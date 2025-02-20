@@ -1,50 +1,83 @@
-# React + TypeScript + Vite
+# GIG
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Sobre
 
-Currently, two official plugins are available:
+**Projeto feito para disciplina de Projeto Aplicado 2, desenvolvido com React e TypeScript e CSS modules**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Instalação
+### 1º Clone o repositório.
 
-## Expanding the ESLint configuration
+**HTTPS**
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+```bash
+git clone https://github.com/ArthurDiogenes/gig-front.git
+```
+ou
 
-- Configure the top-level `parserOptions` property like this:
+**SSH**
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+git clone git@github.com:ArthurDiogenes/gig-front.git
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### 2º Entre no diretório
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+**No terminal**
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
 ```
+cd gig-front
+```
+
+### 3º Crie uma branch para a tarefa que irá ser feita
+
+```
+git checkout -b "nome_da_branch"
+```
+
+### 4º Instale as dependências necessárias
+
+**Ainda no terminal**
+
+```
+npm install
+```
+
+### 5º Rode o projeto
+
+```
+npm run dev
+```
+
+**Após executar, pressione a tecla ctrl e clique no link que vai estar aparecendo**
+
+### 6ª Após ter feito suas alterações, adicione-as para o próximo commit (staging area)
+
+**Caso queira adicionar todos os arquivos modificados**
+```
+git add .
+```
+
+**Caso queira adicionar um arquivo específico**
+```
+git add nome_do_arquivo
+```
+
+### 7ª Faça o commit
+
+**Após ter adicionado as alterações faça o commit**
+
+```
+git commit -m "sua mensagem"
+```
+
+### 8ª Faça o push
+
+**Enviar os commits do repositório local para o repositório remoto (GitHub)**
+
+```
+git push origin nome_da_branch
+```
+
+### 9ª Faça o pull request
+
+**Após fazer o push, vá até o repositório no GitHub e crie um Pull Request. Clique em "Compare & pull request" para enviar sua contribuição para revisão.**

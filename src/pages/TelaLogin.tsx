@@ -1,6 +1,8 @@
 import React from 'react';
 import InputComponent from '../ui/InputComponent'; 
 
+import styles from './TelaLogin.module.css';
+
 export default function TelaLogin(){
 
     const clique= () =>{
@@ -8,11 +10,11 @@ export default function TelaLogin(){
     }
 
     return(
-        <div>
-            <section className="section-img"><img src="" alt="" /></section>
-        
-            <section className="section-form">
-                <h1>login</h1>
+        <div className={styles.container}>
+            <section className={styles.sectionImg}><img className={styles.img} src="../../public/images/img-login.jpg" alt="" /></section> 
+                   
+            <section className={styles.sectionForm}>
+                <h1 className={styles.titulo}>login</h1>
                 <form action="">
                     <InputComponent 
                     type='email'

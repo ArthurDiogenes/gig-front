@@ -1,15 +1,13 @@
 import React from "react"
 import styles from  "./InputComponent.module.css"
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement>{
-    clique?: () => void
-}
+type InputProps = React.InputHTMLAttributes<HTMLInputElement>
 
-const InputComponent: React.FC<InputProps> = ({clique ,...props}) => {
+const InputComponent: React.FC<InputProps> = ({...props}) => {
     return(
-        <>
-        <input {...props} onClick={clique} className={styles.input} />
-        </>
+        <div>
+            <input {...props} className={styles.input} />
+        </div>
     )
 }
 
