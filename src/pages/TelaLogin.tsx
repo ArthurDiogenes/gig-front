@@ -1,5 +1,5 @@
-import React from 'react';
-import InputComponent from '../ui/InputComponent'; 
+import InputComponent from '../ui/InputComponent';
+import ImgCapa from '/images/img-login.png'
 
 import styles from './TelaLogin.module.css';
 import Button from '../ui/Button';
@@ -12,7 +12,7 @@ export default function TelaLogin(){
 
     return(
         <div className={styles.container}>
-            <section className={styles.sectionImg}><img className={styles.img} src="/images/img-login.jpg" alt="" /></section> 
+            <section className={styles.sectionImg}><img className={styles.img} src={ImgCapa} alt="" /></section> 
                    
             <section className={styles.sectionForm}>
                 <div className={styles.login}>
@@ -32,6 +32,8 @@ export default function TelaLogin(){
                         />
                     </form>
                     <Button type='submit'>Entrar</Button>
+                    <h4 className={styles.esqueceu_senha}>Esqueceu a senha?</h4>
+                    <h3 className={styles.cadastro}>Não tem conta? <a href="">Cadastre-se</a></h3>
                 </div>
             </section>
         </div>
