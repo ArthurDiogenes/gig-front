@@ -71,7 +71,7 @@ export default function TelaCadastro() {
                     <p className={styles.loginRedirect}>
                         Já tem uma conta? <a href="/login">Login</a>
                     </p>
-                    <form onSubmit={handleSubmit}>
+                    <form noValidate onSubmit={handleSubmit}>
                         <div className={styles.nameFields}>
                             <InputComponent
                                 type="text"
