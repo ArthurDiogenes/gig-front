@@ -12,14 +12,47 @@ export default function TelaCadastro() {
     const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
 
+    const validateName = (name: string) => {
+        return /^[A-Z][a-zA-Z]{1,}$/.test(name);
+    };
+
+    const validateEmail = (email: string) => {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    };
+
+    const validatePassword = (password: string) => {
+        return password.length >= 6;
+    };
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (!firstName || !lastName || !email || !password || !termsAccepted) {
-            setError('Preencha todos os campos e aceite os termos.');
+        if (!validateName(firstName)) {
+            setError('O nome deve ter pelo menos 2 caracteres e começar com letra maiúscula.');
             return;
         }
 
+        if (!validateName(lastName)) {
+            setError('O sobrenome deve ter pelo menos 2 caracteres e começar com letra maiúscula.');
+            return;
+        }
+
+        if (!validateEmail(email)) {
+            setError('Insira um email válido.');
+            return;
+        }
+
+        if (!validatePassword(password)) {
+            setError('A senha deve ter pelo menos 6 caracteres.');
+            return;
+        }
+
+        if (!termsAccepted) {
+            setError('Você deve aceitar os termos e condições.');
+            return;
+        }
+
+        setError('');
         console.log('Nome:', firstName);
         console.log('Sobrenome:', lastName);
         console.log('Email:', email);
