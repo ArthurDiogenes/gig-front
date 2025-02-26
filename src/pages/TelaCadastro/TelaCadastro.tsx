@@ -13,7 +13,7 @@ export default function TelaCadastro() {
     const [error, setError] = useState<string>('');
 
     const validateName = (name: string) => {
-        return /^[A-Z][a-zA-Z]{1,}$/.test(name);
+        return /^[a-zA-Z]{2,}$/.test(name);
     };
 
     const validateEmail = (email: string) => {
@@ -28,12 +28,12 @@ export default function TelaCadastro() {
         e.preventDefault();
 
         if (!validateName(firstName)) {
-            setError('O nome deve ter pelo menos 2 caracteres e começar com letra maiúscula.');
+            setError('O nome deve ter pelo menos 2 caracteres e conter apenas letras.');
             return;
         }
 
         if (!validateName(lastName)) {
-            setError('O sobrenome deve ter pelo menos 2 caracteres e começar com letra maiúscula.');
+            setError('O sobrenome deve ter pelo menos 2 caracteres e conter apenas letras.');
             return;
         }
 
