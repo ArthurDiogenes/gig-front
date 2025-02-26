@@ -1,33 +1,43 @@
 import InputComponent from "../../ui/InputComponent/InputComponent";
-// Removi a imagem
-
 import styles from "./RecuperarSenha.module.css";
 import Button from "../../ui/Button/Button";
+import { useState } from "react";
 
 export default function RecuperarSenha() {
+  const [email, setEmail] = useState<string>("");
+  const [error, setError] = useState<string>("");
+
+  const validateEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("Solicitação de redefinição de senha enviada");
+    
+    if (!validateEmail(email)) {
+      setError("Insira um email válido.");
+      return;
+    }
+
+    setError("");
+    console.log("Solicitação de redefinição de senha enviada para", email);
   };
 
   return (
     <div className={styles.container}>
-      {/* Removida a seção da imagem */}
       <section className={styles.sectionForm}>
         <div className={styles.login}>
           <h1 className={styles.title}>Recuperar senha</h1>
           <form onSubmit={handleSubmit}>
-
-          <h4 className={styles.subtitulo}>Informe o email para qual deseja redefinir a senha</h4>
+            <h4 className={styles.subtitulo}>Informe o email para qual deseja redefinir a senha</h4>
             <InputComponent
               type="email"
               name="email"
               placeholder="Digite seu email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
-
-
-
-
+            {error && <p className={styles.error}>{error}</p>}
             <Button type="submit" style={{ backgroundColor: 'purple', color: 'white', border: 'none', padding: '0.5rem 1rem' }}>Redefinir senha</Button>
           </form>
         </div>
