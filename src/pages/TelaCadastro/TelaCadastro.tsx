@@ -3,6 +3,7 @@ import ImgCapa from '/images/img-cadastro.png';
 import styles from './TelaCadastro.module.css';
 import Button from '../../ui/Button/Button';
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router';
 
 export default function TelaCadastro() {
     const [firstName, setFirstName] = useState<string>('');
@@ -11,9 +12,10 @@ export default function TelaCadastro() {
     const [password, setPassword] = useState<string>('');
     const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
+    const navigate = useNavigate();
 
     const validateName = (name: string) => {
-        return /^[a-zA-Z]{2,}$/.test(name);
+        return /^[a-zA-Z]{2,}$/.test(name.trim());
     };
 
     const validateEmail = (email: string) => {
@@ -53,6 +55,7 @@ export default function TelaCadastro() {
         }
 
         setError('');
+        navigate('/login')
         console.log('Nome:', firstName);
         console.log('Sobrenome:', lastName);
         console.log('Email:', email);
@@ -69,7 +72,7 @@ export default function TelaCadastro() {
                 <div className={styles.cadastro}>
                     <h1 className={styles.title}>cadastro</h1>
                     <p className={styles.loginRedirect}>
-                        Já tem uma conta? <a href="/login">Login</a>
+                        Já tem uma conta? <Link to="/login">Login</Link>
                     </p>
                     <form noValidate onSubmit={handleSubmit}>
                         <div className={styles.nameFields}>
@@ -108,7 +111,7 @@ export default function TelaCadastro() {
                                 checked={termsAccepted}
                                 onChange={(e) => setTermsAccepted(e.target.checked)}
                             />
-                            <span>Li e concordo com os <a href="/termos">termos e condições</a>.</span>
+                            <span>Li e concordo com os <Link to="/termos">termos e condições</Link>.</span>
                         </div>
                         <Button type="submit">Criar conta</Button>
                     </form>

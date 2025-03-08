@@ -2,11 +2,13 @@ import InputComponent from "../../ui/InputComponent/InputComponent";
 import styles from "./RedefinirSenha.module.css";
 import Button from "../../ui/Button/Button";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 export default function RedefinirSenha() {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const navigate = useNavigate();
 
   const validatePassword = (password: string) => {
     return password.length >= 6;
@@ -26,6 +28,7 @@ export default function RedefinirSenha() {
     }
 
     setError("");
+    navigate('/login')
     console.log("Senha redefinida com sucesso");
   };
 

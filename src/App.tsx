@@ -1,15 +1,13 @@
+import { BrowserRouter } from 'react-router-dom'
 import './App.css'
-import RecuperarSenha from './pages/RecuperarSenha/RecuperarSenha'
-import RedefinirSenha from './pages/RedefinirSenha/RedefinirSenha'
-import TelaCadastro from './pages/TelaCadastro/TelaCadastro'
-import TelaLogin from './pages/TelaLogin/TelaLogin'
+import AppRoutes from './routes/AppRoutes'
 
 function App() {
 
   return (
-    <>
-      <TelaCadastro />
-    </>
+    <BrowserRouter>
+      <AppRoutes/>
+    </BrowserRouter>
   )
 }
 
