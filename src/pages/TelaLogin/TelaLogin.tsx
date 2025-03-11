@@ -3,6 +3,7 @@ import ImgCapa from '/images/img-login.png'
 import styles from './TelaLogin.module.css';
 import Button from '../../ui/Button/Button'
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router';
 
 interface User {
     email: string;
@@ -19,6 +20,7 @@ export default function TelaLogin(){
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
+    const navigate= useNavigate();
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -40,7 +42,7 @@ export default function TelaLogin(){
             // console.log('erro');
         }else{
             setError('');
-            // console.log('logado');
+            navigate('/');
         }
 
     }
@@ -71,7 +73,7 @@ export default function TelaLogin(){
                     </form>
                         {error && <p className={styles.error}>{error}</p>}
                     <h4 className={styles.esqueceu_senha}>Esqueceu a senha?</h4>
-                    <h3 className={styles.cadastro}>Não tem conta? <a href="">Cadastre-se</a></h3>
+                    <h3 className={styles.cadastro}>Não tem conta? <Link to="/cadastro">Cadastre-se</Link></h3>
                 </div>
             </section>
         </div>

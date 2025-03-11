@@ -2,6 +2,7 @@ import InputComponent from "../../ui/InputComponent/InputComponent";
 import styles from "./RecuperarSenha.module.css";
 import Button from "../../ui/Button/Button";
 import { useState } from "react";
+// import { useNavigate } from "react-router";
 
 export default function RecuperarSenha() {
   const [email, setEmail] = useState<string>("");
