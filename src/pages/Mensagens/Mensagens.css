@@ -1,0 +1,96 @@
+.container {
+    display: flex;
+    height: 100vh;
+    background-color: white;
+    color: black;
+}
+
+.sidebar {
+    width: 25%;
+    background-color: #f0f0f0;
+    padding: 1rem;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar li {
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.activeChat {
+    background-color: #d9d9d9;
+}
+
+.sidebar li:hover {
+    background-color: #cfcfcf;
+}
+
+.chatWindow {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    padding: 1rem;
+}
+
+.chatHeader {
+    border-bottom: 1px solid #cccccc;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.message {
+    background-color: #e6e6e6;
+    padding: 0.5rem;
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+    max-width: 60%;
+}
+
+.chatInput {
+    display: flex;
+    border-top: 1px solid #cccccc;
+    padding-top: 0.5rem;
+}
+
+.input {
+    flex: 1;
+    background-color: #f0f0f0;
+    color: black;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 5px;
+    outline: none;
+}
+
+.sendButton {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    margin-left: 0.5rem;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.sendButton:hover {
+    background-color: #0056b3;
+}
