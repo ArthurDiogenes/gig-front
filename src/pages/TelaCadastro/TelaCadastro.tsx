@@ -5,6 +5,7 @@ import Button from '../../ui/Button/Button';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import api from '../../services/api';
+import { toast } from 'react-toastify';
 
 export default function TelaCadastro() {
     const [firstName, setFirstName] = useState<string>('');
@@ -65,11 +66,15 @@ export default function TelaCadastro() {
             if(response.status !== 201){
                 throw new Error();
             }
-            console.log('Conta criada com sucesso!');
-            navigate('/login');
+            toast.success('Conta criada com sucesso!', {
+                onClose: () => navigate('/login'),
+                autoClose: 1500
+            });
         }catch(error){
             console.error(error);
-            setError('Erro ao criar conta. Tente novamente.');
+            toast.error('Erro ao criar conta',{
+                autoClose: 2500
+            });
             return;
         }
     };
