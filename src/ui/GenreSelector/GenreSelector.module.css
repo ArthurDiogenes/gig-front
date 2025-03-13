@@ -1,0 +1,21 @@
+.genreSelector {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 16px;
+    white-space: nowrap;
+    background-color: #f8f8f8;
+}
+
+.genreButton {
+    padding: 8px 16px;
+    border: none;
+    background-color: #ddd;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.genreButton:hover {
+    background-color: #bbb;
+}
