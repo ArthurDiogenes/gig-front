@@ -4,23 +4,35 @@ import ImageCarousel from '../../ui/ImageCarousel/ImageCarousel.tsx';
 import BandCard from '../../ui/BandCard/BandCard.tsx';
 import DepoimentoCard from '../../ui/DepoimentoCard/DepoimentoCard.tsx';
 import styles from './Home.module.css';
+import ImgAudioslave from '/images/audioslave.jpg';
+import ImgSoundgarden from '/images/soundgarden.jpg';
+import ImgMetallica from '/images/metallica.jpg';
+import ImgSystem from '/images/system.jpg';
+import ImgTheDoors from '/images/thedoors.jpg';
+import ImgNirvana from '/images/nirvana.jpg';
+import ImgQotsa from '/images/qotsa.jpg';
+import ImgMj from '/images/mj.jpg';
+import ImgPanchiko from '/images/panchiko.jpg';
+import ImgSafadao from '/images/safadao.jpg';
 
 const bands = [
-    { name: 'Audioslave', genre: 'Grunge', image: '/images/audioslave.jpg' },
-    { name: 'SoundGarden', genre: 'Grunge', image: '/images/soundgarden.jpg' },
-    { name: 'Metallica', genre: 'Metal', image: '/images/metallica.jpg' },
-    { name: 'System of a Down', genre: 'Rock', image: '/images/system.jpg' },
-    { name: 'The Doors', genre: 'Classic Rock', image: '/images/thedoors.jpg' },
-    { name: 'Nirvana', genre: 'Grunge', image: '/images/nirvana.jpg' },
-    { name: 'Queens of the Stone Age', genre: 'Rock', image: '/images/qotsa.jpg' },
-    { name: 'Michael Jackson', genre: 'Pop', image: '/images/mj.jpg' },
+    { name: 'Audioslave', genre: 'Grunge', image: ImgAudioslave },
+    { name: 'SoundGarden', genre: 'Grunge', image: ImgSoundgarden },
+    { name: 'Metallica', genre: 'Metal', image: ImgMetallica },
+    { name: 'System of a Down', genre: 'Rock', image: ImgSystem },
+    { name: 'The Doors', genre: 'Classic Rock', image: ImgTheDoors },
+    { name: 'Nirvana', genre: 'Grunge', image: ImgNirvana },
+    { name: 'Queens of the Stone Age', genre: 'Rock', image: ImgQotsa },
+    { name: 'Michael Jackson', genre: 'Pop', image: ImgMj },
+    { name: 'Panchiko', genre: 'Alternative', image: ImgPanchiko },
+    { name: 'Wesley Safadão', genre: 'Forró', image: ImgSafadao },
 ];
 
 const depoimentos = [
-    { name: 'Suzana', text: 'Lorem ipsum dolor sit amet...', image: '/images/user1.jpg' },
-    { name: 'Livia', text: 'Lorem ipsum dolor sit amet...', image: '/images/user2.jpg' },
-    { name: 'Katia', text: 'Lorem ipsum dolor sit amet...', image: '/images/user3.jpg' },
-    { name: 'Matheus', text: 'Lorem ipsum dolor sit amet...', image: '/images/user4.jpg' },
+    { name: 'Suzana', text: 'O Gig mudou a forma como encontro bandas para tocar nos meus eventos. Plataforma incrível!', image: '/images/user1.png' },
+    { name: 'Livia', text: 'A experiência de contratar bandas nunca foi tão simples. Recomendo demais!', image: '/images/user2.png' },
+    { name: 'Katia', text: 'Encontrei a banda perfeita para o meu casamento em poucos minutos. Excelente serviço!', image: '/images/user3.png' },
+    { name: 'Matheus', text: 'Adorei a praticidade! Diversidade de bandas e músicos de qualidade.', image: '/images/user4.png' },
 ];
 
 export default function Home() {

@@ -10,7 +10,8 @@
 
 .image {
     width: 100%;
-    height: auto;
+    height: 320px;
+    object-fit: cover;
     border-radius: 12px;
 }
 
@@ -23,7 +24,13 @@
     border: none;
     padding: 10px;
     cursor: pointer;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
 }
 
 .prev {

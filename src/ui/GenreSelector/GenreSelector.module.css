@@ -4,7 +4,6 @@
     overflow-x: auto;
     padding: 16px;
     white-space: nowrap;
-    background-color: #f8f8f8;
 }
 
 .genreButton {
@@ -13,7 +12,7 @@
     background-color: #ddd;
     border-radius: 20px;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: background 0.4s;
 }
 
 .genreButton:hover {
