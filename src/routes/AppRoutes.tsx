@@ -4,6 +4,7 @@ import TelaCadastro from "../pages/TelaCadastro/TelaCadastro";
 import RedefinirSenha from "../pages/RedefinirSenha/RedefinirSenha";
 import RecuperarSenha from "../pages/RecuperarSenha/RecuperarSenha";
 import Home from "../pages/Home/Home";
+import Mensagens from "../pages/Mensagens/Mensagens";
 
 export default function AppRoutes() {
   return (
@@ -13,6 +14,7 @@ export default function AppRoutes() {
       <Route path="/cadastro" element={<TelaCadastro/>}/>
       <Route path="/redefinirSenha" element={<RedefinirSenha/>}/>
       <Route path="/recuperarSenha" element={<RecuperarSenha/>}/>
+      <Route path="/mensagens" element={<Mensagens/>}/>
     </Routes>
   );
 }
