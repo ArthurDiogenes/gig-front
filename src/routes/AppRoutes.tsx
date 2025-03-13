@@ -3,11 +3,12 @@ import TelaLogin from "../pages/TelaLogin/TelaLogin";
 import TelaCadastro from "../pages/TelaCadastro/TelaCadastro";
 import RedefinirSenha from "../pages/RedefinirSenha/RedefinirSenha";
 import RecuperarSenha from "../pages/RecuperarSenha/RecuperarSenha";
+import Home from "../pages/Home/Home";
 
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route index element={<h1>Home</h1>}/>
+      <Route path="/" element={<Home />} />
       <Route path="/login" element={<TelaLogin />} />
       <Route path="/cadastro" element={<TelaCadastro/>}/>
       <Route path="/redefinirSenha" element={<RedefinirSenha/>}/>
