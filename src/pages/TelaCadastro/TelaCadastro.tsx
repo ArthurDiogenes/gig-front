@@ -4,6 +4,8 @@ import styles from './TelaCadastro.module.css';
 import Button from '../../ui/Button/Button';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
+import api from '../../services/api';
+import { toast } from 'react-toastify';
 
 export default function TelaCadastro() {
     const [firstName, setFirstName] = useState<string>('');
@@ -26,7 +28,7 @@ export default function TelaCadastro() {
         return password.length >= 6;
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!validateName(firstName)) {
@@ -54,12 +56,27 @@ export default function TelaCadastro() {
             return;
         }
 
-        setError('');
-        navigate('/login')
-        console.log('Nome:', firstName);
-        console.log('Sobrenome:', lastName);
-        console.log('Email:', email);
-        console.log('Senha:', password);
+        try{
+            const response = await api.post('/users', {
+                firstName,
+                lastName,
+                email,
+                password
+            });
+            if(response.status !== 201){
+                throw new Error();
+            }
+            toast.success('Conta criada com sucesso!', {
+                onClose: () => navigate('/login'),
+                autoClose: 1500
+            });
+        }catch(error){
+            console.error(error);
+            toast.error('Erro ao criar conta',{
+                autoClose: 2500
+            });
+            return;
+        }
     };
 
     return (
