@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import api from '../../services/api';
 import { toast } from 'react-toastify';
-
+import { AxiosError } from 'axios';
 export default function TelaCadastro() {
     const [firstName, setFirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
@@ -63,18 +63,20 @@ export default function TelaCadastro() {
                 email,
                 password
             });
-            if(response.status !== 201){
-                throw new Error();
-            }
-            toast.success('Conta criada com sucesso!', {
+            toast.success(response.data.message, {
                 onClose: () => navigate('/login'),
                 autoClose: 1500
             });
         }catch(error){
-            console.error(error);
-            toast.error('Erro ao criar conta',{
-                autoClose: 2500
-            });
+            if(error instanceof AxiosError) {
+                toast.error(error.response?.data.message,{
+                    autoClose: 2500
+                });
+            } else {
+                toast.error('Ocorreu um erro ao cadastrar usuário',{
+                    autoClose: 2500
+                });
+            }
             return;
         }
     };
