@@ -2,47 +2,51 @@ import InputComponent from '../../ui/InputComponent/InputComponent';
 import ImgCapa from '/images/img-login.png'
 import styles from './TelaLogin.module.css';
 import Button from '../../ui/Button/Button'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
+import api from '../../services/api';
+import { AxiosError } from 'axios';
+import { toast } from 'react-toastify';
 
-interface User {
-    email: string;
-    password: string;
-}
-
-const mockUsers: User[] = [
-    { email: 'teste@gmail.com', password: 'senha123' },
-    { email: 'pl@gmail.com', password: 'senha' },
-  ];
 
 export default function TelaLogin(){
 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [error, setError] = useState<string>('');
     const navigate= useNavigate();
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if(token){
+            navigate('/');
+        }
+    }, [navigate]);
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('Email:', email);
-        console.log('Senha:',
-        password);
         
         if(!email || !password){
-            setError('Preencha todos os campos');
+            toast.error('Preencha todos os campos',{
+                autoClose: 2500
+            });
             return;
         }
     
-        const user: User | undefined = mockUsers.find(
-            (u) => u.email === email && u.password === password
-        );
-
-        if (!user) {
-            setError('Usuário ou senha inválidos');
-            // console.log('erro');
-        }else{
-            setError('');
+        try{
+            const response = await api.post('auth/login', {
+                email,
+                password
+            });
+            localStorage.setItem('token', response.data.accessToken);
+            localStorage.setItem('user', JSON.stringify(response.data.user));
             navigate('/');
+        }catch(error){
+            
+            if(error instanceof AxiosError) {
+                toast.error(error.response?.data.message,{
+                    autoClose: 2500
+                });
+            }
         }
 
     }
@@ -69,9 +73,8 @@ export default function TelaLogin(){
                         value={password}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                         />
-                        <Button  type='submit'>Entrar</Button>
+                        <Button type='submit'>Entrar</Button>
                     </form>
-                        {error && <p className={styles.error}>{error}</p>}
                     <h4 className={styles.esqueceu_senha}>Esqueceu a senha?</h4>
                     <h3 className={styles.cadastro}>Não tem conta? <Link to="/cadastro">Cadastre-se</Link></h3>
                 </div>
