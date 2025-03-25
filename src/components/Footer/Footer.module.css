@@ -1,0 +1,45 @@
+.footerMain {
+    border-top: 1px solid #e0e0e0;
+    padding: 1.5rem 0;
+    width: 100%;
+    margin-top: auto;
+    position: relative;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0 1rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.copyright{
+    text-align: center;
+    font-size: 0.875rem;
+    font-family: 'Poppins', sans-serif;
+    color: #64748b;
+}
+
+.nav{
+    display: flex;
+    gap: 1rem;
+}
+
+.link{
+    text-decoration: none;
+    color: #64748b;
+    font-size: 0.875rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.link:hover{
+    text-decoration: underline;
+}

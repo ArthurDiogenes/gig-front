@@ -1,8 +1,8 @@
-import Navbar from '../../ui/Navbar/Navbar.tsx';
-import GenreSelector from '../../ui/GenreSelector/GenreSelector.tsx';
-import ImageCarousel from '../../ui/ImageCarousel/ImageCarousel.tsx';
-import BandCard from '../../ui/BandCard/BandCard.tsx';
-import DepoimentoCard from '../../ui/DepoimentoCard/DepoimentoCard.tsx';
+import Navbar from '../../components/Navbar/Navbar.tsx';
+import GenreSelector from '../../components/GenreSelector/GenreSelector.tsx';
+import ImageCarousel from '../../components/ImageCarousel/ImageCarousel.tsx';
+import BandCard from '../../components/BandCard/BandCard.tsx';
+import DepoimentoCard from '../../components/DepoimentoCard/DepoimentoCard.tsx';
 import styles from './Home.module.css';
 import ImgAudioslave from '/images/audioslave.jpg';
 import ImgSoundgarden from '/images/soundgarden.jpg';
@@ -14,6 +14,9 @@ import ImgQotsa from '/images/qotsa.jpg';
 import ImgMj from '/images/mj.jpg';
 import ImgPanchiko from '/images/panchiko.jpg';
 import ImgSafadao from '/images/safadao.jpg';
+import { useNavigate } from 'react-router';
+import Footer from '../../components/Footer/Footer.tsx';
+
 
 const bands = [
     { name: 'Audioslave', genre: 'Grunge', image: ImgAudioslave },
@@ -36,10 +39,13 @@ const depoimentos = [
 ];
 
 export default function Home() {
+
+    const navigate = useNavigate();
+
     return (
         <div className={styles.container}>
             <Navbar />
-            <GenreSelector />
+            <GenreSelector onGenreSelect={(genero) => navigate(`/genero/${genero.toLowerCase()}`)} />
             <ImageCarousel />
             <section className={styles.bandsSection}>
                 <h2 className={styles.title}>Bandas</h2>
@@ -57,6 +63,7 @@ export default function Home() {
                     ))}
                 </div>
             </section>
+            <Footer/>
         </div>
     );
 }

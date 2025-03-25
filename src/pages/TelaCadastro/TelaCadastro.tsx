@@ -1,7 +1,7 @@
-import InputComponent from '../../ui/InputComponent/InputComponent';
+import InputComponent from '../../components/InputComponent/InputComponent';
 import ImgCapa from '/images/img-cadastro.png';
 import styles from './TelaCadastro.module.css';
-import Button from '../../ui/Button/Button';
+import Button from '../../components/Button/Button';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import api from '../../services/api';
