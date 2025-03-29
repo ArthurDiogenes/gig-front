@@ -1,6 +1,6 @@
-import InputComponent from "../../ui/InputComponent/InputComponent";
+import InputComponent from "../../components/InputComponent/InputComponent";
 import styles from "./RedefinirSenha.module.css";
-import Button from "../../ui/Button/Button";
+import Button from "../../components/Button/Button";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 

@@ -1,0 +1,30 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+    min-height: 100vh; 
+}
+
+.mainContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; 
+    width: 100%;
+}
+
+.title{
+    font-size: 2rem;
+    font-weight: bold;
+    color: #242525;
+    padding: 0 1rem;
+    margin-bottom: 1rem;
+}
+
+.subTitle{
+    font-size: 1rem;
+    color: #64748b;
+    padding: 0 1rem;
+}
