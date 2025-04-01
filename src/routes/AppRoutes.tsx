@@ -7,6 +7,7 @@ import Home from "../pages/Home/Home";
 import Mensagens from "../pages/Mensagens/Mensagens";
 import ProtectedRoute from "./ProtectedRoute";
 import TelaGenero from "../pages/TelaGenero/TelaGenero";
+import BandProfile from "../pages/BandProfile/BandProfile";
 export default function AppRoutes() {
   return (
     <Routes>
@@ -16,6 +17,7 @@ export default function AppRoutes() {
       <Route path="/redefinirSenha" element={<RedefinirSenha/>}/>
       <Route path="/recuperarSenha" element={<RecuperarSenha/>}/>
       <Route path="/genero/:genero" element={<TelaGenero/>}/>
+      <Route path="/perfil" element={<BandProfile/>}/>
       <Route element={<ProtectedRoute/>}>
         <Route path="/mensagens" element={<Mensagens/>}/>
       </Route>
