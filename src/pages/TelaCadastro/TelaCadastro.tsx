@@ -1,4 +1,5 @@
 import InputComponent from '../../components/InputComponent/InputComponent';
+import SelectComponent from '../../components/SelectComponent/SelectComponent';
 import ImgCapa from '/images/img-cadastro.png';
 import styles from './TelaCadastro.module.css';
 import Button from '../../components/Button/Button';
@@ -9,12 +10,14 @@ import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
 export default function TelaCadastro() {
     const [firstName, setFirstName] = useState<string>('');
-    const [lastName, setLastName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
+    const [city, setCity] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
     const navigate = useNavigate();
+
+    const generos: Array<string> = ["Rock", "Pop", "MPB", "Forró", "Sertanejo", "Eletrônica", "Outro"]
 
     const validateName = (name: string) => {
         return /^[a-zA-Z]{2,}$/.test(name.trim());
@@ -36,10 +39,6 @@ export default function TelaCadastro() {
             return;
         }
 
-        if (!validateName(lastName)) {
-            setError('O sobrenome deve ter pelo menos 2 caracteres e conter apenas letras.');
-            return;
-        }
 
         if (!validateEmail(email)) {
             setError('Insira um email válido.');
@@ -56,10 +55,9 @@ export default function TelaCadastro() {
             return;
         }
 
-        try{
+        try {
             const response = await api.post('/users', {
                 firstName,
-                lastName,
                 email,
                 password
             });
@@ -67,13 +65,13 @@ export default function TelaCadastro() {
                 onClose: () => navigate('/login'),
                 autoClose: 1500
             });
-        }catch(error){
-            if(error instanceof AxiosError) {
-                toast.error(error.response?.data.message,{
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data.message, {
                     autoClose: 2500
                 });
             } else {
-                toast.error('Ocorreu um erro ao cadastrar usuário',{
+                toast.error('Ocorreu um erro ao cadastrar usuário', {
                     autoClose: 2500
                 });
             }
@@ -89,27 +87,38 @@ export default function TelaCadastro() {
 
             <section className={styles.sectionForm}>
                 <div className={styles.cadastro}>
-                    <h1 className={styles.title}>cadastro</h1>
+                    <h1 className={styles.title}>Cadastro</h1>
                     <p className={styles.loginRedirect}>
                         Já tem uma conta? <Link to="/login">Login</Link>
                     </p>
+
+                    <p className={styles.establishmentRedirect}>É um estabelecimento? <a href="">Crie sua conta aqui</a></p>
+
                     <form noValidate onSubmit={handleSubmit}>
+                        <InputComponent
+                            type="text"
+                            name="firstName"
+                            placeholder="Nome da Banda"
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                        />
                         <div className={styles.nameFields}>
-                            <InputComponent
-                                type="text"
-                                name="firstName"
-                                placeholder="Nome"
-                                value={firstName}
-                                onChange={(e) => setFirstName(e.target.value)}
+
+                            <SelectComponent
+                                array={generos}
+                                placeholder="Selecione o gênero"
+                                name="generos"
                             />
                             <InputComponent
                                 type="text"
-                                name="lastName"
-                                placeholder="Sobrenome"
-                                value={lastName}
-                                onChange={(e) => setLastName(e.target.value)}
+                                name="city"
+                                placeholder="Cidade/Estado"
+                                value={city}
+                                onChange={(e) => setCity(e.target.value)}
                             />
                         </div>
+
+
                         <InputComponent
                             type="email"
                             name="email"
