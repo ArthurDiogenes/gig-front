@@ -1,65 +1,66 @@
 import InputComponent from '../../components/InputComponent/InputComponent';
+import SelectComponent from '../../components/SelectComponent/SelectComponent';
 import ImgCapa from '/images/img-cadastro.png';
-import styles from './TelaCadastro.module.css';
+import styles from './TelaCadastroBanda.module.css';
 import Button from '../../components/Button/Button';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import api from '../../services/api';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
+import { z } from 'zod';
+
+
+const generos: Array<string> = ["Rock", "Pop", "MPB", "Forró", "Sertanejo", "Eletrônica", "Outro"]
+
 export default function TelaCadastro() {
-    const [firstName, setFirstName] = useState<string>('');
-    const [lastName, setLastName] = useState<string>('');
+    const [bandName, setbandName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
+    const [genero, setGenero] = useState<string>('');
+    const [city, setCity] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
-    const [error, setError] = useState<string>('');
     const navigate = useNavigate();
 
-    const validateName = (name: string) => {
-        return /^[a-zA-Z]{2,}$/.test(name.trim());
-    };
+    const cadastroSchema = z.object({
+        bandName: z.string().min(1, "Nome da banda é obrigatório"),
+        email: z.string().email("Email inválido"),
+        genero: z.string().min(1, "Gênero é obrigatório"),
+        city: z.string().min(2, "Cidade é obrigatória"),
+        password: z.string().min(6, "A Senha deve ter no mínimo 6 caracteres"),
+        termsAccepted: z.literal(true, {
+            errorMap: () => ({ message: "Você deve aceitar os termos" }),
+        }),
+    });
 
-    const validateEmail = (email: string) => {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    };
-
-    const validatePassword = (password: string) => {
-        return password.length >= 6;
-    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
-        if (!validateName(firstName)) {
-            setError('O nome deve ter pelo menos 2 caracteres e conter apenas letras.');
+    
+        const formData = {
+            bandName,
+            email,
+            genero,
+            city,
+            password,
+            termsAccepted,
+        };
+    
+        const result = cadastroSchema.safeParse(formData);
+    
+        if (!result.success) {
+            const firstError = result.error.errors[0]?.message || "Dados inválidos";
+            toast.error(firstError, {
+                autoClose: 2500
+            });
             return;
         }
-
-        if (!validateName(lastName)) {
-            setError('O sobrenome deve ter pelo menos 2 caracteres e conter apenas letras.');
-            return;
-        }
-
-        if (!validateEmail(email)) {
-            setError('Insira um email válido.');
-            return;
-        }
-
-        if (!validatePassword(password)) {
-            setError('A senha deve ter pelo menos 6 caracteres.');
-            return;
-        }
-
-        if (!termsAccepted) {
-            setError('Você deve aceitar os termos e condições.');
-            return;
-        }
-
-        try{
-            const response = await api.post('/users', {
-                firstName,
-                lastName,
+    
+        try {
+            const response = await api.post('/banda', {
+                bandName,
+                city,
+                genero,
                 email,
                 password
             });
@@ -67,13 +68,13 @@ export default function TelaCadastro() {
                 onClose: () => navigate('/login'),
                 autoClose: 1500
             });
-        }catch(error){
-            if(error instanceof AxiosError) {
-                toast.error(error.response?.data.message,{
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data.message, {
                     autoClose: 2500
                 });
             } else {
-                toast.error('Ocorreu um erro ao cadastrar usuário',{
+                toast.error('Ocorreu um erro ao cadastrar usuário', {
                     autoClose: 2500
                 });
             }
@@ -89,27 +90,40 @@ export default function TelaCadastro() {
 
             <section className={styles.sectionForm}>
                 <div className={styles.cadastro}>
-                    <h1 className={styles.title}>cadastro</h1>
+                    <h1 className={styles.title}>Cadastro</h1>
                     <p className={styles.loginRedirect}>
                         Já tem uma conta? <Link to="/login">Login</Link>
                     </p>
+
+                    <p className={styles.establishmentRedirect}>É um estabelecimento? <Link to="/cadastro-estabelecimento">Crie sua conta aqui</Link></p>
+
                     <form noValidate onSubmit={handleSubmit}>
+                        <InputComponent
+                            type="text"
+                            name="bandName"
+                            placeholder="Nome da Banda"
+                            value={bandName}
+                            onChange={(e) => setbandName(e.target.value)}
+                        />
                         <div className={styles.nameFields}>
-                            <InputComponent
-                                type="text"
-                                name="firstName"
-                                placeholder="Nome"
-                                value={firstName}
-                                onChange={(e) => setFirstName(e.target.value)}
+
+                            <SelectComponent
+                                array={generos}
+                                placeholder="Selecione o gênero"
+                                name="generos"
+                                value={genero}
+                                onChange={(e) => setGenero(e.target.value)}
                             />
                             <InputComponent
                                 type="text"
-                                name="lastName"
-                                placeholder="Sobrenome"
-                                value={lastName}
-                                onChange={(e) => setLastName(e.target.value)}
+                                name="city"
+                                placeholder="Cidade/Estado"
+                                value={city}
+                                onChange={(e) => setCity(e.target.value)}
                             />
                         </div>
+
+
                         <InputComponent
                             type="email"
                             name="email"
@@ -134,7 +148,6 @@ export default function TelaCadastro() {
                         </div>
                         <Button type="submit">Criar conta</Button>
                     </form>
-                    {error && <p className={styles.error}>{error}</p>}
                 </div>
             </section>
         </div>

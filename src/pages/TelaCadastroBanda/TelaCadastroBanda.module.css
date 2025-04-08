@@ -20,11 +20,11 @@
 }
 
 .sectionImg {
-    width: 60%;
+    width: 50%;
 }
 
 .sectionForm {
-    width: 40%;
+    width: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -40,8 +40,8 @@
 
 .cadastro {
     width: 100%;
-    max-width: 400px;
-    padding: 48px;
+    /* max-width: 400px; */
+    padding: 16px;
     border-radius: 12px;
     box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
     background: #f9f9f9;
@@ -68,11 +68,35 @@
 .loginRedirect {
     text-align: center;
     font-size: 14px;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
+    margin-top: 0;
 }
 
 .loginRedirect a {
-    color: blue;
+    color: rgb(107, 107, 199);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.loginRedirect a:hover {
+    color: rgb(42, 42, 104);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.establishmentRedirect{
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 0;
+}
+.establishmentRedirect a {
+    color: rgb(107, 107, 199);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.establishmentRedirect a:hover {
+    color: rgb(42, 42, 104);
     text-decoration: none;
     font-weight: bold;
 }
@@ -81,6 +105,10 @@
     display: flex;
     gap: 12px;
 }
+
+.nameFields > * {
+    flex: 1;
+  }
 
 .terms {
     display: flex;
@@ -91,7 +119,13 @@
 }
 
 .terms a {
-    color: blue;
+    color: rgb(107, 107, 199);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.terms a:hover {
+    color: rgb(42, 42, 104);
     text-decoration: none;
     font-weight: bold;
 }
