@@ -1,7 +1,7 @@
 import InputComponent from '../../components/InputComponent/InputComponent';
 import SelectComponent from '../../components/SelectComponent/SelectComponent';
 import ImgCapa from '/images/img-cadastro.png';
-import styles from './TelaCadastro.module.css';
+import styles from './TelaCadastroBanda.module.css';
 import Button from '../../components/Button/Button';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
@@ -9,6 +9,7 @@ import api from '../../services/api';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
 import { z } from 'zod';
+
 
 const generos: Array<string> = ["Rock", "Pop", "MPB", "Forró", "Sertanejo", "Eletrônica", "Outro"]
 
@@ -94,7 +95,7 @@ export default function TelaCadastro() {
                         Já tem uma conta? <Link to="/login">Login</Link>
                     </p>
 
-                    <p className={styles.establishmentRedirect}>É um estabelecimento? <a href="">Crie sua conta aqui</a></p>
+                    <p className={styles.establishmentRedirect}>É um estabelecimento? <Link to="/cadastro-estabelecimento">Crie sua conta aqui</Link></p>
 
                     <form noValidate onSubmit={handleSubmit}>
                         <InputComponent
