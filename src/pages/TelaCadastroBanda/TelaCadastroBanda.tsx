@@ -57,12 +57,13 @@ export default function TelaCadastro() {
         }
     
         try {
-            const response = await api.post('/banda', {
+            const response = await api.post('/users', {
                 bandName,
                 city,
                 genero,
                 email,
-                password
+                password,
+                role: 'band'
             });
             toast.success(response.data.message, {
                 onClose: () => navigate('/login'),

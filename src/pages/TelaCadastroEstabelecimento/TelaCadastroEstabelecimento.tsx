@@ -57,12 +57,13 @@ const TelaCadastroEstabelecimento = () => {
         }
     
         try {
-            const response = await api.post('/venue', {
+            const response = await api.post('/users', {
                 venue,
                 cep,
                 tipo,
                 email,
-                password
+                password,
+                role: 'venue'
             });
             toast.success(response.data.message, {
                 onClose: () => navigate('/login'),
