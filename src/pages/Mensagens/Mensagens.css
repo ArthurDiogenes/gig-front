@@ -25,7 +25,7 @@
 .sidebar li {
     padding: 0.5rem;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 16px;
 }
 
 .activeChat {
@@ -54,20 +54,69 @@
     flex: 1;
     overflow-y: auto;
     padding: 1rem;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.5rem;
 }
 
 .message {
-    background-color: #e6e6e6;
-    padding: 0.5rem;
-    border-radius: 5px;
-    margin-bottom: 0.5rem;
     max-width: 60%;
+    padding: 0.5rem;
+    border-radius: 16px;
+    word-wrap: break-word;
 }
+
+.message.me {
+    align-self: flex-end;
+    background-color: #dcf8c6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #b2d8b2;
+    border-radius: 16px 16px 0 16px;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    padding: 0.5rem 1rem;
+    max-width: 80%;
+    word-wrap: break-word;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    font-family: 'Arial', sans-serif;
+    font-weight: 400;
+    color: #333333;
+    text-align: left;
+    text-overflow: ellipsis;
+    text-wrap: normal;
+    text-align-last: auto;
+}
+
+.message.other {
+    align-self: flex-start;
+    background-color: #e6e6e6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #b2b2b2;
+    border-radius: 16px 16px 16px 0;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    padding: 0.5rem 1rem;
+    max-width: 80%;
+    word-wrap: break-word;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    font-family: 'Arial', sans-serif;
+    font-weight: 400;
+    color: #333333;
+    text-align: left;
+    text-overflow: ellipsis;
+    text-wrap: normal;
+    text-align-last: auto;
+}
+
+
 
 .chatInput {
     display: flex;
     border-top: 1px solid #cccccc;
     padding-top: 0.5rem;
+    height: 60px;
 }
 
 .input {
@@ -76,21 +125,27 @@
     color: black;
     border: none;
     padding: 0.5rem;
-    border-radius: 5px;
+    border-radius: 16px;
     outline: none;
 }
 
 .sendButton {
-    background-color: #007bff;
+    background-color: #1B1212;
     color: white;
     border: none;
     padding: 0.5rem 1rem;
-    border-radius: 5px;
-    margin-left: 0.5rem;
+    border-radius: 16px;
     cursor: pointer;
-    font-size: 1.2rem;
+    margin-left: 0.5rem;
+    transition: background-color 0.3s ease-in-out;
+    width: 70px;
 }
 
 .sendButton:hover {
-    background-color: #0056b3;
+    position: relative;
+    transition: transform 0.1s ease-in-out;
+}
+
+.sendButton:active {
+    transform: scale(0.85);
 }
