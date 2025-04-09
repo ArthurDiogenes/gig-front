@@ -6,51 +6,114 @@ type Mensagem = {
   autor: "eu" | "outro";
 };
 
+type Contato = {
+  id: number;
+  nome: string;
+  avatar: string;
+  mensagens: Mensagem[];
+};
+
+const contatosIniciais: Contato[] = [
+  {
+    id: 1,
+    nome: "Rock Legends",
+    avatar: "/avatars/rock_legends.png",
+    mensagens: [],
+  },
+  {
+    id: 2,
+    nome: "Paulo Luan",
+    avatar: "/avatars/paulo_luan.png",
+    mensagens: [],
+  },
+  {
+    id: 3,
+    nome: "Panchiko",
+    avatar: "/avatars/panchiko.png",
+    mensagens: [],
+  },
+  {
+    id: 4,
+    nome: "Hard Rock Cafe",
+    avatar: "images/avatars/hard_rock_cafe.png",
+    mensagens: [],
+  },
+];
+
 export default function Mensagens() {
-  const [message, setMessage] = useState<string>("");
-  const [messages, setMessages] = useState<Mensagem[]>([]);
-  const [isMyTurn, setIsMyTurn] = useState<boolean>(true);
+  const [contatos, setContatos] = useState<Contato[]>(contatosIniciais);
+  const [contatoAtivo, setContatoAtivo] = useState<Contato>(contatos[0]);
+  const [mensagem, setMensagem] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (message.trim() === "") return;
+    if (mensagem.trim() === "") return;
 
     const novaMensagem: Mensagem = {
-      texto: message,
-      autor: isMyTurn ? "eu" : "outro",
+      texto: mensagem,
+      autor: "eu",
     };
 
-    setMessages([novaMensagem, ...messages]); // Adiciona no início da lista
-    setMessage("");
-    setIsMyTurn(!isMyTurn);
+    const contatosAtualizados = contatos.map((contato) => {
+      if (contato.id === contatoAtivo.id) {
+        return {
+          ...contato,
+          mensagens: [...contato.mensagens, novaMensagem],
+        };
+      }
+      return contato;
+    });
+
+    setContatos(contatosAtualizados);
+    setContatoAtivo({
+      ...contatoAtivo,
+      mensagens: [...contatoAtivo.mensagens, novaMensagem],
+    });
+    setMensagem("");
   };
 
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+  }, [contatoAtivo.mensagens]);
 
   return (
     <div className="container">
       <aside className="sidebar">
         <img src="/logo.png" alt="Gig Chats" className="logo" />
         <ul>
-          <li className="activeChat">Rock Legends</li>
-          <li>Paulo Luan</li>
-          <li>Panchiko</li>
-          <li>Hard Rock Cafe</li>
+          {contatos.map((contato) => (
+            <li
+              key={contato.id}
+              className={contato.id === contatoAtivo.id ? "activeChat" : ""}
+              onClick={() => setContatoAtivo(contato)}
+            >
+              <img
+                src={contato.avatar}
+                alt={contato.nome}
+                className="avatar"
+              />
+              <span>{contato.nome}</span>
+            </li>
+          ))}
         </ul>
       </aside>
 
       <main className="chatWindow">
         <header className="chatHeader">
-          <h2>Fulano 1</h2>
+          <img
+            src={contatoAtivo.avatar}
+            alt={contatoAtivo.nome}
+            className="chatAvatar"
+          />
+          <h2>{contatoAtivo.nome}</h2>
         </header>
 
         <div className="messages">
-          {messages.map((msg, index) => (
+          <div ref={messagesEndRef} />
+          {[...contatoAtivo.mensagens].reverse().map((msg, index) => (
             <div
               key={index}
               className={`message ${msg.autor === "eu" ? "me" : "other"}`}
@@ -58,15 +121,15 @@ export default function Mensagens() {
               {msg.texto}
             </div>
           ))}
-          <div ref={messagesEndRef} />
         </div>
+
 
         <form onSubmit={handleSubmit} className="chatInput">
           <input
             type="text"
             placeholder="Digite a mensagem aqui..."
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            value={mensagem}
+            onChange={(e) => setMensagem(e.target.value)}
             className="input"
           />
           <button
