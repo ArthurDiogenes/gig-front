@@ -27,7 +27,9 @@ export default function AppRoutes() {
       <Route path="/perfil-estabelecimento" element={<PerfilEstabelecimento/>}/>
       <Route path="/termos" element={<Termos/>}/>
 
-        <Route path="/mensagens" element={<Mensagens/>}/> 
+
+        <Route path="/mensagens" element={<Mensagens/>}/>
+
       <Route element={<ProtectedRoute/>}>
       </Route>
     </Routes>
