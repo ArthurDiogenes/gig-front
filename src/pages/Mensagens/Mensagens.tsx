@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./Mensagens.css";
+import styles from "./Mensagens.module.css";
+import { useNavigate } from "react-router-dom";
 
 type Mensagem = {
   texto: string;
@@ -17,25 +18,25 @@ const contatosIniciais: Contato[] = [
   {
     id: 1,
     nome: "Rock Legends",
-    avatar: "/avatars/rock_legends.png",
+    avatar: "images/avatars/chatsidebar1.png",
     mensagens: [],
   },
   {
     id: 2,
     nome: "Paulo Luan",
-    avatar: "/avatars/paulo_luan.png",
+    avatar: "images/avatars/chatsidebar2.png",
     mensagens: [],
   },
   {
     id: 3,
     nome: "Panchiko",
-    avatar: "/avatars/panchiko.png",
+    avatar: "images/avatars/chatsidebar3.png",
     mensagens: [],
   },
   {
     id: 4,
     nome: "Hard Rock Cafe",
-    avatar: "images/avatars/hard_rock_cafe.png",
+    avatar: "images/avatars/chatsidebar4.png",
     mensagens: [],
   },
 ];
@@ -45,6 +46,8 @@ export default function Mensagens() {
   const [contatoAtivo, setContatoAtivo] = useState<Contato>(contatos[0]);
   const [mensagem, setMensagem] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
+
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -80,20 +83,24 @@ export default function Mensagens() {
   }, [contatoAtivo.mensagens]);
 
   return (
-    <div className="container">
-      <aside className="sidebar">
-        <img src="/logo.png" alt="Gig Chats" className="logo" />
+    <div className={styles.container}>
+      <aside className={styles.sidebar}>
+        <div className={styles.logoContainer}>
+          <img src="images/logo-gig 2.svg" alt="Gig Chats" className={styles.logo} onClick={() => navigate("/")}
+            style={{ cursor: "pointer" }} />
+          <h1 className={styles.logoText}>Conversas</h1>
+        </div>
         <ul>
           {contatos.map((contato) => (
             <li
               key={contato.id}
-              className={contato.id === contatoAtivo.id ? "activeChat" : ""}
+              className={contato.id === contatoAtivo.id ? styles.activeChat : ""}
               onClick={() => setContatoAtivo(contato)}
             >
               <img
                 src={contato.avatar}
                 alt={contato.nome}
-                className="avatar"
+                className={styles.avatar}
               />
               <span>{contato.nome}</span>
             </li>
@@ -101,40 +108,39 @@ export default function Mensagens() {
         </ul>
       </aside>
 
-      <main className="chatWindow">
-        <header className="chatHeader">
+      <main className={styles.chatWindow}>
+        <header className={styles.chatHeader}>
           <img
             src={contatoAtivo.avatar}
             alt={contatoAtivo.nome}
-            className="chatAvatar"
+            className={styles.chatAvatar}
           />
           <h2>{contatoAtivo.nome}</h2>
         </header>
 
-        <div className="messages">
+        <div className={styles.messages}>
           <div ref={messagesEndRef} />
           {[...contatoAtivo.mensagens].reverse().map((msg, index) => (
             <div
               key={index}
-              className={`message ${msg.autor === "eu" ? "me" : "other"}`}
+              className={`${styles.message} ${msg.autor === "eu" ? styles.me : styles.other}`}
             >
               {msg.texto}
             </div>
           ))}
         </div>
 
-
-        <form onSubmit={handleSubmit} className="chatInput">
+        <form onSubmit={handleSubmit} className={styles.chatInput}>
           <input
             type="text"
             placeholder="Digite a mensagem aqui..."
             value={mensagem}
             onChange={(e) => setMensagem(e.target.value)}
-            className="input"
+            className={styles.input}
           />
           <button
             type="submit"
-            className="sendButton"
+            className={styles.sendButton}
             aria-label="Enviar mensagem"
           >
             <svg
