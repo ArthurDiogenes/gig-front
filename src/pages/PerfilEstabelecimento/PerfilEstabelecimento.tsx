@@ -7,8 +7,8 @@ import {
 	LocationIcon,
 	StarIcon,
 	StarOutlineIcon,
+	TagIcon,
 	TwitterIcon,
-	UserIcon,
 } from '../../utils/icons';
 import styles from './PerfilEstabelecimento.module.css';
 
@@ -73,7 +73,7 @@ const PerfilEstabelecimento = () => {
 					</div>
 					<div style={{ display: 'flex', marginLeft: 'auto', gap: '16px' }}>
 						<button className={`${styles.btn} ${styles['btn-outline']}`}>
-							<EditIcon style={{ marginRight: 8 }} />
+							<EditIcon style={{ marginRight: 8, width: 20, height: 20 }} />
 							Editar
 						</button>
 					</div>
@@ -97,10 +97,21 @@ const PerfilEstabelecimento = () => {
 								style={{
 									height: '520px',
 									backgroundImage: 'url(/public/images/hard-rock.png)',
-                  backgroundSize: 'cover',
-                  borderRadius: '8px',
+									backgroundSize: 'cover',
+									borderRadius: '8px',
 								}}
 							/>
+							<button
+								className={`${styles.btn} ${styles['btn-outline']}`}
+								style={{
+									marginTop: '16px',
+									width: '100%',
+									gap: '8px',
+								}}
+							>
+								<span style={{ fontSize: 20 }}>+</span>
+								Adicionar fotos
+							</button>
 						</section>
 
 						<section
@@ -111,7 +122,10 @@ const PerfilEstabelecimento = () => {
 								borderRadius: '8px',
 							}}
 						>
-							<h2>Descrição</h2>
+							<div className={styles.inline}>
+								<h2>Descrição</h2>
+								<EditIcon style={{ width: 20, height: 20 }} />
+							</div>
 							<p style={{ color: '#555' }}>
 								O Hard Rock Cafe é uma cadeia de restaurantes e entretenimento
 								conhecida por sua temática rock 'n' roll, decorada com
@@ -131,7 +145,19 @@ const PerfilEstabelecimento = () => {
 								borderRadius: '8px',
 							}}
 						>
-							<h2>Próximos eventos</h2>
+							<div className={styles.inline}>
+								<h2>Próximos eventos</h2>
+								<button
+									className={`${styles.btn} ${styles['btn-outline']}`}
+									style={{
+										marginTop: '16px',
+										gap: '8px',
+									}}
+								>
+									<span style={{ fontSize: 20 }}>+</span>
+									Adicionar evento
+								</button>
+							</div>
 							<div style={{ marginTop: '8px' }}>
 								<div
 									style={{ display: 'flex', justifyContent: 'space-between' }}
@@ -169,7 +195,10 @@ const PerfilEstabelecimento = () => {
 								borderRadius: '8px',
 							}}
 						>
-							<h2>Info</h2>
+							<div className={styles.inline}>
+								<h2>Info</h2>
+								<EditIcon style={{ width: 20, height: 20 }} />
+							</div>
 							<ul
 								style={{
 									listStyle: 'none',
@@ -183,14 +212,14 @@ const PerfilEstabelecimento = () => {
 										gap: '16px',
 									}}
 								>
-									<UserIcon
+									<TagIcon
 										style={{
 											width: '16px',
 											height: '16px',
 											color: '#000',
 										}}
 									/>
-									<span>4 membros</span>
+									<span>Restaurante</span>
 								</li>
 								<li
 									style={{
