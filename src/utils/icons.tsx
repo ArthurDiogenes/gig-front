@@ -210,4 +210,51 @@ export const EditIcon = React.forwardRef<SVGSVGElement, IconProps>(
 		</svg>
 	)
 );
+
 EditIcon.displayName = 'EditIcon';
+
+export const ArrowLeftIcon = React.forwardRef<SVGSVGElement, IconProps>(
+	({ style, ...props }, ref) => (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width={24}
+			height={24}
+			viewBox="0 0 24 24"
+			style={style}
+			{...props}
+			ref={ref}
+		>
+			<path
+				fill="currentColor"
+				d="M10.928 21a2.98 2.98 0 0 1-2.121-.879L1.686 13l7.121-7.121c1.133-1.134 3.109-1.134 4.242 0c.566.564.879 1.317.879 2.119c0 .746-.27 1.451-.764 2.002H18c1.654 0 3 1.346 3 3s-1.346 3-3 3h-4.836c.493.549.764 1.252.764 1.998a2.98 2.98 0 0 1-.879 2.124a2.98 2.98 0 0 1-2.121.878m-6.414-8l5.707 5.707a1.023 1.023 0 0 0 1.414 0c.189-.189.293-.441.293-.708s-.104-.517-.291-.705L8.342 14H18a1.001 1.001 0 0 0 0-2H8.342l3.293-3.293a.996.996 0 0 0 .001-1.413a1.023 1.023 0 0 0-1.415-.001z"
+			></path>
+		</svg>
+	)
+);
+ArrowLeftIcon.displayName = 'ArrowLeftIcon';
+
+export const TagIcon = React.forwardRef<SVGSVGElement, IconProps>(
+	({ style, ...props }, ref) => (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width={24}
+			height={24}
+			viewBox="0 0 24 24"
+			style={style}
+			{...props}
+			ref={ref}
+		>
+			<g
+				fill="none"
+				stroke="currentColor"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				strokeWidth={2}
+			>
+				<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"></path>
+				<circle cx={7.5} cy={7.5} r={0.5} fill="currentColor"></circle>
+			</g>
+		</svg>
+	)
+);
+TagIcon.displayName = 'TagIcon';

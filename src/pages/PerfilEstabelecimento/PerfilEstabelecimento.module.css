@@ -37,26 +37,35 @@
     gap: 24px;
 }
 
+.inline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
 .btn {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 12px 16px;
+    padding: 8px 16px;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
-    text-transform: uppercase;
     cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.btn-default {
-    max-width: 400px;
+.btn:hover {
+    background-color: #eee;
+}
+
+.btn-default {  
     background: #000;
     color: #FFF;
 }
 
 .btn-outline {
-    max-width: 400px;
     background: transparent;
     border: 1px solid #333;
 }
