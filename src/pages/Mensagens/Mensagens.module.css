@@ -196,9 +196,9 @@
 }
 
 .sendButton {
-    width: 48px;
+    width: 64px;
     height: 48px;
-    border-radius: 50%;
+    border-radius: 40%;
     background-color: #474787;
     border: none;
     margin-left: 10px;
