@@ -1,3 +1,4 @@
+import EditarEstabelecimento from '@/components/EditarEstabelecimento';
 import Navbar from '../../components/Navbar/Navbar';
 import {
 	BandProfileIcon,
@@ -72,10 +73,7 @@ const PerfilEstabelecimento = () => {
 						</h1>
 					</div>
 					<div style={{ display: 'flex', marginLeft: 'auto', gap: '16px' }}>
-						<button className={`${styles.btn} ${styles['btn-outline']}`}>
-							<EditIcon style={{ marginRight: 8, width: 20, height: 20 }} />
-							Editar
-						</button>
+						<EditarEstabelecimento />
 					</div>
 				</div>
 				<div className={styles.sectionContainer}>

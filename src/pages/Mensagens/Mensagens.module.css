@@ -1,3 +1,17 @@
+:root {
+    --bg-dark: #ffffff;
+    --bg-light: #ffffff;
+    --bg-sidebar: #ffffff;
+    --primary: #000000;
+    --text-light: #000000;
+    --text-muted: #000000;
+    --bubble-other: #25d366;
+    --bubble-me: #128c7e;
+    --transition: 0.3s ease;
+    --bg-active-chat: #ececec;
+    --font-family: Apple SD Gothic Neo, sans-serif;
+}
+
 .container {
     display: flex;
     height: 100vh;
