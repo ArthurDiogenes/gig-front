@@ -1,22 +1,24 @@
-import styles from './GenreCollectionCard.module.css';
+import styles from './CardMusico.module.css';
 
-interface GenreCollectionCardProps {
+interface CardMusicoProps {
+  name: string;
   genre: string;
   image: string;
-  bandCount?: number; // número de bandas do gênero, opcional
+  bandCount?: number;
   onClick?: () => void;
 }
 
-export default function GenreCollectionCard({ genre, image, bandCount, onClick }: GenreCollectionCardProps) {
+export default function CardMusico({ name, genre, image, bandCount, onClick }: CardMusicoProps) {
   return (
-    <button className={styles.card} onClick={onClick}>
-      <img src={image} alt={genre} className={styles.image} />
-      <div className={styles.info}>
-        <h3 className={styles.genre}>{genre}</h3>
+    <div className={styles.card} onClick={onClick}>
+      <img src={image} alt={genre} className={styles.thumbnail} />
+      <div className={styles.content}>
+        
+        <h3 className={styles.name}>{name}</h3>
         {bandCount !== undefined && (
-          <p className={styles.bandCount}>{bandCount} bandas</p>
+          <span className={styles.bandCount}>{bandCount} bandas</span>
         )}
       </div>
-    </button>
+    </div>
   );
 }
