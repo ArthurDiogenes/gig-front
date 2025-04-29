@@ -4,6 +4,7 @@
     overflow-x: auto;
     padding: 16px;
     white-space: nowrap;
+    justify-content: center;
 }
 
 .genreButton {
