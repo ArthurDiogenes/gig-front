@@ -57,7 +57,7 @@ export default function TelaGenero() {
   return (
     <div className={styles.container}>
       <Navbar />
-      <GenreSelector onGenreSelect={(genero) => navigate(`/genero/${genero.toLowerCase()}`)} />
+      {/* <GenreSelector onGenreSelect={(genero) => navigate(`/genero/${genero.toLowerCase()}`)} /> */}
       
       <div className={styles.mainContent}>
         <h1 className={styles.title}>Músicos de {generoFormatado}</h1>
