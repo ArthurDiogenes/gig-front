@@ -157,7 +157,7 @@ export default function Home() {
                 asChild
                 className="w-full mt-4 bg-stone-900 hover:bg-stone-700"
               >
-                <Link to="/bandas">Ver mais bandas</Link>
+                <Link to="/pesquisa">Ver mais bandas</Link>
               </Button>
             </div>
 
