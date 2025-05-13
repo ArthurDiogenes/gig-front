@@ -2,13 +2,14 @@ import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "../ui/dropdown-menu";
 
 
-const CustomButton = ({children}: { children: React.ReactNode}) => {
+const CustomButton = ({ children, onClick }: { children: React.ReactNode, onClick?: () => void }) => {
     return (
-        <Button variant='ghost' className="w-full text-md justify-start pr-12">
+        <Button variant="ghost" className="w-full text-md justify-start pr-12" onClick={onClick}>
             {children}
         </Button>
     );
-}
+};
+
 
 export default function MenuHamburger() {
     return (
@@ -17,23 +18,23 @@ export default function MenuHamburger() {
                 ☰
                 <DropdownMenuContent className="text-lg flex flex-col mx-3 my-6">
                     <DropdownMenuItem>
-                        <CustomButton >
+                        <CustomButton onClick={() => window.location.href = "/perfil"}>
                             Perfil
                         </CustomButton>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                        <CustomButton>
+                        <CustomButton onClick={() => window.location.href = "/mensagens"}>
                             Conversas
                         </CustomButton>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                        <CustomButton>
+                        <CustomButton onClick={() => window.location.href = "#"}>
                             Configurações
                         </CustomButton>
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator/>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem>
-                        <CustomButton>
+                        <CustomButton onClick={() => window.location.href = "/login"}>
                             Sair
                         </CustomButton>
                     </DropdownMenuItem>
