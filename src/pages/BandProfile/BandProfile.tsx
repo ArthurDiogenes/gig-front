@@ -1,3 +1,4 @@
+import { useParams } from 'react-router-dom';
 import ImageCarousel from '../../components/ImageCarousel/ImageCarousel';
 import Navbar from '../../components/Navbar/Navbar';
 import {
@@ -12,17 +13,40 @@ import {
 	UserIcon,
 } from '../../utils/icons';
 import styles from './BandProfile.module.css';
+import { useQuery } from '@tanstack/react-query';
+import api from '@/services/api';
+import { capitalize } from 'lodash';
+import { Button } from '@/components/ui/button';
+
+export type BandProfile = {
+	id: number;
+	bandName: string;
+	city: string;
+	genre: string;
+	description: string;
+	createdAt: string;
+};
 
 const BandProfile = () => {
+	const { id } = useParams();
+
+	const { data: band } = useQuery({
+		queryKey: ['band', id],
+		queryFn: async () => {
+			const response = await api.get(`/bands/${id}`);
+			return response.data;
+		},
+	});
+
+	if (!band) {
+		return <div>Loading...</div>;
+	}
+
 	return (
 		<>
 			<Navbar />
-			<main style={{ maxWidth: 1720, margin: '0 auto', paddingTop: 16 }}>
-				<section
-					style={{
-						height: '300px',
-					}}
-				>
+			<main className="max-w-[1720px] mx-auto pt-4">
+				<section className="h-[300px]">
 					<div
 						className={styles.imgContainer}
 						style={{
@@ -60,34 +84,18 @@ const BandProfile = () => {
 						</div>
 					</div>
 				</section>
-				<div
-					style={{
-						display: 'flex',
-						alignItems: 'center',
-						position: 'relative',
-					}}
-				>
+				<div className="flex items-center relative">
 					<div>
-						<h1 style={{ fontSize: '20px', fontWeight: 'bold' }}>
-							The Melodic Mavericks
-						</h1>
-						<p style={{ color: '#666' }}>Alternative Rock Band</p>
+						<h1 className="text-start text-xl font-bold">{band.bandName}</h1>
+						<p className="text-[#666]">{capitalize(band.genre)}</p>
 					</div>
 					<div style={{ display: 'flex', marginLeft: 'auto', gap: '16px' }}>
-						<button className={`${styles.btn} ${styles['btn-outline']}`}>
-							Mensagem
-						</button>
-						<button className={`${styles.btn} ${styles['btn-default']}`}>
-							Seguir
-						</button>
+						<Button variant={'outline'}>Mensagem</Button>
+						<Button>Seguir</Button>
 					</div>
 				</div>
 				<div className={styles.sectionContainer}>
-					<div
-						style={{
-							flex: 3,
-						}}
-					>
+					<div className="flex-[3]">
 						<section
 							style={{
 								border: '1px solid #ddd',
@@ -109,13 +117,7 @@ const BandProfile = () => {
 							}}
 						>
 							<h2>Descrição</h2>
-							<p style={{ color: '#555' }}>
-								The Melodic Mavericks é uma banda que mistura rock, jazz e folk,
-								criando melodias complexas e emocionantes. Suas músicas trazem
-								variações dinâmicas e letras profundas que exploram temas
-								pessoais e sociais. Com esse estilo único, se destacam como
-								pioneiros na música contemporânea.
-							</p>
+							<p style={{ color: '#555' }}>{band.description}</p>
 						</section>
 
 						<section
@@ -132,9 +134,7 @@ const BandProfile = () => {
 									style={{ display: 'flex', justifyContent: 'space-between' }}
 								>
 									<p>Caminhos Cruzados</p>
-									<button className={`${styles.btn} ${styles['btn-outline']}`}>
-										Play
-									</button>
+									<Button>Play</Button>
 								</div>
 								<div
 									style={{
@@ -144,9 +144,7 @@ const BandProfile = () => {
 									}}
 								>
 									<p>Ecos do Amanhecer</p>
-									<button className={`${styles.btn} ${styles['btn-outline']}`}>
-										Play
-									</button>
+									<Button>Play</Button>
 								</div>
 							</div>
 						</section>
@@ -165,9 +163,7 @@ const BandProfile = () => {
 									style={{ display: 'flex', justifyContent: 'space-between' }}
 								>
 									<p>Rock in Rio</p>
-									<button className={`${styles.btn} ${styles['btn-default']}`}>
-										Ver evento
-									</button>
+									<Button>Ver evento</Button>
 								</div>
 								<div
 									style={{
@@ -177,9 +173,7 @@ const BandProfile = () => {
 									}}
 								>
 									<p>Lollapalooza</p>
-									<button className={`${styles.btn} ${styles['btn-default']}`}>
-										Ver evento
-									</button>
+									<Button>Ver evento</Button>
 								</div>
 							</div>
 						</section>
@@ -371,7 +365,8 @@ const BandProfile = () => {
 										<StarOutlineIcon />
 									</div>
 									<p style={{ color: '#555', margin: '8px 0 16px 0' }}>
-										"Great band with a unique sound. They were professional and easy to work with."
+										"Great band with a unique sound. They were professional and
+										easy to work with."
 									</p>
 									<span style={{ fontSize: 14, color: '#888' }}>
 										- Soundwave Festival
@@ -379,12 +374,7 @@ const BandProfile = () => {
 								</div>
 							</div>
 						</section>
-						<button
-							style={{ placeSelf: 'end', marginTop: 16 }}
-							className={`${styles.btn} ${styles['btn-default']}`}
-						>
-							Avaliar
-						</button>
+						<Button className="place-self-end mt-4">Avaliar</Button>
 					</div>
 				</div>
 			</main>

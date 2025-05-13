@@ -2,7 +2,6 @@ import axios from "axios";
 import { API_URL } from "../config";
 
 const baseURL = `${API_URL}` || "http://localhost:3000";
-console.log('baseUrl', baseURL)
 
 const api = axios.create({
   baseURL: baseURL,

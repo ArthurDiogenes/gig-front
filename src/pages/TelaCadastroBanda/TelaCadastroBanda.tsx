@@ -11,12 +11,12 @@ import { AxiosError } from 'axios';
 import { z } from 'zod';
 
 
-const generos: Array<string> = ["Rock", "Pop", "MPB", "Forró", "Sertanejo", "Eletrônica", "Outro"]
+const genres: Array<string> = ["Rock", "Pop", "MPB", "Forró", "Sertanejo", "Eletrônica", "Outro"]
 
 export default function TelaCadastro() {
     const [bandName, setbandName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
-    const [genero, setGenero] = useState<string>('');
+    const [genre, setGenre] = useState<string>('');
     const [city, setCity] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
@@ -25,7 +25,7 @@ export default function TelaCadastro() {
     const cadastroSchema = z.object({
         bandName: z.string().min(1, "Nome da banda é obrigatório"),
         email: z.string().email("Email inválido"),
-        genero: z.string().min(1, "Gênero é obrigatório"),
+        genre: z.string().min(1, "Gênero é obrigatório"),
         city: z.string().min(2, "Cidade é obrigatória"),
         password: z.string().min(6, "A Senha deve ter no mínimo 6 caracteres"),
         termsAccepted: z.literal(true, {
@@ -40,7 +40,7 @@ export default function TelaCadastro() {
         const formData = {
             bandName,
             email,
-            genero,
+            genre,
             city,
             password,
             termsAccepted,
@@ -60,7 +60,7 @@ export default function TelaCadastro() {
             const response = await api.post('/users', {
                 bandName,
                 city,
-                genero,
+                genre,
                 email,
                 password,
                 role: 'band'
@@ -109,11 +109,11 @@ export default function TelaCadastro() {
                         <div className={styles.nameFields}>
 
                             <SelectComponent
-                                array={generos}
+                                array={genres}
                                 placeholder="Selecione o gênero"
-                                name="generos"
-                                value={genero}
-                                onChange={(e) => setGenero(e.target.value)}
+                                name="genres"
+                                value={genre}
+                                onChange={(e) => setGenre(e.target.value)}
                             />
                             <InputComponent
                                 type="text"

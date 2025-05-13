@@ -24,7 +24,7 @@ export default function AppRoutes() {
       <Route path="/recuperarSenha" element={<RecuperarSenha/>}/>
       <Route path="/genero/:genero" element={<TelaGenero/>}/>
 
-      <Route path="/perfil" element={<BandProfile/>}/>
+      <Route path="/bandas/:id" element={<BandProfile/>}/>
       <Route path="/perfil-estabelecimento" element={<PerfilEstabelecimento/>}/>
       <Route path="/termos" element={<Termos/>}/>
       <Route path="/edit-profile" element={<EditProfile/>}/>
