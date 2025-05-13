@@ -12,7 +12,8 @@ import PerfilEstabelecimento from "../pages/PerfilEstabelecimento/PerfilEstabele
 import Termos from "../pages/TermosCondicoes/TermosCondicoes";
 import TelaCadastroEstabelecimento from "../pages/TelaCadastroEstabelecimento/TelaCadastroEstabelecimento";
 import EditProfile from "../pages/EditProfile/EditProfile"; 
-import EditarBanda from "../pages/EditarBanda/EditarBanda";      
+import EditarBanda from "../pages/EditarBanda/EditarBanda";
+import Pesquisa from "../pages/Pesquisa/Pesquisa";
 
 export default function AppRoutes() {
   return (
@@ -24,6 +25,7 @@ export default function AppRoutes() {
       <Route path="/redefinirSenha" element={<RedefinirSenha/>}/>
       <Route path="/recuperarSenha" element={<RecuperarSenha/>}/>
       <Route path="/genero/:genero" element={<TelaGenero/>}/>
+      <Route path="/pesquisa" element={<Pesquisa/>}/>
 
       <Route path="/bandas/:id" element={<BandProfile/>}/>
       <Route path="/perfil-estabelecimento" element={<PerfilEstabelecimento/>}/>
@@ -31,7 +33,7 @@ export default function AppRoutes() {
       <Route path="/edit-profile" element={<EditProfile/>}/>
       <Route path="/editar-banda" element={<EditarBanda/>}/>
 
-        <Route path="/mensagens" element={<Mensagens/>}/>
+      <Route path="/mensagens" element={<Mensagens/>}/>
 
       <Route element={<ProtectedRoute/>}>
       </Route>
