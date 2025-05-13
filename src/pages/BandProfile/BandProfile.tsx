@@ -17,8 +17,9 @@ import { useQuery } from '@tanstack/react-query';
 import api from '@/services/api';
 import { capitalize } from 'lodash';
 import { Button } from '@/components/ui/button';
+import HireBandForm from '@/components/Contrato';
 
-export type BandProfile = {
+export type BandProfileType = {
 	id: number;
 	bandName: string;
 	city: string;
@@ -33,7 +34,7 @@ const BandProfile = () => {
 	const { data: band } = useQuery({
 		queryKey: ['band', id],
 		queryFn: async () => {
-			const response = await api.get(`/bands/${id}`);
+			const response = await api.get<BandProfileType>(`/bands/${id}`);
 			return response.data;
 		},
 	});
@@ -84,14 +85,14 @@ const BandProfile = () => {
 						</div>
 					</div>
 				</section>
-				<div className="flex items-center relative">
+				<div className="flex items-center justify-between relative">
 					<div>
 						<h1 className="text-start text-xl font-bold">{band.bandName}</h1>
 						<p className="text-[#666]">{capitalize(band.genre)}</p>
 					</div>
-					<div style={{ display: 'flex', marginLeft: 'auto', gap: '16px' }}>
+					<div className='flex gap-4'> 
 						<Button variant={'outline'}>Mensagem</Button>
-						<Button>Seguir</Button>
+						<HireBandForm band={band} />
 					</div>
 				</div>
 				<div className={styles.sectionContainer}>
