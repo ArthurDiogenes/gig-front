@@ -11,7 +11,8 @@ import BandProfile from "../pages/BandProfile/BandProfile";
 import PerfilEstabelecimento from "../pages/PerfilEstabelecimento/PerfilEstabelecimento";
 import Termos from "../pages/TermosCondicoes/TermosCondicoes";
 import TelaCadastroEstabelecimento from "../pages/TelaCadastroEstabelecimento/TelaCadastroEstabelecimento";
-import EditProfile from "../pages/EditProfile/EditProfile";      
+import EditProfile from "../pages/EditProfile/EditProfile"; 
+import EditarBanda from "../pages/EditarBanda/EditarBanda";      
 
 export default function AppRoutes() {
   return (
@@ -28,6 +29,7 @@ export default function AppRoutes() {
       <Route path="/perfil-estabelecimento" element={<PerfilEstabelecimento/>}/>
       <Route path="/termos" element={<Termos/>}/>
       <Route path="/edit-profile" element={<EditProfile/>}/>
+      <Route path="/editar-banda" element={<EditarBanda/>}/>
 
         <Route path="/mensagens" element={<Mensagens/>}/>
 
