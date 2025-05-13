@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import styles from './Pesquisa.module.css';
 import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
-import BarraPesquisa from '../../components/BarraPesquisa/BarraPesquisa';
 import FiltrosPesquisa from '../../components/FiltrosPesquisa/FiltrosPesquisa';
 import ResultadosPesquisa, { 
   ResultadoPesquisa,
@@ -33,14 +33,22 @@ const estabelecimentos: ResultadoEstabelecimento[] = [
 const dadosExemplo: ResultadoPesquisa[] = [...bandas, ...estabelecimentos];
 
 export default function Pesquisa() {
+  const [searchParams] = useSearchParams();
+  const queryFromUrl = searchParams.get('q') || '';
+  
   // Estados básicos para a página
-  const [termoPesquisa, setTermoPesquisa] = useState('');
+  const [termoPesquisa, setTermoPesquisa] = useState(queryFromUrl);
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [filtros, setFiltros] = useState({
     tipo: 'todos',
     genero: '',
     cidade: ''
   });
+
+  // Atualiza o termo de pesquisa quando a URL muda
+  useEffect(() => {
+    setTermoPesquisa(queryFromUrl);
+  }, [queryFromUrl]);
 
   // Filtra os resultados com base no termo e filtros
   const resultadosFiltrados = dadosExemplo.filter(item => {
@@ -81,12 +89,6 @@ export default function Pesquisa() {
   const fim = inicio + itensPorPagina;
   const resultadosPaginados = resultadosFiltrados.slice(inicio, fim);
 
-  // Handler para busca
-  const handleSearch = (termo: string) => {
-    setTermoPesquisa(termo);
-    setPaginaAtual(1);
-  };
-
   // Handler para filtros
   const handleFilterChange = (novosFiltros: { tipo: string; genero: string; cidade: string }) => {
     setFiltros(novosFiltros);
@@ -109,16 +111,14 @@ export default function Pesquisa() {
           <p className={styles.subtitle}>
             Encontre bandas, músicos e estabelecimentos que combinam com seu estilo
           </p>
+          {termoPesquisa && (
+            <p className={styles.searchTerm}>
+              Resultados para: <strong>"{termoPesquisa}"</strong>
+            </p>
+          )}
         </div>
         
         <div className={styles.pesquisaBox}>
-          <BarraPesquisa 
-            value={termoPesquisa}
-            onChange={setTermoPesquisa}
-            onSearch={handleSearch}
-            placeholder="Buscar por bandas, músicos ou estabelecimentos..."
-          />
-          
           <FiltrosPesquisa onFilterChange={handleFilterChange} />
           
           <ResultadosPesquisa 
