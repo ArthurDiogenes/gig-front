@@ -4,8 +4,7 @@ import { BandCard } from "@/components/BandCardComponent/BandCardComponent.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { UserAvatar } from "@/components/UserAvatar/UserAvatar.tsx";
 import { Input } from "@/components/ui/input.tsx";
-import { Search } from "lucide-react";
-import CreatePost from "@/components/CreatePost/CreatePost.tsx";
+import HomeNavbar from "@/components/Navbar/HomeNavbar.tsx";
 import GenreSelector from "@/components/GenreSelector/GenreSelector.tsx";
 
 export default function Home() {
@@ -13,33 +12,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-10 bg-background border-b">
-        <div className="container flex items-center justify-between h-16 px-4 mx-auto">
-          <Link to="/" className="text-xl font-bold text-rose-600">
-            <img
-              src="/images/logo-gig 2.svg"
-              alt="Gig Logo"
-              className="h-[30px] w-auto ml-4"
-            />
-          </Link>
-          <div className="relative w-full max-w-md mx-4">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Buscar bandas..." className="pl-8" />
-          </div>
-          <div className="flex items-center gap-4">
-            <CreatePost />
-            <Link to="/perfil" className="cursor-pointer">
-              <UserAvatar
-                user={{
-                  name: "Xand Avião",
-                  image: "/placeholder.svg?height=32&width=32",
-                }}
-                className="w-8 h-8"
-              />
-            </Link>
-          </div>
-        </div>
-      </header>
+      <HomeNavbar />
 
       <main className="container grid grid-cols-1 gap-6 px-4 py-6 mx-auto md:grid-cols-3 lg:grid-cols-4">
         <div className="hidden md:block">
