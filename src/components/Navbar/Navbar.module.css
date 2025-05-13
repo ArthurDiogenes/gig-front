@@ -30,6 +30,29 @@
     margin-right: 16px;
 }
 
+.searchForm {
+    flex-grow: 1;
+    max-width: 90%;
+    margin: 0 16px;
+    display: flex;
+}
+
+.search {
+    flex-grow: 1;
+    max-width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .searchForm {
+        width: 90%;
+        margin: 8px 0;
+    }
+}
+
 @media (max-width: 768px) {
     .navbar {
         flex-direction: column;
