@@ -1,3 +1,4 @@
+import MenuHamburger from '../MenuHamburger/MenuHamburger';
 import styles from './Navbar.module.css';
 import { Link } from 'react-router';
 
@@ -8,7 +9,7 @@ export default function Navbar() {
                 <img src='/images/logo-gig 2.svg' alt='Gig Logo' className={styles.logo} />
             </Link>
             <input type="text" className={styles.search} placeholder="Pesquisar" />
-            <div className={styles.menuIcon}>☰</div>
+            <MenuHamburger />
         </nav>
     );
 }
