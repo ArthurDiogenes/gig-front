@@ -94,15 +94,6 @@ export default function ResultadosPesquisa({
         <p className={styles.emptyText}>
           Não encontramos resultados para "<strong>{termo}</strong>".
         </p>
-        <div className={styles.sugestoes}>
-          <p>Sugestões:</p>
-          <ul>
-            <li>Verifique se a palavra foi digitada corretamente</li>
-            <li>Tente utilizar palavras-chave diferentes</li>
-            <li>Utilize termos mais gerais</li>
-            <li>Reduza o número de filtros aplicados</li>
-          </ul>
-        </div>
       </div>
     );
   }
