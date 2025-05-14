@@ -50,7 +50,7 @@ const EditarBanda = () => {
 					{/* Upload de imagens do carrossel */}
 					<div className={styles.carouselUpload}>
 						<label htmlFor="carousel-upload" className={styles.carouselButton}>
-							Adicionar imagens do carrossel
+							Adicionar imagens
 						</label>
 						<input
 							id="carousel-upload"
