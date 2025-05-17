@@ -18,7 +18,7 @@ export default function MenuHamburger() {
                 ☰
                 <DropdownMenuContent className="text-lg flex flex-col mx-3 my-6">
                     <DropdownMenuItem>
-                        <CustomButton onClick={() => window.location.href = "/perfil"}>
+                        <CustomButton onClick={() => window.location.href = "/meu-perfil"}>
                             Perfil
                         </CustomButton>
                     </DropdownMenuItem>
