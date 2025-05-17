@@ -14,7 +14,7 @@ import { z } from 'zod';
 const genres: Array<string> = ["Rock", "Pop", "MPB", "Forró", "Sertanejo", "Eletrônica", "Outro"]
 
 export default function TelaCadastro() {
-    const [bandName, setbandName] = useState<string>('');
+    const [name, setName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [genre, setGenre] = useState<string>('');
     const [city, setCity] = useState<string>('');
@@ -23,7 +23,7 @@ export default function TelaCadastro() {
     const navigate = useNavigate();
 
     const cadastroSchema = z.object({
-        bandName: z.string().min(1, "Nome da banda é obrigatório"),
+        name: z.string().min(1, "Nome da banda é obrigatório"),
         email: z.string().email("Email inválido"),
         genre: z.string().min(1, "Gênero é obrigatório"),
         city: z.string().min(2, "Cidade é obrigatória"),
@@ -38,7 +38,7 @@ export default function TelaCadastro() {
         e.preventDefault();
     
         const formData = {
-            bandName,
+            name,
             email,
             genre,
             city,
@@ -58,7 +58,7 @@ export default function TelaCadastro() {
     
         try {
             const response = await api.post('/users', {
-                bandName,
+                name,
                 city,
                 genre,
                 email,
@@ -101,10 +101,10 @@ export default function TelaCadastro() {
                     <form noValidate onSubmit={handleSubmit}>
                         <InputComponent
                             type="text"
-                            name="bandName"
+                            name="name"
                             placeholder="Nome da Banda"
-                            value={bandName}
-                            onChange={(e) => setbandName(e.target.value)}
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                         />
                         <div className={styles.nameFields}>
 
