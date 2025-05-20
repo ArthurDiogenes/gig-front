@@ -39,13 +39,18 @@ const BandProfile = () => {
 		},
 	});
 
-	if (!band) {
-		return <div>Loading...</div>;
+	if(!band) {
+		return (
+			<div className="flex items-center justify-center h-screen">
+				<p>Carregando.</p>
+			</div>
+		);
 	}
 
 	return (
 		<>
 			<Navbar />
+			
 			<main className="max-w-[1720px] mx-auto pt-4">
 				<section className="h-[300px]">
 					<div
