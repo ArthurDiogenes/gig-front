@@ -14,7 +14,7 @@ const CustomButton = ({ children, onClick }: { children: React.ReactNode, onClic
 export default function MenuHamburger() {
     return (
         <DropdownMenu modal={false}>
-            <DropdownMenuTrigger className="text-2xl mr-2 cursor:pointer">
+            <DropdownMenuTrigger className="text-2xl mr-2 cursor-pointer">
                 ☰
                 <DropdownMenuContent className="text-lg flex flex-col mx-3 my-6">
                     <DropdownMenuItem>

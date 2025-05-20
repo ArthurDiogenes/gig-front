@@ -15,29 +15,30 @@
       color: #222;
       text-align: center;
     }
+    
+    h2 {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      color: #444;
+    }
+    
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    
+    ul {
+      padding-left: 20px;
+    }
+    
+    li {
+      margin-bottom: 6px;
+    }
   }
   
-  h2 {
-    font-size: 20px;
-    font-weight: bold;
-    margin-top: 20px;
-    margin-bottom: 8px;
-    color: #444;
-  }
-  
-  p {
-    font-size: 16px;
-    line-height: 1.6;
-    margin-bottom: 12px;
-  }
-  
-  ul {
-    padding-left: 20px;
-  }
-  
-  li {
-    margin-bottom: 6px;
-  }
   
   @media (max-width: 768px) {
     .container {
