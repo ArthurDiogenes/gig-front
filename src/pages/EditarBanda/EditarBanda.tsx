@@ -109,7 +109,7 @@ const EditarBanda = () => {
 						<div className={styles.formGroup}>
 							<label>
 								Nome da banda:
-								<input name="bandName" className={styles.input} />
+								<input name="name" className={styles.input} />
 							</label>
 							<label>
 								Gênero musical:
