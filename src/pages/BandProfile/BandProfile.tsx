@@ -21,7 +21,7 @@ import HireBandForm from '@/components/Contrato';
 
 export type BandProfileType = {
 	id: number;
-	bandName: string;
+	name: string;
 	city: string;
 	genre: string;
 	description: string;
@@ -39,13 +39,18 @@ const BandProfile = () => {
 		},
 	});
 
-	if (!band) {
-		return <div>Loading...</div>;
+	if(!band) {
+		return (
+			<div className="flex items-center justify-center h-screen">
+				<p>Carregando.</p>
+			</div>
+		);
 	}
 
 	return (
 		<>
 			<Navbar />
+			
 			<main className="max-w-[1720px] mx-auto pt-4">
 				<section className="h-[300px]">
 					<div
@@ -87,7 +92,7 @@ const BandProfile = () => {
 				</section>
 				<div className="flex items-center justify-between relative">
 					<div>
-						<h1 className="text-start text-xl font-bold">{band.bandName}</h1>
+						<h1 className="text-start text-xl font-bold">{band.name}</h1>
 						<p className="text-[#666]">{capitalize(band.genre)}</p>
 					</div>
 					<div className='flex gap-4'> 

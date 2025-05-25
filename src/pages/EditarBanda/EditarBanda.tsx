@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import Navbar from '../../components/Navbar/Navbar';
-import { BandProfileIcon } from '../../utils/icons';
 import styles from './EditarBanda.module.css';
 
 const propostas = [
@@ -23,6 +22,10 @@ const propostas = [
 		status: 'Pendente',
 	},
 ];
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import api from '@/services/api';
+import { AxiosError } from 'axios';
+import { toast } from 'react-toastify';
 
 const EditarBanda = () => {
 	const [carouselImages, setCarouselImages] = useState<string[]>([]);
@@ -105,6 +108,16 @@ const EditarBanda = () => {
 								/>
 							</div>
 
+						<div className={styles.carouselPreview}>
+							{carouselImages.map((src, index) => (
+								<img
+									key={index}
+									src={src}
+									alt={`Carrossel ${index}`}
+									className={styles.carouselImage}
+								/>
+							))}
+						</div>
 							<div className={styles.carouselPreview}>
 								{carouselImages.map((src, index) => (
 									<img key={index} src={src} alt={`Carrossel ${index}`} className={styles.carouselImage} />
@@ -137,7 +150,7 @@ const EditarBanda = () => {
 						<div className={styles.formGroup}>
 							<label>
 								Nome da banda:
-								<input type="text" value={bandName} onChange={(e) => setBandName(e.target.value)} className={styles.input} />
+								<input name="name" className={styles.input} />
 							</label>
 							<label>
 								Gênero musical:

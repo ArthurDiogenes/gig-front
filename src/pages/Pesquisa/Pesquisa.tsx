@@ -1,40 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import styles from './Pesquisa.module.css';
 import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
-import BarraPesquisa from '../../components/BarraPesquisa/BarraPesquisa';
 import FiltrosPesquisa from '../../components/FiltrosPesquisa/FiltrosPesquisa';
 import ResultadosPesquisa, { 
-  ResultadoPesquisa,
-  ResultadoBanda,
-  ResultadoEstabelecimento
+  ResultadoPesquisa
 } from '../../components/ResultadosPesquisa/ResultadosPesquisa';
+import api from '../../services/api';
+import { useQuery } from '@tanstack/react-query';
 
-// Dados de exemplo estáticos
-const bandas: ResultadoBanda[] = [
-  { id: 1, tipo: 'banda', title: 'Rock Legends', image: '/images/selvaprocuradelei.jpg', year: '2001', rating: 4.5, genre: 'Rock' },
-  { id: 2, tipo: 'banda', title: 'Nirvana', image: '/images/nirvana.jpg', year: '1987', rating: 5, genre: 'Rock' },
-  { id: 3, tipo: 'banda', title: 'The Doors', image: '/images/thedoors.jpg', year: '1965', rating: 4.8, genre: 'Rock' },
-  { id: 4, tipo: 'banda', title: 'Gustavo Mioto', image: '/images/gustavo-mioto.jpg', year: '2015', rating: 4.2, genre: 'Sertanejo' },
-  { id: 5, tipo: 'banda', title: 'Metallica', image: '/images/metallica.jpg', year: '1981', rating: 4.7, genre: 'Rock' },
-  { id: 8, tipo: 'banda', title: 'Selvagens à Procura de Lei', image: '/images/selvaprocuradelei.jpg', year: '2010', rating: 4.6, genre: 'Rock' },
-  { id: 9, tipo: 'banda', title: 'Wesley Safadão', image: '/images/safadao.jpg', year: '2012', rating: 4.3, genre: 'Forró' },
-  { id: 10, tipo: 'banda', title: 'Mastruz com Leite', image: '/images/mastruz-leite.jpg', year: '1990', rating: 4.4, genre: 'Forró' },
-];
-
-const estabelecimentos: ResultadoEstabelecimento[] = [
-  { id: 6, tipo: 'estabelecimento', name: 'Hard Rock Cafe', image: '/images/hard-rock.png', genre: 'Restaurante' },
-  { id: 7, tipo: 'estabelecimento', name: 'Pub do Rock', image: '/placeholder.svg', genre: 'Bar' },
-  { id: 11, tipo: 'estabelecimento', name: 'Boteco Cearense', image: '/placeholder.svg', genre: 'Bar' },
-  { id: 12, tipo: 'estabelecimento', name: 'Casa de Show Dragão do Mar', image: '/placeholder.svg', genre: 'Casa de show' },
-];
-
-// Combinando bandas e estabelecimentos em um único array
-const dadosExemplo: ResultadoPesquisa[] = [...bandas, ...estabelecimentos];
+// Define interface for the API response
+interface BandSearchResponse {
+  data: {
+    id: number;
+    bandName: string;
+    city: string;
+    genre: string;
+  }[];
+  total: number;
+  page: number;
+  lastPage: number;
+}
 
 export default function Pesquisa() {
+  const [searchParams] = useSearchParams();
+  const queryFromUrl = searchParams.get('q') || '';
+  
   // Estados básicos para a página
-  const [termoPesquisa, setTermoPesquisa] = useState('');
+  const [termoPesquisa, setTermoPesquisa] = useState(queryFromUrl);
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [filtros, setFiltros] = useState({
     tipo: 'todos',
@@ -42,58 +36,93 @@ export default function Pesquisa() {
     cidade: ''
   });
 
-  // Filtra os resultados com base no termo e filtros
-  const resultadosFiltrados = dadosExemplo.filter(item => {
-    // Filtro por termo de pesquisa
-    if (termoPesquisa) {
-      const termo = termoPesquisa.toLowerCase();
-      const matchesTerm = item.tipo === 'banda' 
-        ? item.title.toLowerCase().includes(termo) || item.genre.toLowerCase().includes(termo)
-        : item.name.toLowerCase().includes(termo) || item.genre.toLowerCase().includes(termo);
-      
-      if (!matchesTerm) return false;
-    }
-    
-    // Filtro por tipo
-    if (filtros.tipo !== 'todos') {
-      if (filtros.tipo === 'bandas' && item.tipo !== 'banda') return false;
-      if (filtros.tipo === 'estabelecimentos' && item.tipo !== 'estabelecimento') return false;
-    }
-    
-    // Filtro por gênero
-    if (filtros.genero && item.genre.toLowerCase() !== filtros.genero.toLowerCase()) {
-      return false;
-    }
-    
-    // Filtro por cidade (simulado - não temos cidade nos dados de exemplo)
-    if (filtros.cidade) {
-      // Em um caso real, verificaríamos a cidade aqui
-      // Por enquanto, retorna verdadeiro para não filtrar por cidade
-    }
-    
-    return true;
-  });
-  
-  // Paginação simples
-  const itensPorPagina = 6;
-  const totalPaginas = Math.ceil(resultadosFiltrados.length / itensPorPagina);
-  const inicio = (paginaAtual - 1) * itensPorPagina;
-  const fim = inicio + itensPorPagina;
-  const resultadosPaginados = resultadosFiltrados.slice(inicio, fim);
+  // Update search term when URL changes
+  useEffect(() => {
+    setTermoPesquisa(queryFromUrl);
+  }, [queryFromUrl]);
 
-  // Handler para busca
-  const handleSearch = (termo: string) => {
-    setTermoPesquisa(termo);
-    setPaginaAtual(1);
+  // Create search function
+  const searchBandsFromAPI = async (): Promise<BandSearchResponse> => {
+    if (!termoPesquisa) {
+      return { data: [], total: 0, page: 1, lastPage: 1 };
+    }
+    
+    try {
+      const response = await api.get('/bands/pesquisa', {
+        params: {
+          name: termoPesquisa,
+          page: paginaAtual,
+          limit: 10
+        }
+      });
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error searching bands:', error);
+      return { data: [], total: 0, page: paginaAtual, lastPage: 1 };
+    }
   };
 
-  // Handler para filtros
+  // Use React Query to fetch search results
+  const { 
+    data: searchResults, 
+    isLoading
+  } = useQuery({
+    queryKey: ['search', termoPesquisa, paginaAtual],
+    queryFn: searchBandsFromAPI,
+    enabled: termoPesquisa.length > 0,
+  });
+
+  // Convert API results to the format expected by ResultadosPesquisa
+  const convertToResultados = (): ResultadoPesquisa[] => {
+    if (!searchResults || !searchResults.data || searchResults.data.length === 0) {
+      return [];
+    }
+
+    return searchResults.data.map(band => ({
+      id: band.id,
+      tipo: 'banda',
+      title: band.bandName,
+      image: '/images/placeholder.svg',
+      year: '2024', // Using a default since we don't have the year in the API response
+      rating: 4.5, // Default rating
+      genre: band.genre
+    }));
+  };
+
+  // Apply filters to results
+  const applyFilters = (resultados: ResultadoPesquisa[]): ResultadoPesquisa[] => {
+    return resultados.filter(item => {
+      // Filter by tipo
+      if (filtros.tipo !== 'todos') {
+        if (filtros.tipo === 'bandas' && item.tipo !== 'banda') return false;
+        if (filtros.tipo === 'estabelecimentos' && item.tipo !== 'estabelecimento') return false;
+      }
+      
+      // Filter by gênero
+      if (filtros.genero && item.genre.toLowerCase() !== filtros.genero.toLowerCase()) {
+        return false;
+      }
+      
+      // Filter by cidade (if we have city data in the future)
+      if (filtros.cidade) {
+        // In a real implementation, check city data here
+      }
+      
+      return true;
+    });
+  };
+
+  // Get the final results
+  const resultadosFiltrados = applyFilters(convertToResultados());
+
+  // Handler for filters
   const handleFilterChange = (novosFiltros: { tipo: string; genero: string; cidade: string }) => {
     setFiltros(novosFiltros);
     setPaginaAtual(1);
   };
 
-  // Handler para paginação
+  // Handler for pagination
   const handlePageChange = (pagina: number) => {
     setPaginaAtual(pagina);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -109,25 +138,23 @@ export default function Pesquisa() {
           <p className={styles.subtitle}>
             Encontre bandas, músicos e estabelecimentos que combinam com seu estilo
           </p>
+          {termoPesquisa && (
+            <p className={styles.searchTerm}>
+              Resultados para: <strong>"{termoPesquisa}"</strong>
+            </p>
+          )}
         </div>
         
         <div className={styles.pesquisaBox}>
-          <BarraPesquisa 
-            value={termoPesquisa}
-            onChange={setTermoPesquisa}
-            onSearch={handleSearch}
-            placeholder="Buscar por bandas, músicos ou estabelecimentos..."
-          />
-          
           <FiltrosPesquisa onFilterChange={handleFilterChange} />
           
           <ResultadosPesquisa 
-            resultados={resultadosPaginados}
-            isLoading={false}
+            resultados={resultadosFiltrados}
+            isLoading={isLoading}
             termo={termoPesquisa}
-            totalResultados={resultadosFiltrados.length}
+            totalResultados={searchResults?.total || 0}
             paginaAtual={paginaAtual}
-            totalPaginas={totalPaginas}
+            totalPaginas={searchResults?.lastPage || 1}
             onChangePagina={handlePageChange}
           />
         </div>

@@ -98,11 +98,11 @@ const TelaCadastroEstabelecimento = () => {
         return;
       }
       const body = {
-        venue,
+        name: venue,
         cep,
         city: data.localidade,
         address: `${data.logradouro}, ${data.bairro}`,
-        tipo,
+        type: tipo,
         email,
         password,
         role: "venue",
