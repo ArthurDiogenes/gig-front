@@ -29,10 +29,14 @@ export default function CreatePost() {
       e.preventDefault();
       const formData = new FormData(e.target as HTMLFormElement);
       const content = formData.get("content") as string;
-      const image = formData.get("image") as File;
+      const image = formData.get("image") as File | null;
 
-      if (!content || !image) {
-        toast.warning("Por favor, preencha todos os campos.");
+      if (image) {
+        formData.append("image", image);
+      }
+
+      if (!content) {
+        toast.warning("Conteúdo do post não pode ser vazio.");
         return;
       }
 
@@ -106,7 +110,6 @@ export default function CreatePost() {
                   className=" relative z-10 cursor-pointer h-full opacity-0"
                   onChange={handleFileChange}
                   multiple={false}
-                  required
                 />
                 <div className="w-full h-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
                   {file ? (

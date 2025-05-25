@@ -9,7 +9,6 @@ export default function HomeNavbar() {
 	const [searchTerm, setSearchTerm] = useState('');
 	const navigate = useNavigate();
 	const user = localStorage.getItem('user');
-    console.log(user)
 	const handleSearch = (e: React.FormEvent) => {
 		e.preventDefault();
 		if (searchTerm.trim()) {
