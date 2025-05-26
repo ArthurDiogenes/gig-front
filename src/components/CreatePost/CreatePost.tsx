@@ -29,11 +29,6 @@ export default function CreatePost() {
       e.preventDefault();
       const formData = new FormData(e.target as HTMLFormElement);
       const content = formData.get("content") as string;
-      const image = formData.get("image") as File | null;
-
-      if (image) {
-        formData.append("image", image);
-      }
 
       if (!content) {
         toast.warning("Conteúdo do post não pode ser vazio.");
@@ -41,7 +36,7 @@ export default function CreatePost() {
       }
 
       const user: User = getUser();
-      formData.append("authorId", user.id); // user.id precisa ser uma string
+      formData.append("authorId", user.id);
 
       await createPost(formData);
     },
