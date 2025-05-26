@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Navbar from '../../components/Navbar/Navbar';
 import styles from './EditarBanda.module.css';
 
+
 const propostas = [
 	{
 		id: 1,
@@ -26,6 +27,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import api from '@/services/api';
 import { AxiosError } from 'axios';
 import { toast } from 'react-toastify';
+import { BandProfileIcon } from '@/utils/icons';
 
 const EditarBanda = () => {
 	const [carouselImages, setCarouselImages] = useState<string[]>([]);
@@ -42,7 +44,8 @@ const EditarBanda = () => {
 	const [instagram, setInstagram] = useState('');
 	const [aceitouTermos, setAceitouTermos] = useState(false);
 
-	const handleSave = () => {
+	const handleSave = async () => {
+
 		const data = {
 			bandName,
 			genre,
@@ -55,6 +58,15 @@ const EditarBanda = () => {
 			carouselImages,
 			profileImage,
 		};
+
+		try {
+			await api.put(`/bands/${5}`, data);
+			toast.success('Perfil atualizado com sucesso!')
+		} catch (error) {
+			if(error instanceof AxiosError) {
+				toast.error(error.response?.data.errors);
+			}
+		}
 
 		console.log('Dados salvos:', data);
 		alert('Perfil salvo com sucesso!');

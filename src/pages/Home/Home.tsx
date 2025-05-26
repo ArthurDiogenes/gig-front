@@ -62,6 +62,8 @@ export default function Home() {
     fetchNextPage: fetchNextPage,
   });
 
+  console.log(data);
+
   const groupedPosts = useMemo(() => {
     return data?.pages.reduce((acc: Post[], page) => {
       return [...acc, ...page.posts];
