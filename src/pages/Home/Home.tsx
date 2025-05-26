@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { useMemo, useRef } from "react";
 import useIntersectObserver from "@/hooks/useIntersectObserver.tsx";
 import PostsError from "./Error.tsx";
+import EmptyPosts from "./Empty.tsx";
 
 type Post = {
   id: number;
@@ -18,9 +19,9 @@ type Post = {
   imageUrl: string;
   createdAt: string;
   likes: number;
-  author: {
+  user: {
     id: number;
-    bandName: string;
+    name: string;
   };
   commentsCount: number;
 };
@@ -47,7 +48,6 @@ export default function Home() {
   } = useInfiniteQuery<PaginatedPost>({
     queryKey: ["posts"],
     queryFn: async ({ pageParam = 1 }) => {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
       const response = await api.get<PaginatedPost>(`/posts?page=${pageParam}`);
       return response.data;
     },
@@ -62,8 +62,6 @@ export default function Home() {
     fetchNextPage: fetchNextPage,
   });
 
-  console.log(data);
-
   const groupedPosts = useMemo(() => {
     return data?.pages.reduce((acc: Post[], page) => {
       return [...acc, ...page.posts];
@@ -71,10 +69,10 @@ export default function Home() {
   }, [data?.pages]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen flex flex-col bg-background">
       <HomeNavbar />
 
-      <main className="container grid grid-cols-1 gap-6 px-4 py-6 mx-auto md:grid-cols-3 lg:grid-cols-4">
+      <main className="container grid grid-cols-1 gap-6 px-4 py-6 mx-auto md:grid-cols-3 lg:grid-cols-4 flex-1">
         <div className="hidden md:block">
           {/* Perfil */}
           <div className="sticky top-[94px] space-y-4">
@@ -110,63 +108,65 @@ export default function Home() {
         </div>
 
         {/* Posts */}
-        <div className="col-span-1 space-y-6 md:col-span-2">
+        <div className="col-span-1 space-y-6 md:col-span-2 h-full">
           <div className="space-y-6">
-            {isFetching && !data
-              ? Array.from({ length: 5 }).map((_, index) => (
-                  <Skeleton key={index} className="w-full h-[200px] mb-4" />
-                ))
-              : isError ? (
-                <PostsError />
-              ) : (
-                groupedPosts?.map((post) => (
-                  <div
-                    key={post.id}
-                    className="p-4 bg-card border rounded-lg shadow"
-                  >
-                    <div className="flex items-center gap-3 mb-4">
-                      <UserAvatar
-                        user={{
-                          name: post.author?.bandName ?? "",
-                          image: `/placeholder.svg?height=40&width=40`,
-                        }}
-                        className="w-10 h-10"
-                      />
-                      <div>
-                        <p className="text-lg font-medium">
-                          {post.author?.bandName}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Há 2 horas
-                        </p>
-                      </div>
-                    </div>
-                    <p className="mb-4">{post.content}</p>
-                    <div className="mb-4 overflow-hidden rounded-lg">
-                      {post.imageUrl && (
-                        <img
-                          src={post.imageUrl}
-                          alt={`Imagem do post ${post.id}`}
-                          className="object-cover w-full h-auto"
-                          width={600}
-                          height={300}
-                        />
-                      )}
-                    </div>
-                    <div className="flex gap-4 mb-4">
-                      <Button variant="ghost" size="sm">
-                        🎸 {post.likes} curtidas
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        💬 {post.commentsCount} comentários
-                      </Button>
+            {isFetching && !data ? (
+              Array.from({ length: 5 }).map((_, index) => (
+                <Skeleton key={index} className="w-full h-[200px] mb-4" />
+              ))
+            ) : isError ? (
+              <PostsError />
+            ) : groupedPosts?.length === 0 ? (
+              <EmptyPosts />
+            ) : (
+              groupedPosts?.map((post) => (
+                <div
+                  key={post.id}
+                  className="p-4 bg-card border rounded-lg shadow"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <UserAvatar
+                      user={{
+                        name: post.user?.name ?? "",
+                        image: `/placeholder.svg?height=40&width=40`,
+                      }}
+                      className="w-10 h-10"
+                    />
+                    <div>
+                      <p className="text-lg font-medium">
+                        {post.user?.name}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Há 2 horas
+                      </p>
                     </div>
                   </div>
-                ))
-              )}
+                  <p className="mb-4">{post.content}</p>
+                  <div className="mb-4 overflow-hidden rounded-lg">
+                    {post.imageUrl && (
+                      <img
+                        src={post.imageUrl}
+                        alt={`Imagem do post ${post.id}`}
+                        className="object-cover w-full h-auto"
+                        width={600}
+                        height={300}
+                      />
+                    )}
+                  </div>
+                  <div className="flex gap-4 mb-4">
+                    <Button variant="ghost" size="sm">
+                      🎸 {post.likes} curtidas
+                    </Button>
+                    <Button variant="ghost" size="sm">
+                      💬 {post.commentsCount} comentários
+                    </Button>
+                  </div>
+                </div>
+              ))
+            )}
             {/* Sentinela para o scroll infinito */}
             {hasNextPage && <div ref={sentinelRef} className="h-[1px]" />}
-       
+
             {isFetchingNextPage && (
               <div className="flex flex-col">
                 <Skeleton className="w-full h-[200px]" />
