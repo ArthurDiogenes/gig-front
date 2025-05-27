@@ -134,9 +134,9 @@ export default function Home() {
                       className="w-10 h-10"
                     />
                     <div>
-                      <p className="text-lg font-medium">
+                      <Link to={`/bandas/${post.user.id}`} className="text-lg font-medium">
                         {post.user?.name}
-                      </p>
+                      </Link>
                       <p className="text-sm text-muted-foreground">
                         Há 2 horas
                       </p>
