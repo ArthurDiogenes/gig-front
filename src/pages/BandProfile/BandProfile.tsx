@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ImageCarousel from "../../components/ImageCarousel/ImageCarousel";
 import Navbar from "../../components/Navbar/Navbar";
 import {
@@ -19,6 +19,7 @@ import { capitalize } from "lodash";
 import { Button } from "@/components/ui/button";
 import HireBandForm from "@/components/Contrato";
 import Review from "@/components/Review/Review";
+import Footer from "@/components/Footer/Footer";
 
 export type BandProfileType = {
   id: number;
@@ -97,7 +98,9 @@ const BandProfile = () => {
             <p className="text-[#666]">{capitalize(band.genre)}</p>
           </div>
           <div className="flex gap-4">
+            <Link to={`/mensagens`}>
             <Button variant={"outline"}>Mensagem</Button>
+            </Link>
             <HireBandForm band={band} />
           </div>
         </div>
@@ -381,12 +384,13 @@ const BandProfile = () => {
                 </div>
               </div>
             </section>
-            <div className="place-self-end mt-4">
+            <div className="place-self-end my-4">
               <Review band={band} />
             </div>
           </div>
         </div>
       </main>
+      <Footer />
     </>
   );
 };
