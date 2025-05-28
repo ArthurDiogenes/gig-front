@@ -14,7 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import { cn } from "@/lib/utils";
 import { Textarea } from "../ui/textarea";
 import { useEffect, useState } from "react";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // ✅ AQUI!
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import api from "@/services/api";
@@ -38,7 +38,7 @@ const formSchema = z.object({
 
 export default function Review({ band }: { band: BandProfileType }) {
   const [open, setOpen] = useState(false);
-  const [rating, setRating] = useState<number>(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (open) {
@@ -53,44 +53,42 @@ export default function Review({ band }: { band: BandProfileType }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       comment: "",
-      rating: 5,
+      rating: 0,
       bandId: band.id,
-      venueId: "",
+      venueId: "93913b23-3e4b-480b-81fa-b1c31ed55fd4",
     },
   });
 
   const handleOpen = () => {
-    const token = sessionStorage.getItem("token");
-    if (!token) redirect("/login");
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
     setOpen(true);
   };
 
   const { mutate: submitContract } = useMutation({
     mutationFn: async (data: ReviewDto) => {
-      // Aqui você pode implementar a lógica para enviar a proposta
       await api.post("/reviews", data);
       console.log("Dados enviados:", data);
     },
     onSuccess: () => {
-      // Aqui você pode implementar a lógica para lidar com o sucesso do envio
       toast.success("Avaliação enviada com sucesso!");
       console.log("Avaliação enviada com sucesso!");
     },
     onError: (error) => {
-      // Aqui você pode implementar a lógica para lidar com erros
       toast.error("Erro ao enviar avaliação. Tente novamente.");
       console.error("Erro ao enviar avaliação:", error);
     },
     onSettled: () => {
-      // Aqui você pode implementar a lógica para lidar com o estado final
       setOpen(false);
       console.log("Avaliação enviada.");
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Transformar os dados para o formato do DTO
-    const dtoData = {
+    const dtoData: ReviewDto = {
       comment: values.comment,
       rating: values.rating,
       bandId: values.bandId,
@@ -134,13 +132,10 @@ export default function Review({ band }: { band: BandProfileType }) {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              {/* Nome do Evento */}
-
-              {/* Detalhes adicionais */}
               <FormField
                 control={form.control}
                 name="comment"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel className="text-lg font-medium">
                       Digite aqui o que você achou do evento
@@ -152,17 +147,35 @@ export default function Review({ band }: { band: BandProfileType }) {
                         {...field}
                       />
                     </FormControl>
+                    {form.formState.isSubmitted && fieldState.error && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {fieldState.error.message}
+                      </p>
+                    )}
                   </FormItem>
                 )}
               />
-              <div className="flex flex-col gap-2 items-center">
-                <p>Qual sua nota para a banda?</p>
-                <Rating
-                  value={rating}
-                  onChange={(value) => setRating(value)}
-                  size="lg"
-                />
-              </div>
+
+              <FormField
+                control={form.control}
+                name="rating"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-lg font-medium flex justify-center">
+                      Qual sua nota para a banda?
+                    </FormLabel>
+                    <FormControl>
+                      <div className="flex justify-center">
+                        <Rating
+                          value={field.value}
+                          onChange={field.onChange}
+                          size="lg"
+                        />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
               <Button type="submit" className="w-full text-lg font-medium">
                 Enviar Avaliação
