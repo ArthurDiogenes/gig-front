@@ -12,6 +12,7 @@ import { useMemo, useRef } from "react";
 import useIntersectObserver from "@/hooks/useIntersectObserver.tsx";
 import PostsError from "./Error.tsx";
 import EmptyPosts from "./Empty.tsx";
+import PostComments from "@/components/Comments/index.tsx";
 
 type Post = {
   id: number;
@@ -133,9 +134,9 @@ export default function Home() {
                       className="w-10 h-10"
                     />
                     <div>
-                      <p className="text-lg font-medium">
+                      <Link to={`/bandas/${post.user.id}`} className="text-lg font-medium">
                         {post.user?.name}
-                      </p>
+                      </Link>
                       <p className="text-sm text-muted-foreground">
                         Há 2 horas
                       </p>
@@ -157,9 +158,7 @@ export default function Home() {
                     <Button variant="ghost" size="sm">
                       🎸 {post.likes} curtidas
                     </Button>
-                    <Button variant="ghost" size="sm">
-                      💬 {post.commentsCount} comentários
-                    </Button>
+                   <PostComments id={post.id} />
                   </div>
                 </div>
               ))
