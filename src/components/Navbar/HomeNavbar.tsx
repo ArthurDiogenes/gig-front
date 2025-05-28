@@ -36,7 +36,10 @@ export default function HomeNavbar() {
 			</form>
 			<div className={styles.navbarActions}>
 				{user ? (
-					<CreatePost />
+					<>
+						<CreatePost />
+						<MenuHamburger />
+					</>
 				) : (
 					<Button>
 						<a href="/login" className={styles.loginButton}>
@@ -44,7 +47,6 @@ export default function HomeNavbar() {
 						</a>
 					</Button>
 				)}
-				<MenuHamburger />
 			</div>
 		</nav>
 	);
