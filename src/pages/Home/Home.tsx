@@ -13,6 +13,8 @@ import useIntersectObserver from "@/hooks/useIntersectObserver.tsx";
 import PostsError from "./Error.tsx";
 import EmptyPosts from "./Empty.tsx";
 import PostComments from "@/components/Comments/index.tsx";
+import { getUser } from "@/services/users/index.ts";
+import { PickOutlinedIcon } from "@/utils/icons.tsx";
 
 type Post = {
   id: number;
@@ -38,6 +40,7 @@ export type PaginatedPost = {
 export default function Home() {
   const navigate = useNavigate();
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const user = getUser()
 
   const {
     data,
@@ -77,34 +80,54 @@ export default function Home() {
         <div className="hidden md:block">
           {/* Perfil */}
           <div className="sticky top-[94px] space-y-4">
-            <div className="p-4 bg-card border rounded-lg shadow">
-              <h2 className="!mt-0 !mb-4 text-lg text-card-foreg font-semibold">
-                Seu Perfil
-              </h2>
-              <div className="flex items-center gap-3 mb-4">
-                <UserAvatar
-                  user={{
-                    name: "Xand Aviao",
-                    image: "/placeholder.svg?height=48&width=48",
-                  }}
-                  className="w-12 h-12"
-                />
-                <div>
-                  <p className="font-medium !m-0">Xand Avião</p>
-                  <p className="text-sm text-muted-foreground">@xandaviao</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-center">
-                <div>
-                  <p className="font-medium">245</p>
-                  <p className="text-xs text-muted-foreground">Seguidores</p>
-                </div>
-                <div>
-                  <p className="font-medium">123</p>
-                  <p className="text-xs text-muted-foreground">Seguindo</p>
-                </div>
-              </div>
-            </div>
+          {user ? (
+							<div className="p-4 bg-card border rounded-lg shadow">
+								<h2 className="mb-4 text-lg text-card-foreg font-semibold">
+									Seu Perfil
+								</h2>
+								<div className="flex items-center gap-3 mb-4">
+									<UserAvatar
+										user={{
+											name: user.name,
+											image: user.avatar ?? '/placeholder.svg?height=48&width=48',
+										}}
+										className="w-12 h-12"
+									/>
+									<div>
+										<p className="font-medium">{user.name}</p>
+									</div>
+								</div>
+								<div className="grid grid-cols-2 gap-2 text-center">
+									<div>
+										<p className="font-medium">245</p>
+										<p className="text-xs text-muted-foreground">Seguidores</p>
+									</div>
+									<div>
+										<p className="font-medium">123</p>
+										<p className="text-xs text-muted-foreground">Seguindo</p>
+									</div>
+								</div>
+								<Link to="/meu-perfil">
+								<Button className="w-full mt-4 bg-rose-600 hover:bg-rose-700 cursor-pointer">
+									Ver perfil
+								</Button>
+								</Link>
+							</div>
+						) : (
+							<div className="p-4 bg-card border rounded-lg shadow text-center">
+								<h2 className="mb-2 text-lg font-semibold text-card-foreg">
+									Faça login para uma melhor experiência
+								</h2>
+								<p className="mb-4 text-sm text-muted-foreground">
+									Acesse sua conta para visualizar seu perfil e interagir com a comunidade.
+								</p>
+								<Link to="/login">
+								<Button className="w-full bg-rose-600 hover:bg-rose-700 cursor-pointer">
+									Login
+								</Button>
+								</Link>
+							</div>
+						)}
           </div>
         </div>
 
@@ -156,7 +179,9 @@ export default function Home() {
                   </div>
                   <div className="flex gap-4 mb-4">
                     <Button variant="ghost" size="sm">
-                      🎸 {post.likes} curtidas
+                      <PickOutlinedIcon style={{
+                        color: "#ff0047"
+                      }}/> {post.likes} curtidas
                     </Button>
                    <PostComments id={post.id} />
                   </div>
