@@ -134,7 +134,7 @@ export default function HireBandForm({ band }: { band: BandProfileType }) {
 			),
 			additionalDetails: values.detalhes,
 			isConfirmed: values.isConfirmed,
-			requesterId: 'cf6e56dd-4920-4cf3-b493-bcc409e98192', // UUID padrão
+			requesterId: '19850cb2-f86d-466d-938d-4542f2b6f8df', // UUID padrão
 			providerId: band.id, // ID da banda
 		};
 

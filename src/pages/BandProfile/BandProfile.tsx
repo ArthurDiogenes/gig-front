@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ImageCarousel from "../../components/ImageCarousel/ImageCarousel";
 import Navbar from "../../components/Navbar/Navbar";
 import {
@@ -19,6 +19,12 @@ import { capitalize } from "lodash";
 import { Button } from "@/components/ui/button";
 import HireBandForm from "@/components/Contrato";
 import Review from "@/components/Review/Review";
+import Footer from "@/components/Footer/Footer";
+
+export type UserType = {
+  id: string;
+  role: string;
+}
 
 export type BandProfileType = {
   id: number;
@@ -27,6 +33,7 @@ export type BandProfileType = {
   genre: string;
   description: string;
   createdAt: string;
+  userId: UserType;
 };
 
 const BandProfile = () => {
@@ -39,6 +46,16 @@ const BandProfile = () => {
       return response.data;
     },
   });
+  const isBand = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user") || "{}").role === "band"
+    : false;
+
+  const userId = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user") || "{}").id
+    : null;
+  
+  const owner = band?.userId.id === userId;
+  
 
   if (!band) {
     return (
@@ -97,8 +114,23 @@ const BandProfile = () => {
             <p className="text-[#666]">{capitalize(band.genre)}</p>
           </div>
           <div className="flex gap-4">
-            <Button variant={"outline"}>Mensagem</Button>
-            <HireBandForm band={band} />
+            {isBand && owner ? (
+              <Link to={`/meu-perfil`}>
+                <Button variant={"outline"}>Editar perfil</Button>
+              </Link>
+            ) : isBand && !owner ? (
+              <Link to={`/mensagens`}>
+                <Button variant={"outline"}>Mensagens</Button>
+              </Link>
+            ) : (
+              <>
+                <Link to={`/mensagens`}>
+                  <Button variant={"outline"}>Mensagem</Button>
+                </Link>
+                <HireBandForm band={band} />
+              </>
+            )}
+
           </div>
         </div>
         <div className={styles.sectionContainer}>
@@ -381,12 +413,14 @@ const BandProfile = () => {
                 </div>
               </div>
             </section>
-            <div className="place-self-end mt-4">
+            {!isBand && (
+              <div className="place-self-end my-4">
               <Review band={band} />
-            </div>
+            </div>)}
           </div>
         </div>
       </main>
+      <Footer />
     </>
   );
 };
