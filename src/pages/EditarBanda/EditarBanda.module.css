@@ -1,35 +1,90 @@
 .main {
   padding: 2rem;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
+  min-height: calc(100vh - 80px);
 }
 
-.tabsContainer {
-  margin-bottom: 2rem;
-}
-
-.tabs {
+.container {
   display: flex;
-  gap: 1rem;
+  gap: 2rem;
+  min-height: 600px;
 }
 
-.tab {
-  padding: 0.5rem 1rem;
-  background-color: #eee;
+.sidebar {
+  width: 280px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  height: fit-content;
+  position: sticky;
+  top: 2rem;
+}
+
+.sidebarHeader {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sidebarHeader h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebarOption {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  background: transparent;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
-  transition: 0.3s;
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
+  font-size: 0.95rem;
 }
 
-.tab:hover {
-  background-color: #ddd;
+.sidebarOption:hover {
+  background: #e5e7eb;
 }
 
-.active {
-  background-color: #333;
+.sidebarOptionActive {
+  background: #333 !important;
   color: white;
+}
+
+.sidebarOptionActive:hover {
+  background: #555 !important;
+}
+
+.sidebarOptionIcon {
+  font-size: 1.1rem;
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebarOptionLabel {
+  font-weight: 500;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
 }
 
 .formSection {
@@ -37,6 +92,7 @@
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
 }
 
 .imageSection {
@@ -58,6 +114,12 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.carouselButton:hover {
+  background-color: #555;
 }
 
 .carouselPreview {
@@ -85,6 +147,11 @@
   justify-content: center;
   border: 2px solid #999;
   background-color: white;
+  transition: border-color 0.2s;
+}
+
+.profileImageLabel:hover {
+  border-color: #666;
 }
 
 .profileImage {
@@ -94,131 +161,259 @@
 }
 
 .title {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #333;
   margin-bottom: 0.5rem;
 }
 
 .subtitle {
   font-size: 1rem;
   margin-bottom: 1.5rem;
-  color: #555;
+  color: #666;
+  line-height: 1.5;
 }
 
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
+}
+
+.formGroup label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  color: #333;
+  gap: 0.5rem;
 }
 
 .input, .textarea {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.75rem;
   border-radius: 6px;
   border: 1px solid #ccc;
   font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input:focus, .textarea:focus {
+  outline: none;
+  border-color: #333;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 .textarea {
   resize: vertical;
+  min-height: 100px;
 }
 
 .saveButton {
   margin-top: 2rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.875rem 2rem;
   background-color: #0d6efd;
   color: white;
   border: none;
   border-radius: 8px;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
-  transition: 0.3s;
+  transition: background-color 0.2s, transform 0.1s;
 }
 
 .saveButton:hover {
   background-color: #094db1;
+  transform: translateY(-1px);
 }
-
-/* ======= Aba de Termos / Propostas ======= */
 
 .statusTabs {
   display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 1rem;
 }
 
 .statusTab {
-  padding: 0.5rem 1rem;
-  background-color: #eee;
+  padding: 0.625rem 1.25rem;
+  background-color: #e5e7eb;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s;
 }
 
 .statusTab:hover {
-  background-color: #ddd;
+  background-color: #d1d5db;
 }
 
 .statusTab.active {
-  background-color: #222;
+  background-color: #333;
   color: white;
 }
 
 .propostasContainer {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .propostaCard {
-  padding: 1rem;
+  padding: 1.5rem;
   background-color: white;
-  border: 1px solid #ddd;
+  border: 1px solid #e5e7eb;
   border-radius: 10px;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s;
+}
+
+.propostaCard:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .cardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 1rem;
+}
+
+.cardHeader h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
 }
 
 .statusBadge {
-  padding: 0.25rem 0.5rem;
+  padding: 0.375rem 0.75rem;
   background-color: #ffc107;
-  color: black;
+  color: #000;
   border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: bold;
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 .cardActions {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   display: flex;
   gap: 1rem;
 }
 
-.aceitarButton {
-  padding: 0.5rem 1rem;
-  background-color: #28a745;
-  color: white;
+.aceitarButton, .recusarButton {
+  padding: 0.5rem 1.25rem;
   border: none;
   border-radius: 6px;
+  font-weight: 500;
   cursor: pointer;
+  transition: all 0.2s;
+}
+
+.aceitarButton {
+  background-color: #28a745;
+  color: white;
+}
+
+.aceitarButton:hover {
+  background-color: #218838;
+  transform: translateY(-1px);
 }
 
 .recusarButton {
-  padding: 0.5rem 1rem;
   background-color: #dc3545;
   color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+}
+
+.recusarButton:hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
 }
 
 .valor {
-  font-weight: bold;
-  color: #333;
-  margin-top: 0.5rem;
+  font-weight: 700;
+  color: #28a745;
+  margin-top: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.placeholderContent {
+  margin-top: 2rem;
+}
+
+.placeholderBox {
+  padding: 3rem 2rem;
+  background: white;
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.placeholderBox p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.placeholderBox p:first-child {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #374151;
+}
+
+@media (max-width: 1024px) {
+  .main {
+    padding: 1rem;
+  }
+  
+  .container {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .sidebar {
+    width: 100%;
+    position: static;
+  }
+  
+  .sidebarNav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .sidebarOption {
+    flex: 1;
+    min-width: 120px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .formSection {
+    padding: 1.5rem;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .statusTabs {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .cardActions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .sidebarNav {
+    flex-direction: column;
+  }
+  
+  .sidebarOption {
+    justify-content: flex-start;
+  }
 }
