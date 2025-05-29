@@ -73,56 +73,56 @@ export default function Home() {
   }, [data?.pages]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-white to-slate-100">
       <HomeNavbar />
 
-      <main className="container grid grid-cols-1 gap-6 px-4 py-6 mx-auto md:grid-cols-3 lg:grid-cols-4 flex-1">
+      <main className="container grid grid-cols-1 gap-8 px-6 py-8 mx-auto md:grid-cols-3 lg:grid-cols-4 flex-1 max-w-7xl">
         <div className="hidden md:block">
           {/* Perfil */}
-          <div className="sticky top-[94px] space-y-4">
+          <div className="sticky top-[94px] space-y-6">
           {user ? (
-							<div className="p-4 bg-card border rounded-lg shadow">
-								<h2 className="mb-4 text-lg text-card-foreg font-semibold">
+							<div className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5 transition-all duration-300 hover:shadow-2xl hover:shadow-black/10 hover:-translate-y-1">
+								<h2 className="mb-6 text-lg text-slate-800 font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
 									Seu Perfil
 								</h2>
-								<div className="flex items-center gap-3 mb-4">
+								<div className="flex items-center gap-4 mb-6 p-4 bg-gradient-to-r from-slate-50/80 to-slate-100/80 rounded-xl border border-slate-200/50">
 									<UserAvatar
 										user={{
 											name: user.name,
 											image: user.avatar ?? '/placeholder.svg?height=48&width=48',
 										}}
-										className="w-12 h-12"
+										className="w-12 h-12 ring-2 ring-white shadow-lg"
 									/>
 									<div>
-										<p className="font-medium">{user.name}</p>
+										<p className="font-semibold text-slate-800">{user.name}</p>
 									</div>
 								</div>
-								<div className="grid grid-cols-2 gap-2 text-center">
-									<div>
-										<p className="font-medium">245</p>
-										<p className="text-xs text-muted-foreground">Seguidores</p>
+								<div className="grid grid-cols-2 gap-4 text-center mb-6">
+									<div className="p-3 bg-slate-50/60 rounded-lg border border-slate-200/40">
+										<p className="font-bold text-lg text-slate-800">245</p>
+										<p className="text-xs text-slate-600 font-medium">Seguidores</p>
 									</div>
-									<div>
-										<p className="font-medium">123</p>
-										<p className="text-xs text-muted-foreground">Seguindo</p>
+									<div className="p-3 bg-slate-50/60 rounded-lg border border-slate-200/40">
+										<p className="font-bold text-lg text-slate-800">123</p>
+										<p className="text-xs text-slate-600 font-medium">Seguindo</p>
 									</div>
 								</div>
 								<Link to="/meu-perfil">
-								<Button className="w-full mt-4 bg-stone-900 hover:bg-stone-800 cursor-pointer">
+								<Button className="w-full bg-black hover:bg-stone-900 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5">
 									Ver perfil
 								</Button>
 								</Link>
 							</div>
 						) : (
-							<div className="p-4 bg-card border rounded-lg shadow text-center">
-								<h2 className="mb-2 text-lg font-semibold text-card-foreg">
+							<div className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5 text-center transition-all duration-300 hover:shadow-2xl hover:shadow-black/10 hover:-translate-y-1">
+								<h2 className="mb-4 text-lg font-bold text-slate-800 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
 									Faça login para uma melhor experiência
 								</h2>
-								<p className="mb-4 text-sm text-muted-foreground">
+								<p className="mb-6 text-sm text-slate-600 leading-relaxed">
 									Acesse sua conta para visualizar seu perfil e interagir com a comunidade.
 								</p>
 								<Link to="/login">
-								<Button className="w-full bg-rose-600 hover:bg-rose-700 cursor-pointer">
+								<Button className="w-full bg-black hover:bg-gray-900 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5">
 									Login
 								</Button>
 								</Link>
@@ -132,11 +132,13 @@ export default function Home() {
         </div>
 
         {/* Posts */}
-        <div className="col-span-1 space-y-6 md:col-span-2 h-full">
-          <div className="space-y-6">
+        <div className="col-span-1 space-y-8 md:col-span-2 h-full">
+          <div className="space-y-8">
             {isFetching && !data ? (
               Array.from({ length: 5 }).map((_, index) => (
-                <Skeleton key={index} className="w-full h-[200px] mb-4" />
+                <div key={index} className="w-full p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5">
+                  <Skeleton className="w-full h-[200px] mb-4 rounded-xl" />
+                </div>
               ))
             ) : isError ? (
               <PostsError />
@@ -146,27 +148,27 @@ export default function Home() {
               groupedPosts?.map((post) => (
                 <div
                   key={post.id}
-                  className="p-4 bg-card border rounded-lg shadow"
+                  className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5 transition-all duration-300 hover:shadow-2xl hover:shadow-black/10 hover:-translate-y-1"
                 >
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-4 mb-6">
                     <UserAvatar
                       user={{
                         name: post.user?.name ?? "",
                         image: `/placeholder.svg?height=40&width=40`,
                       }}
-                      className="w-10 h-10"
+                      className="w-10 h-10 ring-2 ring-white shadow-md"
                     />
                     <div>
-                      <Link to={`/bandas/${post.user.id}`} className="text-lg font-medium">
+                      <Link to={`/bandas/${post.user.id}`} className="text-lg font-semibold text-slate-800 hover:text-slate-600 transition-colors duration-200">
                         {post.user?.name}
                       </Link>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-slate-500 font-medium">
                         Há 2 horas
                       </p>
                     </div>
                   </div>
-                  <p className="mb-4">{post.content}</p>
-                  <div className="mb-4 overflow-hidden rounded-lg">
+                  <p className="mb-6 text-slate-700 leading-relaxed">{post.content}</p>
+                  <div className="mb-6 rounded-xl overflow-hidden shadow-lg">
                     {post.imageUrl && (
                       <img
                         src={post.imageUrl}
@@ -177,8 +179,8 @@ export default function Home() {
                       />
                     )}
                   </div>
-                  <div className="flex gap-4 mb-4">
-                    <Button variant="ghost" size="sm">
+                  <div className="flex gap-6 pt-4 border-t border-slate-200/60">
+                    <Button variant="ghost" size="sm" className="hover:bg-slate-100/80 transition-all duration-200 rounded-lg">
                       <PickOutlinedIcon style={{
                         color: "#ff0047"
                       }}/> {post.likes} curtidas
@@ -192,10 +194,16 @@ export default function Home() {
             {hasNextPage && <div ref={sentinelRef} className="h-[1px]" />}
 
             {isFetchingNextPage && (
-              <div className="flex flex-col">
-                <Skeleton className="w-full h-[200px]" />
-                <Skeleton className="w-full h-[200px] my-4" />
-                <Skeleton className="w-full h-[200px]" />
+              <div className="flex flex-col space-y-4">
+                <div className="w-full p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5">
+                  <Skeleton className="w-full h-[200px] rounded-xl" />
+                </div>
+                <div className="w-full p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5">
+                  <Skeleton className="w-full h-[200px] rounded-xl" />
+                </div>
+                <div className="w-full p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5">
+                  <Skeleton className="w-full h-[200px] rounded-xl" />
+                </div>
               </div>
             )}
           </div>
@@ -203,9 +211,9 @@ export default function Home() {
 
         {/* Bandas Populares */}
         <div className="hidden lg:block">
-          <div className="sticky top-[94px] space-y-4">
-            <div className="p-4 bg-card border rounded-lg shadow">
-              <h2 className="!mt-0 !mb-4 text-lg text-card-foreground font-semibold">
+          <div className="sticky top-[94px] space-y-6">
+            <div className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5 transition-all duration-300 hover:shadow-2xl hover:shadow-black/10 hover:-translate-y-1">
+              <h2 className="!mt-0 !mb-6 text-lg text-slate-800 font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
                 Bandas populares
               </h2>
               <div className="space-y-4">
@@ -225,14 +233,14 @@ export default function Home() {
               </div>
               <Button
                 asChild
-                className="w-full mt-4 bg-stone-900 hover:bg-stone-800"
+                className="w-full mt-6 bg-black hover:bg-stone-900 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5"
               >
                 <Link to="/pesquisa">Ver mais bandas</Link>
               </Button>
             </div>
 
-            <div className="p-4 py-2 bg-card border rounded-lg shadow">
-              <h2 className="!mt-0 !mb-4 text-lg text-card-foreground font-semibold">
+            <div className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5 transition-all duration-300 hover:shadow-2xl hover:shadow-black/10 hover:-translate-y-1">
+              <h2 className="!mt-0 !mb-6 text-lg text-slate-800 font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
                 Categorias
               </h2>
               <GenreSelector
