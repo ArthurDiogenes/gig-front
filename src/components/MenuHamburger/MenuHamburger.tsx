@@ -47,8 +47,8 @@ export default function MenuHamburger() {
             </CustomButton>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <CustomButton onClick={() => (window.location.href = "#")}>
-              Configurações
+            <CustomButton onClick={() => (window.location.href = "/meu-perfil")}>
+              Painel Administrador
             </CustomButton>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
