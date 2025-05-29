@@ -42,7 +42,6 @@ const EditarBanda = () => {
 	const [twitter, setTwitter] = useState('');
 	const [facebook, setFacebook] = useState('');
 	const [instagram, setInstagram] = useState('');
-	const [aceitouTermos, setAceitouTermos] = useState(false);
 
 	const handleSave = async () => {
 
@@ -91,7 +90,7 @@ const EditarBanda = () => {
 							onClick={() => setTab('termos')}
 							className={`${styles.tab} ${tab === 'termos' ? styles.active : ''}`}
 						>
-							Termos
+							Contratos
 						</button>
 					</div>
 				</div>

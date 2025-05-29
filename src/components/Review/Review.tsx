@@ -116,13 +116,13 @@ export default function Review({ band }: { band: BandProfileType }) {
         />
       )}
       <Button type="button" onClick={handleOpen}>
-        Avalie
+        Avaliar
       </Button>
       <Dialog open={open} onOpenChange={setOpen} modal={false}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle className="text-3xl font-bold">
-              Avalie {band.name}
+              Avaliação {band.name}
             </DialogTitle>
             <DialogDescription className="text-base text-gray-500">
               Preencha os detalhes abaixo para enviar uma avaliação para esta

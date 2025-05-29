@@ -40,6 +40,13 @@ const BandProfile = () => {
       return response.data;
     },
   });
+  const isBand = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user") || "{}").role === "band"
+    : false;
+
+  console.log(isBand);
+
+
 
   if (!band) {
     return (
@@ -98,10 +105,19 @@ const BandProfile = () => {
             <p className="text-[#666]">{capitalize(band.genre)}</p>
           </div>
           <div className="flex gap-4">
-            <Link to={`/mensagens`}>
-            <Button variant={"outline"}>Mensagem</Button>
-            </Link>
-            <HireBandForm band={band} />
+            {isBand ? (
+              <Link to={`/meu-perfil`}>
+                <Button variant={"outline"}>Editar perfil</Button>
+              </Link>
+            ) : (
+              <>
+                <Link to={`/mensagens`}>
+                  <Button variant={"outline"}>Mensagem</Button>
+                </Link>
+                <HireBandForm band={band} />
+              </>
+            )}
+
           </div>
         </div>
         <div className={styles.sectionContainer}>
@@ -384,9 +400,10 @@ const BandProfile = () => {
                 </div>
               </div>
             </section>
-            <div className="place-self-end my-4">
+            {!isBand && (
+              <div className="place-self-end my-4">
               <Review band={band} />
-            </div>
+            </div>)}
           </div>
         </div>
       </main>
