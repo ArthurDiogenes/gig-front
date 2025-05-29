@@ -108,7 +108,7 @@ export default function Home() {
 									</div>
 								</div>
 								<Link to="/meu-perfil">
-								<Button className="w-full mt-4 bg-rose-600 hover:bg-rose-700 cursor-pointer">
+								<Button className="w-full mt-4 bg-stone-900 hover:bg-stone-800 cursor-pointer">
 									Ver perfil
 								</Button>
 								</Link>
@@ -225,7 +225,7 @@ export default function Home() {
               </div>
               <Button
                 asChild
-                className="w-full mt-4 bg-stone-900 hover:bg-stone-700"
+                className="w-full mt-4 bg-stone-900 hover:bg-stone-800"
               >
                 <Link to="/pesquisa">Ver mais bandas</Link>
               </Button>
