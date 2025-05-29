@@ -41,7 +41,7 @@ export function BandCard({ band, compact = false }: BandCardProps) {
 
   return (
     <Link
-      to={`/filmes/${band.id}`}
+      to={`/bandas/${band.id}`}
       className="block overflow-hidden transition-transform rounded-lg shadow group hover:scale-105"
     >
       <div className="relative">

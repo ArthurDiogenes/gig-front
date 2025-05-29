@@ -11,6 +11,10 @@ import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { useMemo, useRef } from "react";
 import useIntersectObserver from "@/hooks/useIntersectObserver.tsx";
 import PostsError from "./Error.tsx";
+import EmptyPosts from "./Empty.tsx";
+import PostComments from "@/components/Comments/index.tsx";
+import { getUser } from "@/services/users/index.ts";
+import { PickOutlinedIcon } from "@/utils/icons.tsx";
 
 type Post = {
   id: number;
@@ -18,9 +22,9 @@ type Post = {
   imageUrl: string;
   createdAt: string;
   likes: number;
-  author: {
+  user: {
     id: number;
-    bandName: string;
+    name: string;
   };
   commentsCount: number;
 };
@@ -36,6 +40,7 @@ export type PaginatedPost = {
 export default function Home() {
   const navigate = useNavigate();
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const user = getUser()
 
   const {
     data,
@@ -47,7 +52,6 @@ export default function Home() {
   } = useInfiniteQuery<PaginatedPost>({
     queryKey: ["posts"],
     queryFn: async ({ pageParam = 1 }) => {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
       const response = await api.get<PaginatedPost>(`/posts?page=${pageParam}`);
       return response.data;
     },
@@ -62,8 +66,6 @@ export default function Home() {
     fetchNextPage: fetchNextPage,
   });
 
-  console.log(data);
-
   const groupedPosts = useMemo(() => {
     return data?.pages.reduce((acc: Post[], page) => {
       return [...acc, ...page.posts];
@@ -71,102 +73,124 @@ export default function Home() {
   }, [data?.pages]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen flex flex-col bg-background">
       <HomeNavbar />
 
-      <main className="container grid grid-cols-1 gap-6 px-4 py-6 mx-auto md:grid-cols-3 lg:grid-cols-4">
+      <main className="container grid grid-cols-1 gap-6 px-4 py-6 mx-auto md:grid-cols-3 lg:grid-cols-4 flex-1">
         <div className="hidden md:block">
           {/* Perfil */}
           <div className="sticky top-[94px] space-y-4">
-            <div className="p-4 bg-card border rounded-lg shadow">
-              <h2 className="!mt-0 !mb-4 text-lg text-card-foreg font-semibold">
-                Seu Perfil
-              </h2>
-              <div className="flex items-center gap-3 mb-4">
-                <UserAvatar
-                  user={{
-                    name: "Xand Aviao",
-                    image: "/placeholder.svg?height=48&width=48",
-                  }}
-                  className="w-12 h-12"
-                />
-                <div>
-                  <p className="font-medium !m-0">Xand Avião</p>
-                  <p className="text-sm text-muted-foreground">@xandaviao</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-center">
-                <div>
-                  <p className="font-medium">245</p>
-                  <p className="text-xs text-muted-foreground">Seguidores</p>
-                </div>
-                <div>
-                  <p className="font-medium">123</p>
-                  <p className="text-xs text-muted-foreground">Seguindo</p>
-                </div>
-              </div>
-            </div>
+          {user ? (
+							<div className="p-4 bg-card border rounded-lg shadow">
+								<h2 className="mb-4 text-lg text-card-foreg font-semibold">
+									Seu Perfil
+								</h2>
+								<div className="flex items-center gap-3 mb-4">
+									<UserAvatar
+										user={{
+											name: user.name,
+											image: user.avatar ?? '/placeholder.svg?height=48&width=48',
+										}}
+										className="w-12 h-12"
+									/>
+									<div>
+										<p className="font-medium">{user.name}</p>
+									</div>
+								</div>
+								<div className="grid grid-cols-2 gap-2 text-center">
+									<div>
+										<p className="font-medium">245</p>
+										<p className="text-xs text-muted-foreground">Seguidores</p>
+									</div>
+									<div>
+										<p className="font-medium">123</p>
+										<p className="text-xs text-muted-foreground">Seguindo</p>
+									</div>
+								</div>
+								<Link to="/meu-perfil">
+								<Button className="w-full mt-4 bg-rose-600 hover:bg-rose-700 cursor-pointer">
+									Ver perfil
+								</Button>
+								</Link>
+							</div>
+						) : (
+							<div className="p-4 bg-card border rounded-lg shadow text-center">
+								<h2 className="mb-2 text-lg font-semibold text-card-foreg">
+									Faça login para uma melhor experiência
+								</h2>
+								<p className="mb-4 text-sm text-muted-foreground">
+									Acesse sua conta para visualizar seu perfil e interagir com a comunidade.
+								</p>
+								<Link to="/login">
+								<Button className="w-full bg-rose-600 hover:bg-rose-700 cursor-pointer">
+									Login
+								</Button>
+								</Link>
+							</div>
+						)}
           </div>
         </div>
 
         {/* Posts */}
-        <div className="col-span-1 space-y-6 md:col-span-2">
+        <div className="col-span-1 space-y-6 md:col-span-2 h-full">
           <div className="space-y-6">
-            {isFetching && !data
-              ? Array.from({ length: 5 }).map((_, index) => (
-                  <Skeleton key={index} className="w-full h-[200px] mb-4" />
-                ))
-              : isError ? (
-                <PostsError />
-              ) : (
-                groupedPosts?.map((post) => (
-                  <div
-                    key={post.id}
-                    className="p-4 bg-card border rounded-lg shadow"
-                  >
-                    <div className="flex items-center gap-3 mb-4">
-                      <UserAvatar
-                        user={{
-                          name: post.author?.bandName ?? "",
-                          image: `/placeholder.svg?height=40&width=40`,
-                        }}
-                        className="w-10 h-10"
-                      />
-                      <div>
-                        <p className="text-lg font-medium">
-                          {post.author?.bandName}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Há 2 horas
-                        </p>
-                      </div>
-                    </div>
-                    <p className="mb-4">{post.content}</p>
-                    <div className="mb-4 overflow-hidden rounded-lg">
-                      {post.imageUrl && (
-                        <img
-                          src={post.imageUrl}
-                          alt={`Imagem do post ${post.id}`}
-                          className="object-cover w-full h-auto"
-                          width={600}
-                          height={300}
-                        />
-                      )}
-                    </div>
-                    <div className="flex gap-4 mb-4">
-                      <Button variant="ghost" size="sm">
-                        🎸 {post.likes} curtidas
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        💬 {post.commentsCount} comentários
-                      </Button>
+            {isFetching && !data ? (
+              Array.from({ length: 5 }).map((_, index) => (
+                <Skeleton key={index} className="w-full h-[200px] mb-4" />
+              ))
+            ) : isError ? (
+              <PostsError />
+            ) : groupedPosts?.length === 0 ? (
+              <EmptyPosts />
+            ) : (
+              groupedPosts?.map((post) => (
+                <div
+                  key={post.id}
+                  className="p-4 bg-card border rounded-lg shadow"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <UserAvatar
+                      user={{
+                        name: post.user?.name ?? "",
+                        image: `/placeholder.svg?height=40&width=40`,
+                      }}
+                      className="w-10 h-10"
+                    />
+                    <div>
+                      <Link to={`/bandas/${post.user.id}`} className="text-lg font-medium">
+                        {post.user?.name}
+                      </Link>
+                      <p className="text-sm text-muted-foreground">
+                        Há 2 horas
+                      </p>
                     </div>
                   </div>
-                ))
-              )}
+                  <p className="mb-4">{post.content}</p>
+                  <div className="mb-4 overflow-hidden rounded-lg">
+                    {post.imageUrl && (
+                      <img
+                        src={post.imageUrl}
+                        alt={`Imagem do post ${post.id}`}
+                        className="object-cover w-full h-auto"
+                        width={600}
+                        height={300}
+                      />
+                    )}
+                  </div>
+                  <div className="flex gap-4 mb-4">
+                    <Button variant="ghost" size="sm">
+                      <PickOutlinedIcon style={{
+                        color: "#ff0047"
+                      }}/> {post.likes} curtidas
+                    </Button>
+                   <PostComments id={post.id} />
+                  </div>
+                </div>
+              ))
+            )}
             {/* Sentinela para o scroll infinito */}
             {hasNextPage && <div ref={sentinelRef} className="h-[1px]" />}
-       
+
             {isFetchingNextPage && (
               <div className="flex flex-col">
                 <Skeleton className="w-full h-[200px]" />
