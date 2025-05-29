@@ -169,7 +169,7 @@ const TelaCadastroEstabelecimento = () => {
             <div className={styles.nameFields}>
               <SelectComponent
                 array={tiposEstabelecimento}
-                placeholder="Selecione o tipo de estabelecimento"
+                placeholder="Categoria"
                 name="tipos"
                 value={tipo}
                 onChange={(e) => setTipo(e.target.value)}

@@ -1,11 +1,40 @@
-.select{
+.select {
+    background-color: var(--select-bg, #fff);
+    color: #000;
+    border: 1.5px solid var(--select-border, #ccc);
+    border-radius: var(--select-border-radius, 8px);
+    padding: var(--select-padding, 16px 0 16px 10px);
+    margin: var(--select-margin, 24px 0 0 0);
+    width: 100%;
+    box-shadow: var(--select-shadow, #c3c3c3 0px 5px 5px 0px);
+    font-size: var(--select-font-size, 16px);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.select:focus {
+    outline: none;
+    border-color: var(--select-border-focus, #1e293b);
+    box-shadow: var(--select-shadow-focus, 0 0 0 3px rgba(30, 41, 59, 0.1));
+    background-color: var(--select-bg-focus, rgba(255, 255, 255, 0.95));
+}
+
+.select:hover {
+    border-color: var(--select-border-hover, #64748b);
+    background-color: var(--select-bg-hover, rgba(255, 255, 255, 0.9));
+}
+
+.select option {
+    padding: 8px;
     background-color: #fff;
     color: #000;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 16px 0 16px 10px;
-    margin: 24px 0 0 0;
-    width: 100%;
-    box-shadow: #c3c3c3 0px 5px 5px 0px;
-    font-size: 16px;
+}
+
+.select option:hover {
+    background-color: #f8fafc;
+}
+
+.select option:disabled {
+    color: #64748b;
+    font-style: italic;
 }

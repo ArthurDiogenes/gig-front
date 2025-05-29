@@ -1,5 +1,5 @@
 .container {
-    background-color: #fff;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     width: 100vw;  
     height: 100vh; 
     display: flex;
@@ -15,56 +15,150 @@
     justify-content: center;
     align-items: center;
     height: 100vh; 
-    background-color: #fff;
-    padding: 32px;
+    background-color: transparent;
+    padding: 24px;
 }
 
 .sectionImg {
-    width: 60%;
+    width: 55%;
 }
 
 .sectionForm {
-    width: 40%;
+    width: 45%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .img {
-    width: 100%;
-    height: 100%;
+    width: 85%;
+    height: 75%;
     object-fit: cover;
-    object-position:center;
-    border-radius: 24px;
+    object-position: center;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.img:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.2);
 }
 
 .login {
     width: 100%;
-    max-width: 400px;
-    padding: 48px;
-    border-radius: 12px;
-    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
-    background: #f9f9f9;
+    max-width: 380px;
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    
+    --input-bg: rgba(248, 250, 252, 0.8);
+    --input-border: #e2e8f0;
+    --input-border-focus: #1e293b;
+    --input-border-hover: #64748b;
+    --input-padding: 12px 16px;
+    --input-border-radius: 10px;
+    --input-font-size: 15px;
+    --input-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --input-shadow-focus: 0 0 0 3px rgba(30, 41, 59, 0.1);
+    --input-margin: 0;
+    
+    --btn-bg: #000000;
+    --btn-bg-hover: #1a1a1a;
+    --btn-color: white;
+    --btn-padding: 12px 24px;
+    --btn-border-radius: 10px;
+    --btn-font-size: 16px;
+    --btn-font-weight: 600;
+    --btn-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.3);
+    --btn-shadow-hover: 0 6px 20px 0 rgba(0, 0, 0, 0.4);
+    --btn-shadow-active: 0 2px 8px 0 rgba(0, 0, 0, 0.3);
+    --btn-margin: 0;
+}
+
+.login:hover {
+    box-shadow: 0 20px 35px -3px rgba(0, 0, 0, 0.12), 0 8px 10px -2px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
 }
 
 .error {
-    color: red;
+    color: #ef4444;
     text-align: center;
-    margin-top: 12px;
-    margin-bottom: 12px;
+    margin: 8px 0;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 12px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 8px;
 }
 
 .title {
-    color: #333;
-    text-align: left;
-    margin-top: 0;
-    margin-bottom: 12px;
-    font-size: 48px;
-    font-weight: bold;
+    color: #1e293b;
+    text-align: center;
+    margin: 0 0 24px 0;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .esqueceu_senha, .cadastro {
     text-align: center;
+    margin: 16px 0 8px 0;
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.esqueceu_senha {
+    margin-top: 20px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.esqueceu_senha:hover {
+    color: #1e293b;
+}
+
+.cadastro a {
+    color: #1e293b;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.cadastro a:hover {
+    color: #0f172a;
+}
+
+.cadastro a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background: linear-gradient(90deg, #1e293b, #0f172a);
+    transition: width 0.3s ease;
+}
+
+.cadastro a:hover::after {
+    width: 100%;
 }
 
 @media (max-width: 1024px) {
@@ -74,20 +168,34 @@
     .sectionForm {
         width: 50%;
     }
+    
+    .img {
+        width: 90%;
+        height: 70%;
+    }
 }
 
 @media (max-width: 768px) {
+    .container {
+        background: #f8fafc;
+    }
+    
     .sectionImg {
         display: none;
     }
+    
     .sectionForm {
         width: 100%;
         padding: 16px;
     }
+    
     .login {
-        padding: 32px;
+        padding: 24px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.98);
     }
+    
     .title {
-        font-size: 36px;
+        font-size: 28px;
     }
 }

@@ -1,24 +1,40 @@
-.btn{
-    background-color: #1C1917;
-    color: #fff;
-    box-shadow: #4b3e3e 0px 5px 5px 0px;
+.btn {
+    background: var(--btn-bg, #000000);
+    color: var(--btn-color, #fff);
+    box-shadow: var(--btn-shadow, 0 4px 10px 0 rgba(0, 0, 0, 0.3));
     text-align: center;
-    border-radius: 8px;
-    padding: 12px 0;
-    margin: 12px 0 0 0;
+    border: none;
+    border-radius: var(--btn-border-radius, 8px);
+    padding: var(--btn-padding, 12px 0);
+    margin: var(--btn-margin, 12px 0 0 0);
     width: 100%;
-    font-size: 24px;
+    font-size: var(--btn-font-size, 24px);
+    font-weight: var(--btn-font-weight, normal);
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    letter-spacing: var(--btn-letter-spacing, 0.025em);
 }
 
-.btn:hover{
-    background-color: #4b3e3e;
+.btn:hover {
+    background: var(--btn-bg-hover, #1a1a1a);
+    box-shadow: var(--btn-shadow-hover, 0 6px 15px 0 rgba(0, 0, 0, 0.4));
+    transform: translateY(var(--btn-hover-transform, -2px));
 }
 
+.btn:active {
+    transform: translateY(0);
+    background: var(--btn-bg, #000000);
+    box-shadow: var(--btn-shadow-active, 0 2px 8px 0 rgba(0, 0, 0, 0.3));
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
 
 @media (max-width: 768px) {
-    .btn{
-        font-size: 20px;
+    .btn {
+        font-size: var(--btn-font-size-mobile, 20px);
     }
 }
