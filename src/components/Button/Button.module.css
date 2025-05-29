@@ -6,7 +6,7 @@
     border: none;
     border-radius: var(--btn-border-radius, 8px);
     padding: var(--btn-padding, 12px 0);
-    margin: 12px 0 0 0;
+    margin: var(--btn-margin, 12px 0 0 0);
     width: 100%;
     font-size: var(--btn-font-size, 24px);
     font-weight: var(--btn-font-weight, normal);
