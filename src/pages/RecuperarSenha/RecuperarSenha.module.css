@@ -30,7 +30,6 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
     
-    /* CSS Custom Properties for child components */
     --input-bg: rgba(248, 250, 252, 0.8);
     --input-border: #e2e8f0;
     --input-border-focus: #1e293b;
@@ -124,7 +123,6 @@
     color: #0f172a;
 }
 
-/* Enhanced button styling for special purple button */
 .login :global(.btn) {
     background: var(--btn-bg) !important;
     color: var(--btn-color) !important;
@@ -152,7 +150,6 @@
     box-shadow: var(--btn-shadow-active) !important;
 }
 
-/* Enhanced input styling */
 .login :global(.input) {
     background: var(--input-bg) !important;
     border: 1.5px solid var(--input-border) !important;
