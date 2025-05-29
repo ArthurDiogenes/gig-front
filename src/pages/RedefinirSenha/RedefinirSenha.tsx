@@ -37,7 +37,7 @@ export default function RedefinirSenha() {
       <section className={styles.sectionForm}>
         <div className={styles.login}>
           <h1 className={styles.title}>Redefinir Senha</h1>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className={styles.form}>
             <h4 className={styles.subtitulo}>Defina aqui sua senha de acesso à plataforma</h4>
             <InputComponent
               type="password"

@@ -77,7 +77,9 @@ export default function TelaLogin() {
 						/>
 						<Button type="submit">Entrar</Button>
 					</form>
-					<h4 className={styles.esqueceu_senha}>Esqueceu a senha?</h4>
+					<h4 className={styles.esqueceu_senha}>
+						<Link to="/recuperarSenha">Esqueceu a senha?</Link>
+					</h4>
 					<h3 className={styles.cadastro}>
 						Não tem conta? <Link to="/cadastro">Cadastre-se</Link>
 					</h3>

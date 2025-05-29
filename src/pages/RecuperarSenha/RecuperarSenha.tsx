@@ -29,7 +29,7 @@ export default function RecuperarSenha() {
       <section className={styles.sectionForm}>
         <div className={styles.login}>
           <h1 className={styles.title}>Recuperar senha</h1>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className={styles.form}>
             <h4 className={styles.subtitulo}>Informe o email para qual deseja redefinir a senha</h4>
             <InputComponent
               type="email"
@@ -39,7 +39,7 @@ export default function RecuperarSenha() {
               onChange={(e) => setEmail(e.target.value)}
             />
             {error && <p className={styles.error}>{error}</p>}
-            <Button type="submit" style={{ backgroundColor: 'purple', color: 'white', border: 'none', padding: '0.5rem 1rem' }}>Redefinir senha</Button>
+            <Button type="submit">Redefinir senha</Button>
           </form>
         </div>
       </section>
