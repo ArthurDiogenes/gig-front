@@ -50,13 +50,13 @@ export default function TelaLogin() {
 	return (
 		<div className={styles.container}>
 			<section className={styles.sectionImg}>
-				<img className={styles.img} src={ImgCapa} alt="" />
+				<img className={styles.img} src={ImgCapa} alt="Concert crowd silhouette" />
 			</section>
 
 			<section className={styles.sectionForm}>
 				<div className={styles.login}>
-					<h1 className={styles.title}>login</h1>
-					<form onSubmit={handleSubmit}>
+					<h1 className={styles.title}>Login</h1>
+					<form onSubmit={handleSubmit} className={styles.form}>
 						<InputComponent
 							type="email"
 							name="email"
