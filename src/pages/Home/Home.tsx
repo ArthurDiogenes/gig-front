@@ -6,7 +6,7 @@ import { UserAvatar } from "@/components/UserAvatar/UserAvatar.tsx";
 import HomeNavbar from "@/components/Navbar/HomeNavbar.tsx";
 import GenreSelector from "@/components/GenreSelector/GenreSelector.tsx";
 import api from "@/services/api.ts";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { useMemo, useRef } from "react";
 import useIntersectObserver from "@/hooks/useIntersectObserver.tsx";
@@ -37,6 +37,12 @@ export type PaginatedPost = {
   limit: number;
 };
 
+type FeaturedBand = {
+  averageRating: number;
+  bandId: number;
+  bandName: string;
+}
+
 export default function Home() {
   const navigate = useNavigate();
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -59,6 +65,14 @@ export default function Home() {
     getNextPageParam: (lastPage: PaginatedPost): number | undefined =>
       lastPage.hasNextPage ? lastPage.page + 1 : undefined,
   });
+
+  const { data: featuredBands } = useQuery({
+    queryKey: ["featuredBands"],
+    queryFn: async () => {
+      const response = await api.get<FeaturedBand[]>("/bands/featured");
+      return response.data;
+    },
+  })
 
   useIntersectObserver({
     target: sentinelRef as React.RefObject<HTMLElement>,
@@ -217,15 +231,14 @@ export default function Home() {
                 Bandas populares
               </h2>
               <div className="space-y-4">
-                {[1, 2].map((banda) => (
+                {featuredBands?.map((band) => (
                   <BandCard
-                    key={banda}
+                    key={band.bandId}
                     band={{
-                      id: 1,
-                      title: "Banda Exemplo",
+                      id: band.bandId,
+                      title: band.bandName,
                       image: "/placeholder.svg?height=200&width=150",
-                      year: "2001",
-                      rating: 4.5,
+                      rating: band.averageRating,
                     }}
                     compact
                   />

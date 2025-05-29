@@ -55,7 +55,7 @@ export default function Review({ band }: { band: BandProfileType }) {
       comment: "",
       rating: 0,
       bandId: band.id,
-      venueId: "93913b23-3e4b-480b-81fa-b1c31ed55fd4",
+      venueId: "fcf2d472-6baf-452a-8b06-76e0cdc2a9cb",
     },
   });
 
@@ -122,7 +122,7 @@ export default function Review({ band }: { band: BandProfileType }) {
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle className="text-3xl font-bold">
-              Avaliação {band.name}
+              Avaliação {band.bandName}
             </DialogTitle>
             <DialogDescription className="text-base text-gray-500">
               Preencha os detalhes abaixo para enviar uma avaliação para esta

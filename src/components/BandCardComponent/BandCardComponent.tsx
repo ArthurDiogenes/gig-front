@@ -5,7 +5,6 @@ interface Band {
   id: number;
   title: string;
   image: string | null;
-  year: string;
   rating: number;
 }
 
@@ -32,7 +31,6 @@ export function BandCard({ band, compact = false }: BandCardProps) {
           <div className="flex items-center gap-1 mt-1">
             <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
             <span className="text-xs">{band.rating}</span>
-            <span className="text-xs text-muted-foreground">({band.year})</span>
           </div>
         </div>
       </Link>
@@ -57,7 +55,6 @@ export function BandCard({ band, compact = false }: BandCardProps) {
           <div className="flex items-center gap-1 mt-1">
             <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
             <span className="text-xs text-white">{band.rating}</span>
-            <span className="text-xs text-gray-300">({band.year})</span>
           </div>
         </div>
       </div>

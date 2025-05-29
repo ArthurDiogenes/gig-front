@@ -172,7 +172,7 @@ export default function HireBandForm({ band }: { band: BandProfileType }) {
 				<DialogContent className="sm:max-w-[500px]">
 					<DialogHeader>
 						<DialogTitle className="text-3xl font-bold">
-							Contratar {band.name}
+							Contratar {band.bandName}
 						</DialogTitle>
 						<DialogDescription className="text-base text-gray-500">
 							Preencha os detalhes abaixo para enviar uma proposta para esta
