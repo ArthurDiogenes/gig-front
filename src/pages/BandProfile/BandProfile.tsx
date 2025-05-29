@@ -21,6 +21,11 @@ import HireBandForm from "@/components/Contrato";
 import Review from "@/components/Review/Review";
 import Footer from "@/components/Footer/Footer";
 
+export type UserType = {
+  id: string;
+  role: string;
+}
+
 export type BandProfileType = {
   id: number;
   name: string;
@@ -28,6 +33,7 @@ export type BandProfileType = {
   genre: string;
   description: string;
   createdAt: string;
+  userId: UserType;
 };
 
 const BandProfile = () => {
@@ -44,9 +50,12 @@ const BandProfile = () => {
     ? JSON.parse(localStorage.getItem("user") || "{}").role === "band"
     : false;
 
-  console.log(isBand);
-
-
+  const userId = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user") || "{}").id
+    : null;
+  
+  const owner = band?.userId.id === userId;
+  
 
   if (!band) {
     return (
@@ -105,9 +114,13 @@ const BandProfile = () => {
             <p className="text-[#666]">{capitalize(band.genre)}</p>
           </div>
           <div className="flex gap-4">
-            {isBand ? (
+            {isBand && owner ? (
               <Link to={`/meu-perfil`}>
                 <Button variant={"outline"}>Editar perfil</Button>
+              </Link>
+            ) : isBand && !owner ? (
+              <Link to={`/mensagens`}>
+                <Button variant={"outline"}>Mensagens</Button>
               </Link>
             ) : (
               <>
