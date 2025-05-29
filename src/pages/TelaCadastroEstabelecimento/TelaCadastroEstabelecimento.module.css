@@ -1,5 +1,5 @@
 .container {
-    background-color: #fff;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     width: 100vw;  
     height: 100vh; 
     display: flex;
@@ -15,8 +15,8 @@
     justify-content: center;
     align-items: center;
     height: 100vh; 
-    background-color: #fff;
-    padding: 32px;
+    background-color: transparent;
+    padding: 24px;
 }
 
 .sectionImg {
@@ -31,103 +31,272 @@
 }
 
 .img {
-    width: 100%;
-    height: 100%;
+    width: 85%;
+    height: 75%;
     object-fit: cover;
     object-position: center;
-    border-radius: 24px;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.img:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.2);
 }
 
 .cadastro {
     width: 100%;
-    /* max-width: 400px; */
-    padding: 16px;
-    border-radius: 12px;
-    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
-    background: #f9f9f9;
+    max-width: 450px;
+    padding: 28px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    
+    --input-bg: rgba(248, 250, 252, 0.8);
+    --input-border: #e2e8f0;
+    --input-border-focus: #1e293b;
+    --input-border-hover: #64748b;
+    --input-padding: 12px 16px;
+    --input-border-radius: 10px;
+    --input-font-size: 15px;
+    --input-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --input-shadow-focus: 0 0 0 3px rgba(30, 41, 59, 0.1);
+    --input-margin: 0;
+    
+    --btn-bg: #000000;
+    --btn-bg-hover: #1a1a1a;
+    --btn-color: white;
+    --btn-padding: 12px 24px;
+    --btn-border-radius: 10px;
+    --btn-font-size: 16px;
+    --btn-font-weight: 600;
+    --btn-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.3);
+    --btn-shadow-hover: 0 6px 20px 0 rgba(0, 0, 0, 0.4);
+    --btn-shadow-active: 0 2px 8px 0 rgba(0, 0, 0, 0.3);
+    --btn-margin: 0;
+    
+    --select-bg: rgba(248, 250, 252, 0.8);
+    --select-border: #e2e8f0;
+    --select-border-focus: #1e293b;
+    --select-border-hover: #64748b;
+    --select-padding: 12px 16px;
+    --select-border-radius: 10px;
+    --select-font-size: 15px;
+    --select-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --select-margin: 0;
+}
+
+.cadastro:hover {
+    box-shadow: 0 20px 35px -3px rgba(0, 0, 0, 0.12), 0 8px 10px -2px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
 }
 
 .error {
-    color: red;
+    color: #ef4444;
     text-align: center;
-    margin-top: 12px;
-    margin-bottom: 12px;
+    margin: 8px 0;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 12px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 8px;
 }
 
 .title {
-    color: #333;
+    color: #1e293b;
     text-align: center;
-    margin-top: 0;
-    margin-bottom: 12px;
-    font-size: 48px;
-    font-weight: bold;
+    margin: 0 0 20px 0;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     width: 100%;
 }
 
-
-.loginRedirect {
+.loginRedirect, .establishmentRedirect {
     text-align: center;
     font-size: 14px;
-    margin-bottom: 8px;
+    margin: 8px 0;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.loginRedirect {
+    margin-bottom: 6px;
     margin-top: 0;
 }
 
-.loginRedirect a {
-    color: rgb(107, 107, 199);
-    text-decoration: none;
-    font-weight: bold;
+.establishmentRedirect {
+    margin-bottom: 24px;
 }
 
-.loginRedirect a:hover {
-    color: rgb(42, 42, 104);
+.loginRedirect a, .establishmentRedirect a {
+    color: #1e293b;
     text-decoration: none;
-    font-weight: bold;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    position: relative;
 }
 
-.establishmentRedirect{
-    text-align: center;
-    font-size: 14px;
-    margin-bottom: 0;
-}
-.establishmentRedirect a {
-    color: rgb(107, 107, 199);
-    text-decoration: none;
-    font-weight: bold;
+.loginRedirect a:hover, .establishmentRedirect a:hover {
+    color: #0f172a;
 }
 
-.establishmentRedirect a:hover {
-    color: rgb(42, 42, 104);
-    text-decoration: none;
-    font-weight: bold;
+.loginRedirect a::after, .establishmentRedirect a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background: linear-gradient(90deg, #1e293b, #0f172a);
+    transition: width 0.3s ease;
+}
+
+.loginRedirect a:hover::after, .establishmentRedirect a:hover::after {
+    width: 100%;
 }
 
 .nameFields {
     display: flex;
-    gap: 12px;
+    gap: 10px;
+    margin: 0;
 }
 
 .nameFields > * {
     flex: 1;
-  }
+}
 
 .terms {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-top: 12px;
+    margin-top: 16px;
+    margin-bottom: 8px;
     font-size: 14px;
+    color: #64748b;
+}
+
+.terms input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #1e293b;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .terms a {
-    color: rgb(107, 107, 199);
+    color: #1e293b;
     text-decoration: none;
-    font-weight: bold;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    position: relative;
 }
 
 .terms a:hover {
-    color: rgb(42, 42, 104);
-    text-decoration: none;
-    font-weight: bold;
+    color: #0f172a;
+}
+
+.terms a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background: linear-gradient(90deg, #1e293b, #0f172a);
+    transition: width 0.3s ease;
+}
+
+.terms a:hover::after {
+    width: 100%;
+}
+
+.cadastro form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cadastro :global(.input) {
+    background: var(--input-bg) !important;
+    border: 1.5px solid var(--input-border) !important;
+    border-radius: var(--input-border-radius) !important;
+    padding: var(--input-padding) !important;
+    font-size: var(--input-font-size) !important;
+    transition: all 0.2s ease !important;
+    box-shadow: var(--input-shadow) !important;
+    margin: 0 !important;
+}
+
+.cadastro :global(.input):focus {
+    outline: none !important;
+    border-color: var(--input-border-focus) !important;
+    box-shadow: var(--input-shadow-focus) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.cadastro :global(.input):hover {
+    border-color: var(--input-border-hover) !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+}
+
+.cadastro :global(.select) {
+    background: var(--select-bg) !important;
+    border: 1.5px solid var(--select-border) !important;
+    border-radius: var(--select-border-radius) !important;
+    padding: var(--select-padding) !important;
+    font-size: var(--select-font-size) !important;
+    transition: all 0.2s ease !important;
+    box-shadow: var(--select-shadow) !important;
+    margin: 0 !important;
+}
+
+.cadastro :global(.select):focus {
+    outline: none !important;
+    border-color: var(--select-border-focus) !important;
+    box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.1) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.cadastro :global(.select):hover {
+    border-color: var(--select-border-hover) !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+}
+
+.cadastro :global(.btn) {
+    background: var(--btn-bg) !important;
+    color: var(--btn-color) !important;
+    border: none !important;
+    border-radius: var(--btn-border-radius) !important;
+    padding: var(--btn-padding) !important;
+    font-size: var(--btn-font-size) !important;
+    font-weight: var(--btn-font-weight) !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: var(--btn-shadow) !important;
+    margin: 8px 0 !important;
+    letter-spacing: 0.025em !important;
+}
+
+.cadastro :global(.btn):hover {
+    background: var(--btn-bg-hover) !important;
+    box-shadow: var(--btn-shadow-hover) !important;
+    transform: translateY(-2px) !important;
+}
+
+.cadastro :global(.btn):active {
+    transform: translateY(0) !important;
+    background: var(--btn-bg) !important;
+    box-shadow: var(--btn-shadow-active) !important;
 }
 
 @media (max-width: 1024px) {
@@ -137,20 +306,40 @@
     .sectionForm {
         width: 50%;
     }
+    
+    .img {
+        width: 90%;
+        height: 70%;
+    }
 }
 
 @media (max-width: 768px) {
+    .container {
+        background: #f8fafc;
+    }
+    
     .sectionImg {
         display: none;
     }
+    
     .sectionForm {
         width: 100%;
         padding: 16px;
     }
+    
     .cadastro {
-        padding: 32px;
+        padding: 20px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.98);
+        max-width: none;
     }
+    
     .title {
-        font-size: 36px;
+        font-size: 24px;
+    }
+    
+    .nameFields {
+        flex-direction: column;
+        gap: 8px;
     }
 }
