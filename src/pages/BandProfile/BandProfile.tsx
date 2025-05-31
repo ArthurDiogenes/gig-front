@@ -24,7 +24,7 @@ import Footer from "@/components/Footer/Footer";
 export type UserType = {
   id: string;
   role: string;
-}
+};
 
 export type BandProfileType = {
   id: number;
@@ -43,7 +43,7 @@ const BandProfile = () => {
   const { data: band } = useQuery({
     queryKey: ["band", id],
     queryFn: async () => {
-      const response = await api.get<BandProfileType>(`/bands/${id}`);
+      const response = await api.get<BandProfileType>(`/bands/user/${id}`);
       return response.data;
     },
   });
@@ -54,9 +54,8 @@ const BandProfile = () => {
   const userId = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user") || "{}").id
     : null;
-  
+
   const owner = band?.userId.id === userId;
-  
 
   if (!band) {
     return (
@@ -131,7 +130,6 @@ const BandProfile = () => {
                 <HireBandForm band={band} />
               </>
             )}
-
           </div>
         </div>
         <div className={styles.sectionContainer}>
@@ -416,8 +414,9 @@ const BandProfile = () => {
             </section>
             {!isBand && (
               <div className="place-self-end my-4">
-              <Review band={band} />
-            </div>)}
+                <Review band={band} />
+              </div>
+            )}
           </div>
         </div>
       </main>
