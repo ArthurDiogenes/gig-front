@@ -41,6 +41,7 @@ type FeaturedBand = {
   averageRating: number;
   bandId: number;
   bandName: string;
+  userId: string;
 };
 
 export default function Home() {
@@ -262,7 +263,7 @@ export default function Home() {
                   <BandCard
                     key={band.bandId}
                     band={{
-                      id: band.bandId,
+                      id: band.userId,
                       title: band.bandName,
                       image: "/placeholder.svg?height=200&width=150",
                       rating: band.averageRating,
