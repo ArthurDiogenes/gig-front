@@ -41,12 +41,13 @@ type FeaturedBand = {
   averageRating: number;
   bandId: number;
   bandName: string;
-}
+  userId: string;
+};
 
 export default function Home() {
   const navigate = useNavigate();
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const user = getUser()
+  const user = getUser();
 
   const {
     data,
@@ -72,7 +73,7 @@ export default function Home() {
       const response = await api.get<FeaturedBand[]>("/bands/featured");
       return response.data;
     },
-  })
+  });
 
   useIntersectObserver({
     target: sentinelRef as React.RefObject<HTMLElement>,
@@ -94,54 +95,66 @@ export default function Home() {
         <div className="hidden md:block">
           {/* Perfil */}
           <div className="sticky top-[94px] space-y-6">
-          {user ? (
-							<div className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5 transition-all duration-300 hover:shadow-2xl hover:shadow-black/10 hover:-translate-y-1">
-								<h2 className="mb-6 text-lg text-slate-800 font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-									Seu Perfil
-								</h2>
-								<div className="flex items-center gap-4 mb-6 p-4 bg-gradient-to-r from-slate-50/80 to-slate-100/80 rounded-xl border border-slate-200/50">
-									<UserAvatar
-										user={{
-											name: user.name,
-											image: user.avatar ?? '/placeholder.svg?height=48&width=48',
-										}}
-										className="w-12 h-12 ring-2 ring-white shadow-lg"
-									/>
-									<div>
-										<p className="font-semibold text-slate-800">{user.name}</p>
-									</div>
-								</div>
-								<div className="grid grid-cols-2 gap-4 text-center mb-6">
-									<div className="p-3 bg-slate-50/60 rounded-lg border border-slate-200/40">
-										<p className="font-bold text-lg text-slate-800">245</p>
-										<p className="text-xs text-slate-600 font-medium">Seguidores</p>
-									</div>
-									<div className="p-3 bg-slate-50/60 rounded-lg border border-slate-200/40">
-										<p className="font-bold text-lg text-slate-800">123</p>
-										<p className="text-xs text-slate-600 font-medium">Seguindo</p>
-									</div>
-								</div>
-								<Link to="/meu-perfil">
-								<Button className="w-full bg-black hover:bg-stone-900 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5">
-									Ver perfil
-								</Button>
-								</Link>
-							</div>
-						) : (
-							<div className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5 text-center transition-all duration-300 hover:shadow-2xl hover:shadow-black/10 hover:-translate-y-1">
-								<h2 className="mb-4 text-lg font-bold text-slate-800 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-									Faça login para uma melhor experiência
-								</h2>
-								<p className="mb-6 text-sm text-slate-600 leading-relaxed">
-									Acesse sua conta para visualizar seu perfil e interagir com a comunidade.
-								</p>
-								<Link to="/login">
-								<Button className="w-full bg-black hover:bg-gray-900 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5">
-									Login
-								</Button>
-								</Link>
-							</div>
-						)}
+            {user ? (
+              <div className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5 transition-all duration-300 hover:shadow-2xl hover:shadow-black/10 hover:-translate-y-1">
+                <h2 className="mb-6 text-lg text-slate-800 font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                  Seu Perfil
+                </h2>
+                <div className="flex items-center gap-4 mb-6 p-4 bg-gradient-to-r from-slate-50/80 to-slate-100/80 rounded-xl border border-slate-200/50">
+                  <UserAvatar
+                    user={{
+                      name: user.name,
+                      image:
+                        user.avatar ?? "/placeholder.svg?height=48&width=48",
+                    }}
+                    className="w-12 h-12 ring-2 ring-white shadow-lg"
+                  />
+                  <div>
+                    <p className="font-semibold text-slate-800">{user.name}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-center mb-6">
+                  <div className="p-3 bg-slate-50/60 rounded-lg border border-slate-200/40">
+                    <p className="font-bold text-lg text-slate-800">245</p>
+                    <p className="text-xs text-slate-600 font-medium">
+                      Seguidores
+                    </p>
+                  </div>
+                  <div className="p-3 bg-slate-50/60 rounded-lg border border-slate-200/40">
+                    <p className="font-bold text-lg text-slate-800">123</p>
+                    <p className="text-xs text-slate-600 font-medium">
+                      Seguindo
+                    </p>
+                  </div>
+                </div>
+                <Link
+                  to={
+                    user.role === "band"
+                      ? `bandas/${user.id}`
+                      : `perfil-estabelecimento`
+                  }
+                >
+                  <Button className="w-full bg-black hover:bg-stone-900 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5">
+                    Ver perfil
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5 text-center transition-all duration-300 hover:shadow-2xl hover:shadow-black/10 hover:-translate-y-1">
+                <h2 className="mb-4 text-lg font-bold text-slate-800 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                  Faça login para uma melhor experiência
+                </h2>
+                <p className="mb-6 text-sm text-slate-600 leading-relaxed">
+                  Acesse sua conta para visualizar seu perfil e interagir com a
+                  comunidade.
+                </p>
+                <Link to="/login">
+                  <Button className="w-full bg-black hover:bg-gray-900 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5">
+                    Login
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 
@@ -150,7 +163,10 @@ export default function Home() {
           <div className="space-y-8">
             {isFetching && !data ? (
               Array.from({ length: 5 }).map((_, index) => (
-                <div key={index} className="w-full p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5">
+                <div
+                  key={index}
+                  className="w-full p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5"
+                >
                   <Skeleton className="w-full h-[200px] mb-4 rounded-xl" />
                 </div>
               ))
@@ -173,7 +189,10 @@ export default function Home() {
                       className="w-10 h-10 ring-2 ring-white shadow-md"
                     />
                     <div>
-                      <Link to={`/bandas/${post.user.id}`} className="text-lg font-semibold text-slate-800 hover:text-slate-600 transition-colors duration-200">
+                      <Link
+                        to={`/bandas/${post.user.id}`}
+                        className="text-lg font-semibold text-slate-800 hover:text-slate-600 transition-colors duration-200"
+                      >
                         {post.user?.name}
                       </Link>
                       <p className="text-sm text-slate-500 font-medium">
@@ -181,7 +200,9 @@ export default function Home() {
                       </p>
                     </div>
                   </div>
-                  <p className="mb-6 text-slate-700 leading-relaxed">{post.content}</p>
+                  <p className="mb-6 text-slate-700 leading-relaxed">
+                    {post.content}
+                  </p>
                   <div className="mb-6 rounded-xl overflow-hidden shadow-lg">
                     {post.imageUrl && (
                       <img
@@ -194,12 +215,19 @@ export default function Home() {
                     )}
                   </div>
                   <div className="flex gap-6 pt-4 border-t border-slate-200/60">
-                    <Button variant="ghost" size="sm" className="hover:bg-slate-100/80 transition-all duration-200 rounded-lg">
-                      <PickOutlinedIcon style={{
-                        color: "#ff0047"
-                      }}/> {post.likes} curtidas
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="hover:bg-slate-100/80 transition-all duration-200 rounded-lg"
+                    >
+                      <PickOutlinedIcon
+                        style={{
+                          color: "#ff0047",
+                        }}
+                      />{" "}
+                      {post.likes} curtidas
                     </Button>
-                   <PostComments id={post.id} />
+                    <PostComments id={post.id} />
                   </div>
                 </div>
               ))
@@ -235,7 +263,7 @@ export default function Home() {
                   <BandCard
                     key={band.bandId}
                     band={{
-                      id: band.bandId,
+                      id: band.userId,
                       title: band.bandName,
                       image: "/placeholder.svg?height=200&width=150",
                       rating: band.averageRating,

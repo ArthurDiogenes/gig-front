@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "../ui/dropdown-menu";
+import { getUser } from "@/services/users";
 
 const CustomButton = ({
   children,
@@ -28,6 +29,16 @@ const CustomButton = ({
 
 export default function MenuHamburger() {
   const navigate = useNavigate();
+  const user = getUser();
+
+  const handleProfile = () => {
+    if (!user) return;
+    if (user.role === "band") {
+      navigate(`/bandas/${user.id}`);
+    } else {
+      navigate("/perfil-estabelecimento");
+    }
+  };
 
   return (
     <DropdownMenu modal={false}>
@@ -35,11 +46,7 @@ export default function MenuHamburger() {
         ☰
         <DropdownMenuContent className="text-lg flex flex-col mx-3 my-6">
           <DropdownMenuItem>
-            <CustomButton
-              onClick={() => (window.location.href = "/meu-perfil")}
-            >
-              Perfil
-            </CustomButton>
+            <CustomButton onClick={handleProfile}>Perfil</CustomButton>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <CustomButton onClick={() => (window.location.href = "/mensagens")}>
@@ -47,7 +54,9 @@ export default function MenuHamburger() {
             </CustomButton>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <CustomButton onClick={() => (window.location.href = "/meu-perfil")}>
+            <CustomButton
+              onClick={() => (window.location.href = "/meu-perfil")}
+            >
               Painel Administrador
             </CustomButton>
           </DropdownMenuItem>

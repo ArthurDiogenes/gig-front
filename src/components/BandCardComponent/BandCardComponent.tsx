@@ -2,7 +2,7 @@ import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface Band {
-  id: number;
+  id: string;
   title: string;
   image: string | null;
   rating: number;

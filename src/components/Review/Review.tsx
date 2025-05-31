@@ -19,12 +19,13 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import api from "@/services/api";
 import { Rating } from "../ui/rating";
+import { getUser } from "@/services/users";
 
 export type ReviewDto = {
   comment: string;
   rating: number;
   bandId: number;
-  venueId: string;
+  userId: string;
 };
 
 const formSchema = z.object({
@@ -33,12 +34,13 @@ const formSchema = z.object({
   }),
   rating: z.number().min(1).max(5),
   bandId: z.number().min(1),
-  venueId: z.string().uuid(),
+  userId: z.string().uuid(),
 });
 
 export default function Review({ band }: { band: BandProfileType }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const user = getUser();
 
   useEffect(() => {
     if (open) {
@@ -55,7 +57,7 @@ export default function Review({ band }: { band: BandProfileType }) {
       comment: "",
       rating: 0,
       bandId: band.id,
-      venueId: "fcf2d472-6baf-452a-8b06-76e0cdc2a9cb",
+      userId: user?.id,
     },
   });
 
@@ -92,7 +94,7 @@ export default function Review({ band }: { band: BandProfileType }) {
       comment: values.comment,
       rating: values.rating,
       bandId: values.bandId,
-      venueId: values.venueId,
+      userId: values.userId,
     };
 
     console.log("Dados do formulário:", values);
