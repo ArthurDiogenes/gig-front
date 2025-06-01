@@ -5,3 +5,11 @@ export type User = {
 	role: string;
 	avatar?: string;
 };
+
+export type Session = {
+	id: string;
+	name: string;
+	email: string;
+	role: string;
+	likedPosts: number[];
+};
