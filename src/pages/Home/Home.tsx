@@ -6,10 +6,7 @@ import { UserAvatar } from "@/components/UserAvatar/UserAvatar.tsx";
 import HomeNavbar from "@/components/Navbar/HomeNavbar.tsx";
 import GenreSelector from "@/components/GenreSelector/GenreSelector.tsx";
 import api from "@/services/api.ts";
-import {
-  useInfiniteQuery,
-  useQuery,
-} from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { useMemo, useRef } from "react";
 import useIntersectObserver from "@/hooks/useIntersectObserver.tsx";
@@ -80,7 +77,6 @@ export default function Home() {
       return response.data;
     },
   });
-
 
   useIntersectObserver({
     target: sentinelRef as React.RefObject<HTMLElement>,
@@ -183,10 +179,13 @@ export default function Home() {
               <EmptyPosts />
             ) : (
               groupedPosts?.map((post) => (
-                <Post 
+                <Post
                   key={post.id}
                   post={post}
-                  isLiked={session ? session.likedPosts.includes(post.id) : false} />
+                  isLiked={
+                    session ? session.likedPosts.includes(post.id) : false
+                  }
+                />
               ))
             )}
             {/* Sentinela para o scroll infinito */}

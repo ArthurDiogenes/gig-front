@@ -1,60 +1,66 @@
-import { useState } from 'react';
-import Navbar from '../../components/Navbar/Navbar';
-import styles from './EditarBanda.module.css';
-import api from '@/services/api';
-import { AxiosError } from 'axios';
-import { toast } from 'react-toastify';
-import { BandProfileIcon } from '@/utils/icons';
+import { useState } from "react";
+import Navbar from "../../components/Navbar/Navbar";
+import styles from "./EditarBanda.module.css";
+import api from "@/services/api";
+import { AxiosError } from "axios";
+import { toast } from "react-toastify";
+import { BandProfileIcon } from "@/utils/icons";
+import { useContractsData } from "@/hooks/useContractsData";
 
 const propostas = [
   {
     id: 1,
-    eventName: 'Noite do Pop',
-    data: '19/05/2025',
-    horario: '20:00 - 23:00',
-    tipo: 'Show ao vivo',
+    eventName: "Noite do Pop",
+    data: "19/05/2025",
+    horario: "20:00 - 23:00",
+    tipo: "Show ao vivo",
     valor: 1500,
-    local: 'Bar do Zé',
-    cep: '60415-150',
-    descricao: 'Apresentação ao vivo com músicas pop atuais e clássicas.',
-    endereco: 'Rua das Flores, 123, Centro',
-    contato: '(85) 99999-9999',
-    status: 'Pendente',
+    local: "Bar do Zé",
+    cep: "60415-150",
+    descricao: "Apresentação ao vivo com músicas pop atuais e clássicas.",
+    endereco: "Rua das Flores, 123, Centro",
+    contato: "(85) 99999-9999",
+    status: "Pendente",
   },
   {
     id: 2,
-    eventName: 'Pop & Rock Night',
-    data: '04/06/2025',
-    horario: '21:00 - 23:30',
-    tipo: 'Show acústico',
+    eventName: "Pop & Rock Night",
+    data: "04/06/2025",
+    horario: "21:00 - 23:30",
+    tipo: "Show acústico",
     valor: 1200,
     local: "Pub Rock'n Beer",
-    cep: '60422-200',
-    descricao: 'Uma noite especial de pop acústico em um ambiente descontraído.',
-    endereco: 'Av. Principal, 456, Bairro Fátima',
-    contato: '(85) 98888-8888',
-    status: 'Pendente',
+    cep: "60422-200",
+    descricao:
+      "Uma noite especial de pop acústico em um ambiente descontraído.",
+    endereco: "Av. Principal, 456, Bairro Fátima",
+    contato: "(85) 98888-8888",
+    status: "Pendente",
   },
 ];
 
-type SidebarOption = 'perfil' | 'contratos' | 'contrato' | 'dashboard';
+type SidebarOption = "perfil" | "contratos" | "contrato" | "dashboard";
 
 const EditarBanda = () => {
-  const [activeSection, setActiveSection] = useState<SidebarOption>('perfil');
+  const [activeSection, setActiveSection] = useState<SidebarOption>("perfil");
   const [carouselImages, setCarouselImages] = useState<string[]>([]);
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
-  const [bandName, setBandName] = useState('');
-  const [genre, setGenre] = useState('');
-  const [location, setLocation] = useState('');
-  const [description, setDescription] = useState('');
-  const [terms] = useState('');
-  const [twitter, setTwitter] = useState('');
-  const [facebook, setFacebook] = useState('');
-  const [instagram, setInstagram] = useState('');
+  const [bandName, setBandName] = useState("");
+  const [genre, setGenre] = useState("");
+  const [location, setLocation] = useState("");
+  const [description, setDescription] = useState("");
+  const [terms] = useState("");
+  const [twitter, setTwitter] = useState("");
+  const [facebook, setFacebook] = useState("");
+  const [instagram, setInstagram] = useState("");
 
-  const [statusTab, setStatusTab] = useState<'pendentes' | 'aceitas' | 'recusadas'>('pendentes');
+  const [statusTab, setStatusTab] = useState<
+    "pendentes" | "aceitas" | "recusadas"
+  >("pendentes");
   const [propostasEstado, setPropostasEstado] = useState(propostas);
+  const { data: contractsData } = useContractsData();
+  console.log("Contracts Data:", contractsData);
 
   const handleSave = async () => {
     const data = {
@@ -72,7 +78,7 @@ const EditarBanda = () => {
 
     try {
       await api.put(`/bands/${5}`, data);
-      toast.success('Perfil atualizado com sucesso!');
+      toast.success("Perfil atualizado com sucesso!");
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data.errors);
@@ -81,10 +87,10 @@ const EditarBanda = () => {
   };
 
   const sidebarOptions = [
-    { id: 'perfil', label: 'Perfil', icon: '👤' },
-    { id: 'contratos', label: 'Contratos', icon: '📋' },
-    { id: 'contrato', label: 'Contrato', icon: '📄' },
-    { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+    { id: "perfil", label: "Perfil", icon: "👤" },
+    { id: "contratos", label: "Contratos", icon: "📋" },
+    { id: "contrato", label: "Contrato", icon: "📄" },
+    { id: "dashboard", label: "Dashboard", icon: "📊" },
   ];
 
   const renderPerfilContent = () => (
@@ -101,13 +107,13 @@ const EditarBanda = () => {
             multiple
             onChange={(e) => {
               if (e.target.files) {
-                const filesArray = Array.from(e.target.files).map(file =>
+                const filesArray = Array.from(e.target.files).map((file) =>
                   URL.createObjectURL(file)
                 );
-                setCarouselImages(prev => [...prev, ...filesArray]);
+                setCarouselImages((prev) => [...prev, ...filesArray]);
               }
             }}
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
           />
         </div>
 
@@ -124,9 +130,15 @@ const EditarBanda = () => {
 
         <label htmlFor="profile-upload" className={styles.profileImageLabel}>
           {profileImage ? (
-            <img src={profileImage} alt="Perfil" className={styles.profileImage} />
+            <img
+              src={profileImage}
+              alt="Perfil"
+              className={styles.profileImage}
+            />
           ) : (
-            <BandProfileIcon style={{ width: '48px', height: '48px', color: '#000' }} />
+            <BandProfileIcon
+              style={{ width: "48px", height: "48px", color: "#000" }}
+            />
           )}
           <input
             id="profile-upload"
@@ -137,13 +149,15 @@ const EditarBanda = () => {
                 setProfileImage(URL.createObjectURL(e.target.files[0]));
               }
             }}
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
           />
         </label>
       </section>
 
       <h1 className={styles.title}>Editar Perfil da Banda</h1>
-      <p className={styles.subtitle}>Preencha as informações do perfil da banda abaixo.</p>
+      <p className={styles.subtitle}>
+        Preencha as informações do perfil da banda abaixo.
+      </p>
 
       <div className={styles.formGroup}>
         <label>
@@ -221,52 +235,67 @@ const EditarBanda = () => {
     <section className={styles.formSection}>
       <div className={styles.statusTabs}>
         <button
-          className={`${styles.statusTab} ${statusTab === 'pendentes' ? styles.active : ''}`}
-          onClick={() => setStatusTab('pendentes')}
+          className={`${styles.statusTab} ${
+            statusTab === "pendentes" ? styles.active : ""
+          }`}
+          onClick={() => setStatusTab("pendentes")}
         >
-          Pendentes ({propostasEstado.filter(p => p.status === 'Pendente').length})
+          Pendentes (
+          {propostasEstado.filter((p) => p.status === "Pendente").length})
         </button>
         <button
-          className={`${styles.statusTab} ${statusTab === 'aceitas' ? styles.active : ''}`}
-          onClick={() => setStatusTab('aceitas')}
+          className={`${styles.statusTab} ${
+            statusTab === "aceitas" ? styles.active : ""
+          }`}
+          onClick={() => setStatusTab("aceitas")}
         >
-          Aceitas ({propostasEstado.filter(p => p.status === 'Aceita').length})
+          Aceitas ({propostasEstado.filter((p) => p.status === "Aceita").length}
+          )
         </button>
         <button
-          className={`${styles.statusTab} ${statusTab === 'recusadas' ? styles.active : ''}`}
-          onClick={() => setStatusTab('recusadas')}
+          className={`${styles.statusTab} ${
+            statusTab === "recusadas" ? styles.active : ""
+          }`}
+          onClick={() => setStatusTab("recusadas")}
         >
-          Recusadas ({propostasEstado.filter(p => p.status === 'Recusada').length})
+          Recusadas (
+          {propostasEstado.filter((p) => p.status === "Recusada").length})
         </button>
       </div>
 
       <div className={styles.propostasContainer}>
         {propostasEstado
-          .filter(p => {
-            if (statusTab === 'pendentes') return p.status === 'Pendente';
-            if (statusTab === 'aceitas') return p.status === 'Aceita';
-            return p.status === 'Recusada';
+          .filter((p) => {
+            if (statusTab === "pendentes") return p.status === "Pendente";
+            if (statusTab === "aceitas") return p.status === "Aceita";
+            return p.status === "Recusada";
           })
-          .map(p => (
+          .map((p) => (
             <div key={p.id} className={styles.propostaCard}>
               <div className={styles.cardHeader}>
                 <h3>{p.eventName}</h3>
                 <span className={styles.statusBadge}>{p.status}</span>
               </div>
               <p>{p.tipo}</p>
-              <p>📅 {p.data} • {p.horario}</p>
-              <p>📍 {p.local} - {p.endereco} - CEP {p.cep}</p>
+              <p>
+                📅 {p.data} • {p.horario}
+              </p>
+              <p>
+                📍 {p.local} - {p.endereco} - CEP {p.cep}
+              </p>
               <p>💬 {p.descricao}</p>
               <p>📞 Contato: {p.contato}</p>
               <p className={styles.valor}>💰 R$ {p.valor.toFixed(2)}</p>
 
-              {p.status === 'Pendente' && (
+              {p.status === "Pendente" && (
                 <div className={styles.cardActions}>
                   <button
                     onClick={() =>
-                      setPropostasEstado(prev =>
-                        prev.map(item =>
-                          item.id === p.id ? { ...item, status: 'Aceita' } : item
+                      setPropostasEstado((prev) =>
+                        prev.map((item) =>
+                          item.id === p.id
+                            ? { ...item, status: "Aceita" }
+                            : item
                         )
                       )
                     }
@@ -276,9 +305,11 @@ const EditarBanda = () => {
                   </button>
                   <button
                     onClick={() =>
-                      setPropostasEstado(prev =>
-                        prev.map(item =>
-                          item.id === p.id ? { ...item, status: 'Recusada' } : item
+                      setPropostasEstado((prev) =>
+                        prev.map((item) =>
+                          item.id === p.id
+                            ? { ...item, status: "Recusada" }
+                            : item
                         )
                       )
                     }
@@ -309,14 +340,20 @@ const EditarBanda = () => {
 
   const renderContent = () => {
     switch (activeSection) {
-      case 'perfil':
+      case "perfil":
         return renderPerfilContent();
-      case 'contratos':
+      case "contratos":
         return renderContratosContent();
-      case 'contrato':
-        return renderPlaceholderContent('Contrato', 'Gerencie contratos individuais e documentação.');
-      case 'dashboard':
-        return renderPlaceholderContent('Dashboard', 'Visualize estatísticas e métricas da sua banda.');
+      case "contrato":
+        return renderPlaceholderContent(
+          "Contrato",
+          "Gerencie contratos individuais e documentação."
+        );
+      case "dashboard":
+        return renderPlaceholderContent(
+          "Dashboard",
+          "Visualize estatísticas e métricas da sua banda."
+        );
       default:
         return renderPerfilContent();
     }
@@ -337,21 +374,25 @@ const EditarBanda = () => {
                 <button
                   key={option.id}
                   className={`${styles.sidebarOption} ${
-                    activeSection === option.id ? styles.sidebarOptionActive : ''
+                    activeSection === option.id
+                      ? styles.sidebarOptionActive
+                      : ""
                   }`}
                   onClick={() => setActiveSection(option.id as SidebarOption)}
                 >
-                  <span className={styles.sidebarOptionIcon}>{option.icon}</span>
-                  <span className={styles.sidebarOptionLabel}>{option.label}</span>
+                  <span className={styles.sidebarOptionIcon}>
+                    {option.icon}
+                  </span>
+                  <span className={styles.sidebarOptionLabel}>
+                    {option.label}
+                  </span>
                 </button>
               ))}
             </nav>
           </aside>
 
           {/* Main Content */}
-          <div className={styles.content}>
-            {renderContent()}
-          </div>
+          <div className={styles.content}>{renderContent()}</div>
         </div>
       </main>
     </>
