@@ -6,31 +6,35 @@ import { UserAvatar } from "@/components/UserAvatar/UserAvatar.tsx";
 import HomeNavbar from "@/components/Navbar/HomeNavbar.tsx";
 import GenreSelector from "@/components/GenreSelector/GenreSelector.tsx";
 import api from "@/services/api.ts";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useQuery,
+} from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { useMemo, useRef } from "react";
 import useIntersectObserver from "@/hooks/useIntersectObserver.tsx";
 import PostsError from "./Error.tsx";
 import EmptyPosts from "./Empty.tsx";
-import PostComments from "@/components/Comments/index.tsx";
+import { useSession } from "@/hooks/useSession.tsx";
+import Post from "@/components/Post/index.tsx";
 import { getUser } from "@/services/users/index.ts";
-import { PickOutlinedIcon } from "@/utils/icons.tsx";
 
-type Post = {
+export type PostType = {
   id: number;
   content: string;
   imageUrl: string;
   createdAt: string;
-  likes: number;
+  likesCount: number;
   user: {
     id: number;
     name: string;
   };
+  isLiked: boolean;
   commentsCount: number;
 };
 
 export type PaginatedPost = {
-  posts: Post[];
+  posts: PostType[];
   page: number;
   hasNextPage: boolean;
   totalPages: number;
@@ -67,6 +71,8 @@ export default function Home() {
       lastPage.hasNextPage ? lastPage.page + 1 : undefined,
   });
 
+  const { data: session } = useSession();
+
   const { data: featuredBands } = useQuery({
     queryKey: ["featuredBands"],
     queryFn: async () => {
@@ -75,6 +81,7 @@ export default function Home() {
     },
   });
 
+
   useIntersectObserver({
     target: sentinelRef as React.RefObject<HTMLElement>,
     hasNextPage: hasNextPage,
@@ -82,7 +89,7 @@ export default function Home() {
   });
 
   const groupedPosts = useMemo(() => {
-    return data?.pages.reduce((acc: Post[], page) => {
+    return data?.pages.reduce((acc: PostType[], page) => {
       return [...acc, ...page.posts];
     }, []);
   }, [data?.pages]);
@@ -176,60 +183,10 @@ export default function Home() {
               <EmptyPosts />
             ) : (
               groupedPosts?.map((post) => (
-                <div
+                <Post 
                   key={post.id}
-                  className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5 transition-all duration-300 hover:shadow-2xl hover:shadow-black/10 hover:-translate-y-1"
-                >
-                  <div className="flex items-center gap-4 mb-6">
-                    <UserAvatar
-                      user={{
-                        name: post.user?.name ?? "",
-                        image: `/placeholder.svg?height=40&width=40`,
-                      }}
-                      className="w-10 h-10 ring-2 ring-white shadow-md"
-                    />
-                    <div>
-                      <Link
-                        to={`/bandas/${post.user.id}`}
-                        className="text-lg font-semibold text-slate-800 hover:text-slate-600 transition-colors duration-200"
-                      >
-                        {post.user?.name}
-                      </Link>
-                      <p className="text-sm text-slate-500 font-medium">
-                        Há 2 horas
-                      </p>
-                    </div>
-                  </div>
-                  <p className="mb-6 text-slate-700 leading-relaxed">
-                    {post.content}
-                  </p>
-                  <div className="mb-6 rounded-xl overflow-hidden shadow-lg">
-                    {post.imageUrl && (
-                      <img
-                        src={post.imageUrl}
-                        alt={`Imagem do post ${post.id}`}
-                        className="object-cover w-full h-auto"
-                        width={600}
-                        height={300}
-                      />
-                    )}
-                  </div>
-                  <div className="flex gap-6 pt-4 border-t border-slate-200/60">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="hover:bg-slate-100/80 transition-all duration-200 rounded-lg"
-                    >
-                      <PickOutlinedIcon
-                        style={{
-                          color: "#ff0047",
-                        }}
-                      />{" "}
-                      {post.likes} curtidas
-                    </Button>
-                    <PostComments id={post.id} />
-                  </div>
-                </div>
+                  post={post}
+                  isLiked={session ? session.likedPosts.includes(post.id) : false} />
               ))
             )}
             {/* Sentinela para o scroll infinito */}
