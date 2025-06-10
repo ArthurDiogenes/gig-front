@@ -10,8 +10,8 @@ import BandProfile from "../pages/BandProfile/BandProfile";
 import PerfilEstabelecimento from "../pages/PerfilEstabelecimento/PerfilEstabelecimento";
 import Termos from "../pages/TermosCondicoes/TermosCondicoes";
 import TelaCadastroEstabelecimento from "../pages/TelaCadastroEstabelecimento/TelaCadastroEstabelecimento";
-import EditarBanda from "../pages/EditarBanda/EditarBanda";
 import Pesquisa from "../pages/Pesquisa/Pesquisa";
+import Admin from "@/pages/Admin/Admin";
 
 export default function AppRoutes() {
   return (
@@ -27,7 +27,7 @@ export default function AppRoutes() {
       <Route path="/bandas/:id" element={<BandProfile/>}/>
       <Route path="/venue/:id" element={<PerfilEstabelecimento/>}/>
       <Route path="/termos" element={<Termos/>}/>
-      <Route path="/meu-perfil" element={<EditarBanda/>}/>
+      <Route path="/meu-perfil" element={<Admin />}/>
 
       <Route path="/mensagens" element={<Mensagens/>}/>
 

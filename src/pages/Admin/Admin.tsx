@@ -8,6 +8,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getUser } from "@/services/users";
 import { Contract } from "@/types/contract";
 import EditBandForm from "./EditBandForm";
+import EditVenueForm from "./EditVenueForm";
 
 // Add interface for band data
 interface BandData {
@@ -24,8 +25,8 @@ interface BandData {
 
 type SidebarOption = "perfil" | "contratos";
 
-const EditarBanda = () => {
-  const [activeSection, setActiveSection] = useState<SidebarOption>("perfil")
+const Admin = () => {
+  const [activeSection, setActiveSection] = useState<SidebarOption>("perfil");
 
   const [statusTab, setStatusTab] = useState<
     "pendente" | "aceito" | "recusado"
@@ -46,11 +47,17 @@ const EditarBanda = () => {
   });
 
   // Fetch contracts data
-  const { data: contractsData, isLoading: contractsLoading, error: contractsError } = useQuery<Contract[]>({
+  const {
+    data: contractsData,
+    isLoading: contractsLoading,
+    error: contractsError,
+  } = useQuery<Contract[]>({
     queryKey: ["contracts", bandData?.id],
     queryFn: async () => {
       if (!bandData?.id) throw new Error("Band not found");
-      const response = await api.get<Contract[]>(`/contract/band/${bandData.id}`);
+      const response = await api.get<Contract[]>(
+        `/contract/band/${bandData.id}`
+      );
       return response.data;
     },
     enabled: !!bandData?.id,
@@ -58,8 +65,14 @@ const EditarBanda = () => {
 
   // Mutation for updating contract status
   const updateContractMutation = useMutation({
-    mutationFn: async ({ contractId, action }: { contractId: string; action: 'confirm' | 'cancel' }) => {
-      const endpoint = action === 'confirm' ? 'confirm' : 'cancel';
+    mutationFn: async ({
+      contractId,
+      action,
+    }: {
+      contractId: string;
+      action: "confirm" | "cancel";
+    }) => {
+      const endpoint = action === "confirm" ? "confirm" : "cancel";
       const response = await api.patch(`/contract/${endpoint}/${contractId}`);
       return response.data;
     },
@@ -75,18 +88,18 @@ const EditarBanda = () => {
 
   // Function to handle contract acceptance
   const handleAcceptContract = (contractId: string) => {
-    updateContractMutation.mutate({ contractId, action: 'confirm' });
+    updateContractMutation.mutate({ contractId, action: "confirm" });
   };
 
   // Function to handle contract rejection
   const handleRejectContract = (contractId: string) => {
-    updateContractMutation.mutate({ contractId, action: 'cancel' });
+    updateContractMutation.mutate({ contractId, action: "cancel" });
   };
 
   // Filter contracts by status
   const getFilteredContracts = () => {
     if (!contractsData) return [];
-    
+
     return contractsData.filter((contract) => {
       if (statusTab === "pendente") return contract.isConfirmed === null;
       if (statusTab === "aceito") return contract.isConfirmed === true;
@@ -97,33 +110,39 @@ const EditarBanda = () => {
 
   // Format currency
   const formatCurrency = (value: number | string) => {
-    const numValue = typeof value === 'string' ? parseFloat(value) : value;
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    const numValue = typeof value === "string" ? parseFloat(value) : value;
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(numValue);
   };
 
   // Format date
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+    return new Date(dateString).toLocaleDateString("pt-BR");
   };
 
   const sidebarOptions = [
     { id: "perfil", label: "Perfil", icon: "👤" },
-    { id: "contratos", label: "Contratos", icon: "📋" }
+    { id: "contratos", label: "Contratos", icon: "📋" },
   ];
 
-  const renderPerfilContent = () => (
-    <EditBandForm />
-  );
+  const renderPerfilContent = () => {
+    if (user?.role === "band") {
+      return <EditBandForm />;
+    } else {
+      return <EditVenueForm />;
+    }
+  };
 
   const renderContratosContent = () => {
     const filteredContracts = getFilteredContracts();
     const contractCounts = {
-      pendente: contractsData?.filter(c => c.isConfirmed === null).length || 0,
-      aceito: contractsData?.filter(c => c.isConfirmed === true).length || 0,
-      recusado: contractsData?.filter(c => c.isConfirmed === false).length || 0,
+      pendente:
+        contractsData?.filter((c) => c.isConfirmed === null).length || 0,
+      aceito: contractsData?.filter((c) => c.isConfirmed === true).length || 0,
+      recusado:
+        contractsData?.filter((c) => c.isConfirmed === false).length || 0,
     };
 
     if (contractsLoading) {
@@ -193,19 +212,21 @@ const EditarBanda = () => {
                 <div className={styles.cardHeader}>
                   <h3>{contract.eventName}</h3>
                   <span className={styles.statusBadge}>
-                    {contract.isConfirmed === null 
-                      ? "Pendente" 
-                      : contract.isConfirmed 
-                        ? "Aceita" 
-                        : "Recusada"}
+                    {contract.isConfirmed === null
+                      ? "Pendente"
+                      : contract.isConfirmed
+                      ? "Aceita"
+                      : "Recusada"}
                   </span>
                 </div>
                 <p>{contract.eventType}</p>
                 <p>
-                  📅 {formatDate(contract.eventDate)} • {contract.startTime} - {contract.endTime}
+                  📅 {formatDate(contract.eventDate)} • {contract.startTime} -{" "}
+                  {contract.endTime}
                 </p>
                 <p>
-                  📍 {contract.requester.name} - {contract.requester.address}, {contract.requester.city} - CEP {contract.requester.cep}
+                  📍 {contract.requester.name} - {contract.requester.address},{" "}
+                  {contract.requester.city} - CEP {contract.requester.cep}
                 </p>
                 {contract.additionalDetails && (
                   <p>💬 {contract.additionalDetails}</p>
@@ -213,7 +234,9 @@ const EditarBanda = () => {
                 {contract.requester.contact && (
                   <p>📞 Contato: {contract.requester.contact}</p>
                 )}
-                <p className={styles.valor}>💰 {formatCurrency(contract.budget)}</p>
+                <p className={styles.valor}>
+                  💰 {formatCurrency(contract.budget)}
+                </p>
 
                 {contract.isConfirmed === null && (
                   <div className={styles.cardActions}>
@@ -222,14 +245,18 @@ const EditarBanda = () => {
                       className={styles.aceitarButton}
                       disabled={updateContractMutation.isPending}
                     >
-                      {updateContractMutation.isPending ? "Processando..." : "Aceitar"}
+                      {updateContractMutation.isPending
+                        ? "Processando..."
+                        : "Aceitar"}
                     </button>
                     <button
                       onClick={() => handleRejectContract(contract.id)}
                       className={styles.recusarButton}
                       disabled={updateContractMutation.isPending}
                     >
-                      {updateContractMutation.isPending ? "Processando..." : "Recusar"}
+                      {updateContractMutation.isPending
+                        ? "Processando..."
+                        : "Recusar"}
                     </button>
                   </div>
                 )}
@@ -292,4 +319,4 @@ const EditarBanda = () => {
   );
 };
 
-export default EditarBanda;
+export default Admin;
