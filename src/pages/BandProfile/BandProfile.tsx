@@ -30,6 +30,10 @@ export type BandProfileType = {
   city: string;
   contact?: string;
   genre: string;
+  members: string;
+  twitter?: string;
+  facebook?: string;
+  instagram?: string;
   description: string;
   createdAt: string;
   userId: UserType;
@@ -297,7 +301,9 @@ const BandProfile = () => {
                   <UserIcon
                     style={{ width: "20px", height: "20px", color: "#64748b" }}
                   />
-                  <span className="text-slate-700 font-medium">4 membros</span>
+                  <span className="text-slate-700 font-medium">
+                    {band.members || "Carreira solo"}
+                  </span>
                 </li>
                 <li className="flex items-center gap-4 p-3 bg-slate-50/60 rounded-lg border border-slate-200/40">
                   <LocationIcon
@@ -329,7 +335,18 @@ const BandProfile = () => {
                     style={{ width: "20px", height: "20px", color: "#64748b" }}
                   />
                   <span className="text-slate-500 font-medium">
-                    Twitter/X não informado
+                    {band.twitter ? (
+                      <a
+                        href={band.twitter}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline"
+                      >
+                        Twitter
+                      </a>
+                    ) : (
+                      "Twitter não informado"
+                    )}
                   </span>
                 </li>
                 <li className="flex items-center gap-4 p-3 bg-slate-50/60 rounded-lg border border-slate-200/40 opacity-50">
@@ -337,7 +354,18 @@ const BandProfile = () => {
                     style={{ width: "20px", height: "20px", color: "#64748b" }}
                   />
                   <span className="text-slate-500 font-medium">
-                    Facebook não informado
+                    {band.facebook ? (
+                      <a
+                        href={band.facebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline"
+                      >
+                        Facebook
+                      </a>
+                    ) : (
+                      "Facebook não informado"
+                    )}
                   </span>
                 </li>
                 <li className="flex items-center gap-4 p-3 bg-slate-50/60 rounded-lg border border-slate-200/40 opacity-50">
@@ -345,7 +373,18 @@ const BandProfile = () => {
                     style={{ width: "20px", height: "20px", color: "#64748b" }}
                   />
                   <span className="text-slate-500 font-medium">
-                    Instagram não informado
+                    {band.instagram ? (
+                      <a
+                        href={band.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline"
+                      >
+                        Instagram
+                      </a>
+                    ) : (
+                      "Instagram não informado"
+                    )}
                   </span>
                 </li>
               </ul>
