@@ -103,7 +103,7 @@ export default function Post({
       likePostMutation(post.id);
     }
   };
-
+  
   return (
     <div
       key={post.id}
@@ -113,7 +113,7 @@ export default function Post({
         <UserAvatar
           user={{
             name: post.user?.name ?? "",
-            image: `/placeholder.svg?height=40&width=40`,
+            image: post.user.avatar ?? `/placeholder.svg?height=40&width=40`,
           }}
           className="w-10 h-10 ring-2 ring-white shadow-md"
         />
