@@ -354,14 +354,6 @@ export default function Pesquisa() {
           <>Nenhum {activeTab === 'bandas' ? 'banda' : 'estabelecimento'} encontrado.</>
         )}
       </p>
-      <div className="text-sm text-gray-500">
-        <p>Dicas para melhorar sua busca:</p>
-        <ul className="list-disc list-inside mt-2 space-y-1">
-          <li>Verifique a ortografia</li>
-          <li>Tente termos mais gerais</li>
-          <li>Use palavras-chave diferentes</li>
-        </ul>
-      </div>
     </div>
   );
 

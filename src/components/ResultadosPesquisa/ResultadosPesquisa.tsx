@@ -118,15 +118,6 @@ export default function ResultadosPesquisa({
         <p className={styles.emptyText}>
           Não encontramos resultados para "<strong>{termo}</strong>".
         </p>
-        <div className={styles.sugestoes}>
-          <p>Dicas para melhorar sua busca:</p>
-          <ul>
-            <li>Verifique a ortografia das palavras</li>
-            <li>Tente usar termos mais gerais</li>
-            <li>Use sinônimos ou palavras relacionadas</li>
-            <li>Remova alguns filtros aplicados</li>
-          </ul>
-        </div>
       </div>
     );
   }
