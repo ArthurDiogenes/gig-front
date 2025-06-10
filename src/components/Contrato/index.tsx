@@ -27,10 +27,11 @@ import { ptBR } from 'date-fns/locale';
 import { Textarea } from '../ui/textarea';
 import { Calendar } from '../ui/calendar';
 import { useEffect, useState } from 'react';
-import { redirect } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import api from '@/services/api';
+import { getUser } from '@/services/users';
 
 export type ContractDTO = {
 	eventName: string;
@@ -43,6 +44,17 @@ export type ContractDTO = {
 	isConfirmed?: boolean;
 	requesterId: string;
 	providerId: number;
+};
+
+// Add type for venue data
+type VenueData = {
+	id: string;
+	name: string;
+	type: string;
+	user: {
+		id: string;
+		role: string;
+	};
 };
 
 const formSchema = z.object({
@@ -70,6 +82,19 @@ const formSchema = z.object({
 
 export default function HireBandForm({ band }: { band: BandProfileType }) {
 	const [open, setOpen] = useState(false);
+	const navigate = useNavigate();
+	const user = getUser();
+
+	// Get venue data for the current user
+	const { data: venueData, isLoading: venueLoading } = useQuery<VenueData>({
+		queryKey: ['venue', user?.id],
+		queryFn: async () => {
+			if (!user?.id) throw new Error('User not found');
+			const response = await api.get<VenueData>(`/venues/user/${user.id}`);
+			return response.data;
+		},
+		enabled: !!user?.id && user?.role === 'venue',
+	});
 
 	useEffect(() => {
 		if (open) {
@@ -93,37 +118,55 @@ export default function HireBandForm({ band }: { band: BandProfileType }) {
 	});
 
 	const handleOpen = () => {
-		const token = sessionStorage.getItem('token');
-		if (!token) redirect('/login');
+		// Fix: Check localStorage instead of sessionStorage
+		const token = localStorage.getItem('token');
+		if (!token) {
+			navigate('/login');
+			return;
+		}
+
+		// Check if user is a venue
+		if (!user || user.role !== 'venue') {
+			toast.error('Apenas estabelecimentos podem contratar bandas');
+			return;
+		}
+
 		setOpen(true);
 	};
 
-	const { mutate: submitContract } = useMutation({
+	const { mutate: submitContract, isPending } = useMutation({
 		mutationFn: async (data: ContractDTO) => {
-			// Aqui você pode implementar a lógica para enviar a proposta
-			await api.post('/contract', data);
-			console.log('Dados enviados:', data);
+			const response = await api.post('/contract', data);
+			return response.data;
 		},
 		onSuccess: () => {
-			// Aqui você pode implementar a lógica para lidar com o sucesso do envio
 			toast.success('Proposta enviada com sucesso!');
-			console.log('Proposta enviada com sucesso!');
-		},
-		onError: (error) => {
-			// Aqui você pode implementar a lógica para lidar com erros
-			toast.error('Erro ao enviar proposta. Tente novamente.');
-			console.error('Erro ao enviar proposta:', error);
-		},
-		onSettled: () => {
-			// Aqui você pode implementar a lógica para lidar com o estado final
 			setOpen(false);
-			console.log('Proposta enviada.');
+			form.reset();
+		},
+		onError: (error: unknown) => {
+			console.error('Erro ao enviar proposta:', error);
+			
+			// Type guard to check if error is an AxiosError
+			if (error && typeof error === 'object' && 'response' in error) {
+				const axiosError = error as { response?: { data?: { message?: string } } };
+				const errorMessage = axiosError.response?.data?.message || 'Erro ao enviar proposta. Tente novamente.';
+				toast.error(errorMessage);
+			} else {
+				toast.error('Erro ao enviar proposta. Tente novamente.');
+			}
 		},
 	});
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
-		// Transformar os dados para o formato do DTO
-		const dtoData = {
+		// Check if venue data is available
+		if (!venueData?.id) {
+			toast.error('Erro: Dados do estabelecimento não encontrados');
+			return;
+		}
+
+		// Transform form data to DTO format
+		const dtoData: ContractDTO = {
 			eventName: values.eventName,
 			eventDate: values.data,
 			startTime: values.horarioInicial,
@@ -133,13 +176,14 @@ export default function HireBandForm({ band }: { band: BandProfileType }) {
 				values.orcamento.replace('.', '').replace(',', '.')
 			),
 			additionalDetails: values.detalhes,
-			isConfirmed: values.isConfirmed,
-			requesterId: '19850cb2-f86d-466d-938d-4542f2b6f8df', // UUID padrão
-			providerId: band.id, // ID da banda
+			isConfirmed: values.isConfirmed, // Set default value
+			requesterId: venueData.id, // Fix: Use actual venue ID
+			providerId: band.id,
 		};
 
 		console.log('Dados do formulário:', values);
 		console.log('Dados para envio (DTO):', dtoData);
+		
 		submitContract(dtoData);
 	}
 
@@ -151,6 +195,16 @@ export default function HireBandForm({ band }: { band: BandProfileType }) {
 		'Evento Corporativo',
 		'Outro',
 	];
+
+	// Show loading state while venue data is being fetched
+	if (venueLoading) {
+		return <Button disabled>Carregando...</Button>;
+	}
+
+	// Show error if user is not a venue
+	if (user && user.role !== 'venue') {
+		return null; // Don't show the button for non-venue users
+	}
 
 	return (
 		<>
@@ -167,7 +221,9 @@ export default function HireBandForm({ band }: { band: BandProfileType }) {
 					onClick={() => setOpen(false)}
 				/>
 			)}
-			<Button type='button' onClick={handleOpen}>Contratar</Button>
+			<Button type='button' onClick={handleOpen}>
+				Contratar
+			</Button>
 			<Dialog open={open} onOpenChange={setOpen} modal={false}>
 				<DialogContent className="sm:max-w-[500px]">
 					<DialogHeader>
@@ -182,7 +238,7 @@ export default function HireBandForm({ band }: { band: BandProfileType }) {
 
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-							{/* Nome do Evento */}
+							{/* Event Name */}
 							<FormField
 								control={form.control}
 								name="eventName"
@@ -202,7 +258,7 @@ export default function HireBandForm({ band }: { band: BandProfileType }) {
 								)}
 							/>
 
-							{/* Data do Evento */}
+							{/* Event Date */}
 							<FormField
 								control={form.control}
 								name="data"
@@ -244,9 +300,8 @@ export default function HireBandForm({ band }: { band: BandProfileType }) {
 								)}
 							/>
 
-							{/* Horários */}
+							{/* Time Fields */}
 							<div className="grid grid-cols-2 gap-4">
-								{/* Horário Inicial */}
 								<FormField
 									control={form.control}
 									name="horarioInicial"
@@ -264,7 +319,6 @@ export default function HireBandForm({ band }: { band: BandProfileType }) {
 									)}
 								/>
 
-								{/* Horário Final */}
 								<FormField
 									control={form.control}
 									name="horarioFinal"
@@ -283,7 +337,7 @@ export default function HireBandForm({ band }: { band: BandProfileType }) {
 								/>
 							</div>
 
-							{/* Tipo de Evento */}
+							{/* Event Type */}
 							<FormField
 								control={form.control}
 								name="tipoEvento"
@@ -313,7 +367,7 @@ export default function HireBandForm({ band }: { band: BandProfileType }) {
 								)}
 							/>
 
-							{/* Orçamento */}
+							{/* Budget */}
 							<FormField
 								control={form.control}
 								name="orcamento"
@@ -327,7 +381,6 @@ export default function HireBandForm({ band }: { band: BandProfileType }) {
 												{...field}
 												className=" border-2 border-purple-200 focus:border-purple-400"
 												onChange={(e) => {
-													// Formata o valor para moeda
 													const value = e.target.value.replace(/\D/g, '');
 													const formattedValue = (
 														Number(value) / 100
@@ -343,7 +396,7 @@ export default function HireBandForm({ band }: { band: BandProfileType }) {
 								)}
 							/>
 
-							{/* Detalhes adicionais */}
+							{/* Additional Details */}
 							<FormField
 								control={form.control}
 								name="detalhes"
@@ -366,8 +419,9 @@ export default function HireBandForm({ band }: { band: BandProfileType }) {
 							<Button
 								type="submit"
 								className="w-full text-lg font-medium"
+								disabled={isPending}
 							>
-								Enviar Proposta
+								{isPending ? "Enviando..." : "Enviar Proposta"}
 							</Button>
 						</form>
 					</Form>
