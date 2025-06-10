@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, AlertCircle, Grid, List } from 'lucide-react';
 import styles from './ResultadosPesquisa.module.css';
 import { BandCard } from '../BandCardComponent/BandCardComponent';
 import CardMusico from '../CardMusico/CardMusico';
@@ -8,20 +8,20 @@ import CardMusico from '../CardMusico/CardMusico';
 export type ResultadoTipo = 'banda' | 'estabelecimento';
 
 export interface ResultadoBanda {
-  id: number;
+  id: string; // Changed to string to match BandCard expectations
   tipo: 'banda';
   title: string;
-  profilePicture: string; // UPDATED: image -> profilePicture
+  profilePicture: string;
   year: string;
   rating: number;
   genre: string;
 }
 
 export interface ResultadoEstabelecimento {
-  id: number;
+  id: string; // Changed to string for consistency
   tipo: 'estabelecimento';
   name: string;
-  profilePicture: string; // UPDATED: image -> profilePicture
+  profilePicture: string;
   genre: string;
 }
 
@@ -36,6 +36,8 @@ interface ResultadosPesquisaProps {
   totalPaginas: number;
   onChangePagina: (pagina: number) => void;
   className?: string;
+  error?: boolean;
+  onRetry?: () => void;
 }
 
 export default function ResultadosPesquisa({ 
@@ -46,7 +48,9 @@ export default function ResultadosPesquisa({
   paginaAtual,
   totalPaginas,
   onChangePagina,
-  className
+  className,
+  error = false,
+  onRetry
 }: ResultadosPesquisaProps) {
   const [visualizacao, setVisualizacao] = useState<'grid' | 'lista'>('grid');
   
@@ -57,8 +61,7 @@ export default function ResultadosPesquisa({
           band={{
             id: resultado.id,
             title: resultado.title,
-            profilePicture: resultado.profilePicture || '/placeholder.svg', // UPDATED: use profilePicture
-            year: resultado.year,
+            profilePicture: resultado.profilePicture,
             rating: resultado.rating
           }}
         />
@@ -68,12 +71,33 @@ export default function ResultadosPesquisa({
         <CardMusico 
           name={resultado.name}
           genre={resultado.genre}
-          profilePicture={resultado.profilePicture || '/placeholder.svg'} // UPDATED: use profilePicture
+          profilePicture={resultado.profilePicture}
           onClick={() => console.log(`Clicou em ${resultado.name}`)}
         />
       );
     }
   };
+
+  // Estado de erro
+  if (error) {
+    return (
+      <div className={`${styles.emptyContainer} ${className || ''}`}>
+        <AlertCircle size={48} className={styles.emptyIcon} />
+        <h3 className={styles.emptyTitle}>Erro ao carregar resultados</h3>
+        <p className={styles.emptyText}>
+          Ocorreu um erro ao buscar os resultados. Tente novamente.
+        </p>
+        {onRetry && (
+          <button 
+            onClick={onRetry}
+            className="mt-4 px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors"
+          >
+            Tentar novamente
+          </button>
+        )}
+      </div>
+    );
+  }
 
   // Estado de carregamento
   if (isLoading) {
@@ -86,7 +110,7 @@ export default function ResultadosPesquisa({
   }
 
   // Estado de nenhum resultado
-  if (resultados.length === 0) {
+  if (resultados.length === 0 && !isLoading) {
     return (
       <div className={`${styles.emptyContainer} ${className || ''}`}>
         <AlertCircle size={48} className={styles.emptyIcon} />
@@ -94,9 +118,59 @@ export default function ResultadosPesquisa({
         <p className={styles.emptyText}>
           Não encontramos resultados para "<strong>{termo}</strong>".
         </p>
+        <div className={styles.sugestoes}>
+          <p>Dicas para melhorar sua busca:</p>
+          <ul>
+            <li>Verifique a ortografia das palavras</li>
+            <li>Tente usar termos mais gerais</li>
+            <li>Use sinônimos ou palavras relacionadas</li>
+            <li>Remova alguns filtros aplicados</li>
+          </ul>
+        </div>
       </div>
     );
   }
+
+  // Função para gerar números de página inteligentes
+  const generatePageNumbers = () => {
+    const pages: (number | string)[] = [];
+    const maxVisiblePages = 7;
+
+    if (totalPaginas <= maxVisiblePages) {
+      // Se temos poucas páginas, mostra todas
+      for (let i = 1; i <= totalPaginas; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Sempre mostra a primeira página
+      pages.push(1);
+
+      if (paginaAtual <= 4) {
+        // Próximo ao início
+        for (let i = 2; i <= 5; i++) {
+          pages.push(i);
+        }
+        if (totalPaginas > 6) pages.push('...');
+        pages.push(totalPaginas);
+      } else if (paginaAtual >= totalPaginas - 3) {
+        // Próximo ao final
+        if (totalPaginas > 6) pages.push('...');
+        for (let i = totalPaginas - 4; i <= totalPaginas; i++) {
+          if (i > 1) pages.push(i);
+        }
+      } else {
+        // No meio
+        pages.push('...');
+        for (let i = paginaAtual - 1; i <= paginaAtual + 1; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(totalPaginas);
+      }
+    }
+
+    return pages;
+  };
 
   return (
     <div className={`${styles.container} ${className || ''}`}>
@@ -117,31 +191,24 @@ export default function ResultadosPesquisa({
             className={`${styles.viewButton} ${visualizacao === 'grid' ? styles.active : ''}`}
             onClick={() => setVisualizacao('grid')}
             aria-label="Visualização em grid"
+            title="Visualização em grade"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2" />
-              <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2" />
-              <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2" />
-              <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2" />
-            </svg>
+            <Grid size={16} />
           </button>
           <button 
             className={`${styles.viewButton} ${visualizacao === 'lista' ? styles.active : ''}`}
             onClick={() => setVisualizacao('lista')}
             aria-label="Visualização em lista"
+            title="Visualização em lista"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M3 5H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              <path d="M3 12H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              <path d="M3 19H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
+            <List size={16} />
           </button>
         </div>
       </div>
 
       <div className={`${styles.resultadosGrid} ${visualizacao === 'lista' ? styles.listaView : ''}`}>
-        {resultados.map((resultado, index) => (
-          <div key={`${resultado.tipo}-${resultado.id || index}`} className={styles.resultadoItem}>
+        {resultados.map((resultado) => (
+          <div key={`${resultado.tipo}-${resultado.id}`} className={styles.resultadoItem}>
             {renderResultado(resultado)}
           </div>
         ))}
@@ -154,42 +221,35 @@ export default function ResultadosPesquisa({
             disabled={paginaAtual === 1}
             onClick={() => onChangePagina(paginaAtual - 1)}
             aria-label="Página anterior"
+            title="Página anterior"
           >
             <ChevronLeft size={16} />
           </button>
           
-          {Array.from({ length: totalPaginas }).map((_, index) => {
-            const pagina = index + 1;
-            // Mostrar sempre a primeira, a última e as páginas ao redor da atual
-            if (
-              pagina === 1 || 
-              pagina === totalPaginas || 
-              (pagina >= paginaAtual - 1 && pagina <= paginaAtual + 1)
-            ) {
-              return (
-                <button 
-                  key={pagina}
-                  className={`${styles.pageButton} ${paginaAtual === pagina ? styles.activePage : ''}`}
-                  onClick={() => onChangePagina(pagina)}
-                >
-                  {pagina}
-                </button>
-              );
-            } else if (
-              (pagina === paginaAtual - 2 && paginaAtual > 3) || 
-              (pagina === paginaAtual + 2 && paginaAtual < totalPaginas - 2)
-            ) {
-              // Mostrar reticências para indicar páginas ocultas
-              return <span key={pagina} className={styles.pageEllipsis}>...</span>;
-            }
-            return null;
-          })}
+          {generatePageNumbers().map((page, index) => (
+            page === '...' ? (
+              <span key={`ellipsis-${index}`} className={styles.pageEllipsis}>
+                ...
+              </span>
+            ) : (
+              <button 
+                key={`page-${page}`}
+                className={`${styles.pageButton} ${paginaAtual === page ? styles.activePage : ''}`}
+                onClick={() => onChangePagina(page as number)}
+                aria-label={`Ir para página ${page}`}
+                title={`Página ${page}`}
+              >
+                {page}
+              </button>
+            )
+          ))}
           
           <button 
             className={styles.pageButton}
             disabled={paginaAtual === totalPaginas}
             onClick={() => onChangePagina(paginaAtual + 1)}
             aria-label="Próxima página"
+            title="Próxima página"
           >
             <ChevronRight size={16} />
           </button>
