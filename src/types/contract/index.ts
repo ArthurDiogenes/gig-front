@@ -10,7 +10,6 @@ export type Contract = {
   isConfirmed: boolean | null;
   createdAt: string;
   updatedAt: string;
-
   provider: Provider;
   requester: Requester;
 };
