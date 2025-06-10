@@ -90,6 +90,10 @@ export default function Home() {
     }, []);
   }, [data?.pages]);
 
+  const handleGenreSelect = (genre: string) => {
+    navigate(`/pesquisa?q=${encodeURIComponent(genre)}`);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-white to-slate-100">
       <HomeNavbar />
@@ -240,11 +244,7 @@ export default function Home() {
               <h2 className="!mt-0 !mb-6 text-lg text-slate-800 font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
                 Categorias
               </h2>
-              <GenreSelector
-                onGenreSelect={(genero) =>
-                  navigate(`/genero/${genero.toLowerCase()}`)
-                }
-              />
+              <GenreSelector onGenreSelect={handleGenreSelect} />
             </div>
           </div>
         </div>
