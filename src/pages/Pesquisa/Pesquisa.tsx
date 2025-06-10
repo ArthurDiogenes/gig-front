@@ -2,14 +2,15 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
 import styles from './Pesquisa.module.css';
-import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import FiltrosPesquisa from '../../components/FiltrosPesquisa/FiltrosPesquisa';
 import { BandCard } from '../../components/BandCardComponent/BandCardComponent';
-import CardMusico from '../../components/CardMusico/CardMusico';
+import BarraPesquisa from '../../components/BarraPesquisa/BarraPesquisa';
 import api from '../../services/api';
 import { useQuery } from '@tanstack/react-query';
-
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import SearchNavbar from '../../components/Navbar/SearchNavbar';
 // Define interface for the API response
 interface BandSearchResponse {
   data: {
@@ -33,11 +34,31 @@ interface BandSearchResponse {
   lastPage: number;
 }
 
+interface VenueSearchResponse {
+  data: {
+    id: string;
+    name: string;
+    type: string;
+    city: string;
+    description?: string;
+    contact?: string;
+    address?: string;
+    cep?: string;
+    user?: {
+      id: string;
+      role: string;
+    };
+  }[];
+  total: number;
+  page: number;
+  lastPage: number;
+}
+
 // Definindo tipos para os resultados
 export type ResultadoTipo = 'banda' | 'estabelecimento';
 
 export interface ResultadoBanda {
-  id: string; // Changed to string to match BandCard expectations
+  id: string;
   tipo: 'banda';
   title: string;
   profilePicture: string;
@@ -47,20 +68,24 @@ export interface ResultadoBanda {
 }
 
 export interface ResultadoEstabelecimento {
-  id: string; // Changed to string for consistency
+  id: string;
   tipo: 'estabelecimento';
   name: string;
   profilePicture: string;
-  genre: string;
+  type: string;
+  city: string;
 }
 
 export type ResultadoPesquisa = ResultadoBanda | ResultadoEstabelecimento;
 
+type TabType = 'bandas' | 'estabelecimentos';
+
 export default function Pesquisa() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const queryFromUrl = searchParams.get('q') || '';
   
   const [termoPesquisa, setTermoPesquisa] = useState(queryFromUrl);
+  const [activeTab, setActiveTab] = useState<TabType>('bandas');
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [filtros, setFiltros] = useState({
     tipo: 'todos',
@@ -70,23 +95,24 @@ export default function Pesquisa() {
 
   useEffect(() => {
     setTermoPesquisa(queryFromUrl);
-    setPaginaAtual(1); // Reset page when search term changes
+    setPaginaAtual(1);
   }, [queryFromUrl]);
 
+  // Function to search bands
   const searchBandsFromAPI = async (): Promise<BandSearchResponse> => {
-    if (!termoPesquisa) {
-      return { data: [], total: 0, page: 1, lastPage: 1 };
-    }
-    
     try {
-      const response = await api.get('/bands/pesquisa', {
-        params: {
-          name: termoPesquisa,
-          page: paginaAtual,
-          limit: 10
-        }
-      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const params: any = {
+        page: paginaAtual,
+        limit: 10
+      };
       
+      // Only add name parameter if there's a search term
+      if (termoPesquisa.trim()) {
+        params.name = termoPesquisa;
+      }
+      
+      const response = await api.get('/bands/pesquisa', { params });
       return response.data;
     } catch (error) {
       console.error('Error searching bands:', error);
@@ -94,66 +120,184 @@ export default function Pesquisa() {
     }
   };
 
+  // Function to get all bands when no search term
+  const getAllBands = async (): Promise<BandSearchResponse> => {
+    try {
+      const response = await api.get('/bands', {
+        params: {
+          page: paginaAtual,
+          limit: 10
+        }
+      });
+      
+      // Transform the response to match the expected format
+      const bands = response.data;
+      const total = bands.length;
+      const lastPage = Math.ceil(total / 10);
+      
+      return {
+        data: bands,
+        total,
+        page: paginaAtual,
+        lastPage
+      };
+    } catch (error) {
+      console.error('Error fetching all bands:', error);
+      return { data: [], total: 0, page: paginaAtual, lastPage: 1 };
+    }
+  };
+
+  // Function to search venues
+  const searchVenuesFromAPI = async (): Promise<VenueSearchResponse> => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const params: any = {
+        page: paginaAtual,
+        limit: 10
+      };
+      
+      if (termoPesquisa.trim()) {
+        params.name = termoPesquisa;
+      }
+      
+      const response = await api.get('/venues', { params });
+      
+      // Transform the response to match the expected format
+      const venues = response.data;
+      const total = venues.length;
+      const lastPage = Math.ceil(total / 10);
+      
+      return {
+        data: venues,
+        total,
+        page: paginaAtual,
+        lastPage
+      };
+    } catch (error) {
+      console.error('Error searching venues:', error);
+      return { data: [], total: 0, page: paginaAtual, lastPage: 1 };
+    }
+  };
+
+  // Query for bands
   const { 
-    data: searchResults, 
-    isLoading,
-    error
+    data: bandsResults, 
+    isLoading: bandsLoading,
+    error: bandsError
   } = useQuery({
-    queryKey: ['search', termoPesquisa, paginaAtual],
-    queryFn: searchBandsFromAPI,
-    enabled: termoPesquisa.length > 0,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    queryKey: ['bands', termoPesquisa, paginaAtual],
+    queryFn: termoPesquisa.trim() ? searchBandsFromAPI : getAllBands,
+    staleTime: 1000 * 60 * 5,
   });
 
-  const convertToResultados = (): ResultadoPesquisa[] => {
-    if (!searchResults || !searchResults.data || searchResults.data.length === 0) {
+  // Query for venues
+  const { 
+    data: venuesResults, 
+    isLoading: venuesLoading,
+    error: venuesError
+  } = useQuery({
+    queryKey: ['venues', termoPesquisa, paginaAtual],
+    queryFn: searchVenuesFromAPI,
+    enabled: activeTab === 'estabelecimentos',
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const convertBandsToResultados = (): ResultadoBanda[] => {
+    if (!bandsResults || !bandsResults.data || bandsResults.data.length === 0) {
       return [];
     }
 
-    return searchResults.data
-      .filter(band => band.userId?.id) // Only include bands that have a userId
+    return bandsResults.data
+      .filter(band => band.userId?.id)
       .map(band => ({
-        id: band.userId!.id, // Use the userId.id for routing to the profile page
+        id: band.userId!.id,
         tipo: 'banda' as const,
         title: band.bandName,
-        profilePicture: '/placeholder.svg', // You might want to add this to the API response
+        profilePicture: '/placeholder.svg',
         year: new Date(band.createdAt).getFullYear().toString(),
-        rating: 4.5, // You might want to calculate this from reviews or get from API
+        rating: 4.5,
         genre: band.genre
+      }));
+  };
+
+  const convertVenuesToResultados = (): ResultadoEstabelecimento[] => {
+    if (!venuesResults || !venuesResults.data || venuesResults.data.length === 0) {
+      return [];
+    }
+
+    return venuesResults.data
+      .filter(venue => venue.user?.id)
+      .map(venue => ({
+        id: venue.user!.id,
+        tipo: 'estabelecimento' as const,
+        name: venue.name,
+        profilePicture: '/placeholder.svg',
+        type: venue.type,
+        city: venue.city
       }));
   };
 
   const applyFilters = (resultados: ResultadoPesquisa[]): ResultadoPesquisa[] => {
     return resultados.filter(item => {
-      // Filter by type
-      if (filtros.tipo !== 'todos') {
-        if (filtros.tipo === 'bandas' && item.tipo !== 'banda') return false;
-        if (filtros.tipo === 'estabelecimentos' && item.tipo !== 'estabelecimento') return false;
-      }
-      
-      // Filter by genre
-      if (filtros.genero && item.genre.toLowerCase() !== filtros.genero.toLowerCase()) {
+      // Filter by genre for bands
+      if (filtros.genero && item.tipo === 'banda' && item.genre.toLowerCase() !== filtros.genero.toLowerCase()) {
         return false;
       }
       
-      // City filter would need to be implemented based on your requirements
-      // For now, we'll skip it since the current API doesn't seem to filter by city
+      // Filter by city
+      if (filtros.cidade) {
+        if (item.tipo === 'banda') {
+          // For bands, we'd need to add city filtering logic
+          return true;
+        } else {
+          return item.city.toLowerCase().includes(filtros.cidade.toLowerCase());
+        }
+      }
       
       return true;
     });
   };
 
-  const resultadosFiltrados = applyFilters(convertToResultados());
-
   const handleFilterChange = (novosFiltros: { tipo: string; genero: string; cidade: string }) => {
     setFiltros(novosFiltros);
-    setPaginaAtual(1); // Reset to first page when filters change
+    setPaginaAtual(1);
   };
 
   const handlePageChange = (pagina: number) => {
     setPaginaAtual(pagina);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const handleSearch = (searchTerm: string) => {
+    setTermoPesquisa(searchTerm);
+    setPaginaAtual(1);
+    // Update URL params
+    if (searchTerm.trim()) {
+      setSearchParams({ q: searchTerm });
+    } else {
+      setSearchParams({});
+    }
+  };
+
+  const handleTabChange = (tab: TabType) => {
+    setActiveTab(tab);
+    setPaginaAtual(1);
+  };
+
+  // Get current results based on active tab
+  const getCurrentResults = () => {
+    if (activeTab === 'bandas') {
+      return applyFilters(convertBandsToResultados());
+    } else {
+      return applyFilters(convertVenuesToResultados());
+    }
+  };
+
+  const isLoading = activeTab === 'bandas' ? bandsLoading : venuesLoading;
+  const error = activeTab === 'bandas' ? bandsError : venuesError;
+  const currentResults = getCurrentResults();
+  const totalResultados = activeTab === 'bandas' ? (bandsResults?.total || 0) : (venuesResults?.total || 0);
+  const totalPaginas = activeTab === 'bandas' ? (bandsResults?.lastPage || 1) : (venuesResults?.lastPage || 1);
 
   const renderResultado = (resultado: ResultadoPesquisa) => {
     if (resultado.tipo === 'banda') {
@@ -169,12 +313,25 @@ export default function Pesquisa() {
       );
     } else {
       return (
-        <CardMusico 
-          name={resultado.name}
-          genre={resultado.genre}
-          profilePicture={resultado.profilePicture}
-          onClick={() => console.log(`Clicou em ${resultado.name}`)}
-        />
+        <Link 
+          to={`/venue/${resultado.id}`}
+          className="block overflow-hidden transition-transform rounded-lg shadow group hover:scale-105"
+        >
+          <div className="relative">
+            <img
+              src={resultado.profilePicture || "/placeholder.svg"}
+              alt={resultado.name}
+              className="object-cover w-full aspect-[2/3]"
+              width={300}
+              height={450}
+            />
+            <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
+              <h3 className="text-sm font-medium text-white">{resultado.name}</h3>
+              <p className="text-xs text-white/80">{resultado.type}</p>
+              <p className="text-xs text-white/60">{resultado.city}</p>
+            </div>
+          </div>
+        </Link>
       );
     }
   };
@@ -191,7 +348,11 @@ export default function Pesquisa() {
       <AlertCircle size={48} className="text-gray-400 mb-4" />
       <h3 className="text-xl font-semibold text-gray-900 mb-2">Nenhum resultado encontrado</h3>
       <p className="text-gray-600 mb-4">
-        Não encontramos resultados para "<strong>{termoPesquisa}</strong>".
+        {termoPesquisa ? (
+          <>Não encontramos resultados para "<strong>{termoPesquisa}</strong>".</>
+        ) : (
+          <>Nenhum {activeTab === 'bandas' ? 'banda' : 'estabelecimento'} encontrado.</>
+        )}
       </p>
       <div className="text-sm text-gray-500">
         <p>Dicas para melhorar sua busca:</p>
@@ -220,12 +381,9 @@ export default function Pesquisa() {
     </div>
   );
 
-  const totalResultados = searchResults?.total || 0;
-  const totalPaginas = searchResults?.lastPage || 1;
-
   return (
     <div className={styles.pesquisaContainer}>
-      <Navbar />
+      <SearchNavbar />
       
       <main className={styles.mainContent}>
         <div className={styles.pesquisaHeader}>
@@ -233,11 +391,44 @@ export default function Pesquisa() {
           <p className={styles.subtitle}>
             Encontre bandas, músicos e estabelecimentos que combinam com seu estilo
           </p>
-          {termoPesquisa && (
-            <p className={styles.searchTerm}>
-              Resultados para: <strong>"{termoPesquisa}"</strong>
-            </p>
-          )}
+        </div>
+
+        {/* Internal Search Bar */}
+        <div className="mb-6">
+          <BarraPesquisa
+            placeholder={`Pesquisar ${activeTab === 'bandas' ? 'bandas' : 'estabelecimentos'}...`}
+            value={termoPesquisa}
+            onChange={setTermoPesquisa}
+            onSearch={handleSearch}
+          />
+        </div>
+
+        {/* Tabs */}
+        <div className="mb-6">
+          <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-fit">
+            <Button
+              variant={activeTab === 'bandas' ? 'default' : 'ghost'}
+              onClick={() => handleTabChange('bandas')}
+              className={`px-6 py-2 rounded-md font-medium transition-all ${
+                activeTab === 'bandas' 
+                  ? 'bg-white text-black shadow-sm' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Bandas
+            </Button>
+            <Button
+              variant={activeTab === 'estabelecimentos' ? 'default' : 'ghost'}
+              onClick={() => handleTabChange('estabelecimentos')}
+              className={`px-6 py-2 rounded-md font-medium transition-all ${
+                activeTab === 'estabelecimentos' 
+                  ? 'bg-white text-black shadow-sm' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Estabelecimentos
+            </Button>
+          </div>
         </div>
         
         <div className={styles.pesquisaBox}>
@@ -261,12 +452,12 @@ export default function Pesquisa() {
               renderError()
             ) : isLoading ? (
               renderLoading()
-            ) : resultadosFiltrados.length === 0 ? (
+            ) : currentResults.length === 0 ? (
               renderEmpty()
             ) : (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mb-6">
-                  {resultadosFiltrados.map((resultado) => (
+                  {currentResults.map((resultado) => (
                     <div key={`${resultado.tipo}-${resultado.id}`} className="transition-transform hover:-translate-y-1">
                       {renderResultado(resultado)}
                     </div>
