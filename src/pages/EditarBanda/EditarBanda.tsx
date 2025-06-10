@@ -5,41 +5,24 @@ import api from "@/services/api";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { BandProfileIcon } from "@/utils/icons";
-import { useContractsData } from "@/hooks/useContractsData";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getUser } from "@/services/users";
+import { Contract } from "@/types/contract";
 
-const propostas = [
-  {
-    id: 1,
-    eventName: "Noite do Pop",
-    data: "19/05/2025",
-    horario: "20:00 - 23:00",
-    tipo: "Show ao vivo",
-    valor: 1500,
-    local: "Bar do Zé",
-    cep: "60415-150",
-    descricao: "Apresentação ao vivo com músicas pop atuais e clássicas.",
-    endereco: "Rua das Flores, 123, Centro",
-    contato: "(85) 99999-9999",
-    status: "Pendente",
-  },
-  {
-    id: 2,
-    eventName: "Pop & Rock Night",
-    data: "04/06/2025",
-    horario: "21:00 - 23:30",
-    tipo: "Show acústico",
-    valor: 1200,
-    local: "Pub Rock'n Beer",
-    cep: "60422-200",
-    descricao:
-      "Uma noite especial de pop acústico em um ambiente descontraído.",
-    endereco: "Av. Principal, 456, Bairro Fátima",
-    contato: "(85) 98888-8888",
-    status: "Pendente",
-  },
-];
+// Add interface for band data
+interface BandData {
+  id: number;
+  bandName: string;
+  genre: string;
+  city: string;
+  description: string;
+  userId: {
+    id: string;
+    role: string;
+  };
+}
 
-type SidebarOption = "perfil" | "contratos" | "contrato" | "dashboard";
+type SidebarOption = "perfil" | "contratos";
 
 const EditarBanda = () => {
   const [activeSection, setActiveSection] = useState<SidebarOption>("perfil");
@@ -50,47 +33,121 @@ const EditarBanda = () => {
   const [genre, setGenre] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
-  const [terms] = useState("");
   const [twitter, setTwitter] = useState("");
   const [facebook, setFacebook] = useState("");
   const [instagram, setInstagram] = useState("");
 
   const [statusTab, setStatusTab] = useState<
-    "pendentes" | "aceitas" | "recusadas"
-  >("pendentes");
-  const [propostasEstado, setPropostasEstado] = useState(propostas);
-  const { data: contractsData } = useContractsData();
-  console.log("Contracts Data:", contractsData);
+    "pendente" | "aceito" | "recusado"
+  >("pendente");
+
+  const queryClient = useQueryClient();
+  const user = getUser();
+
+  // Fetch band data
+  const { data: bandData } = useQuery<BandData>({
+    queryKey: ["band", user?.id],
+    queryFn: async () => {
+      if (!user?.id) throw new Error("User not found");
+      const response = await api.get<BandData>(`/bands/user/${user.id}`);
+      return response.data;
+    },
+    enabled: !!user?.id,
+  });
+
+  // Fetch contracts data
+  const { data: contractsData, isLoading: contractsLoading, error: contractsError } = useQuery<Contract[]>({
+    queryKey: ["contracts", bandData?.id],
+    queryFn: async () => {
+      if (!bandData?.id) throw new Error("Band not found");
+      const response = await api.get<Contract[]>(`/contract/band/${bandData.id}`);
+      return response.data;
+    },
+    enabled: !!bandData?.id,
+  });
+
+  // Mutation for updating contract status
+  const updateContractMutation = useMutation({
+    mutationFn: async ({ contractId, action }: { contractId: string; action: 'confirm' | 'cancel' }) => {
+      const endpoint = action === 'confirm' ? 'confirm' : 'cancel';
+      const response = await api.patch(`/contract/${endpoint}/${contractId}`);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Status do contrato atualizado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["contracts"] });
+    },
+    onError: (error: AxiosError) => {
+      toast.error("Erro ao atualizar status do contrato");
+      console.error("Error updating contract:", error);
+    },
+  });
+
+  // Function to handle contract acceptance
+  const handleAcceptContract = (contractId: string) => {
+    updateContractMutation.mutate({ contractId, action: 'confirm' });
+  };
+
+  // Function to handle contract rejection
+  const handleRejectContract = (contractId: string) => {
+    updateContractMutation.mutate({ contractId, action: 'cancel' });
+  };
+
+  // Filter contracts by status
+  const getFilteredContracts = () => {
+    if (!contractsData) return [];
+    
+    return contractsData.filter((contract) => {
+      if (statusTab === "pendente") return contract.isConfirmed === null;
+      if (statusTab === "aceito") return contract.isConfirmed === true;
+      if (statusTab === "recusado") return contract.isConfirmed === false;
+      return false;
+    });
+  };
+
+  // Format currency
+  const formatCurrency = (value: number | string) => {
+    const numValue = typeof value === 'string' ? parseFloat(value) : value;
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(numValue);
+  };
+
+  // Format date
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('pt-BR');
+  };
 
   const handleSave = async () => {
+    if (!bandData?.id) {
+      toast.error("Dados da banda não encontrados");
+      return;
+    }
+
     const data = {
       bandName,
       genre,
-      location,
+      city: location,
       description,
-      terms,
       twitter,
       facebook,
       instagram,
-      carouselImages,
-      profileImage,
     };
 
     try {
-      await api.put(`/bands/${5}`, data);
+      await api.put(`/bands/${bandData.id}`, data);
       toast.success("Perfil atualizado com sucesso!");
     } catch (error) {
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data.errors);
+        toast.error(error.response?.data.message || "Erro ao atualizar perfil");
       }
     }
   };
 
   const sidebarOptions = [
     { id: "perfil", label: "Perfil", icon: "👤" },
-    { id: "contratos", label: "Contratos", icon: "📋" },
-    { id: "contrato", label: "Contrato", icon: "📄" },
-    { id: "dashboard", label: "Dashboard", icon: "📊" },
+    { id: "contratos", label: "Contratos", icon: "📋" }
   ];
 
   const renderPerfilContent = () => (
@@ -167,6 +224,7 @@ const EditarBanda = () => {
             value={bandName}
             onChange={(e) => setBandName(e.target.value)}
             className={styles.input}
+            placeholder={bandData?.bandName}
           />
         </label>
         <label>
@@ -176,6 +234,7 @@ const EditarBanda = () => {
             value={genre}
             onChange={(e) => setGenre(e.target.value)}
             className={styles.input}
+            placeholder={bandData?.genre}
           />
         </label>
         <label>
@@ -185,6 +244,7 @@ const EditarBanda = () => {
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             className={styles.input}
+            placeholder={bandData?.city}
           />
         </label>
         <label>
@@ -194,6 +254,7 @@ const EditarBanda = () => {
             onChange={(e) => setDescription(e.target.value)}
             rows={4}
             className={styles.textarea}
+            placeholder={bandData?.description}
           />
         </label>
         <label>
@@ -231,112 +292,128 @@ const EditarBanda = () => {
     </section>
   );
 
-  const renderContratosContent = () => (
-    <section className={styles.formSection}>
-      <div className={styles.statusTabs}>
-        <button
-          className={`${styles.statusTab} ${
-            statusTab === "pendentes" ? styles.active : ""
-          }`}
-          onClick={() => setStatusTab("pendentes")}
-        >
-          Pendentes (
-          {propostasEstado.filter((p) => p.status === "Pendente").length})
-        </button>
-        <button
-          className={`${styles.statusTab} ${
-            statusTab === "aceitas" ? styles.active : ""
-          }`}
-          onClick={() => setStatusTab("aceitas")}
-        >
-          Aceitas ({propostasEstado.filter((p) => p.status === "Aceita").length}
-          )
-        </button>
-        <button
-          className={`${styles.statusTab} ${
-            statusTab === "recusadas" ? styles.active : ""
-          }`}
-          onClick={() => setStatusTab("recusadas")}
-        >
-          Recusadas (
-          {propostasEstado.filter((p) => p.status === "Recusada").length})
-        </button>
-      </div>
+  const renderContratosContent = () => {
+    const filteredContracts = getFilteredContracts();
+    const contractCounts = {
+      pendente: contractsData?.filter(c => c.isConfirmed === null).length || 0,
+      aceito: contractsData?.filter(c => c.isConfirmed === true).length || 0,
+      recusado: contractsData?.filter(c => c.isConfirmed === false).length || 0,
+    };
 
-      <div className={styles.propostasContainer}>
-        {propostasEstado
-          .filter((p) => {
-            if (statusTab === "pendentes") return p.status === "Pendente";
-            if (statusTab === "aceitas") return p.status === "Aceita";
-            return p.status === "Recusada";
-          })
-          .map((p) => (
-            <div key={p.id} className={styles.propostaCard}>
-              <div className={styles.cardHeader}>
-                <h3>{p.eventName}</h3>
-                <span className={styles.statusBadge}>{p.status}</span>
-              </div>
-              <p>{p.tipo}</p>
-              <p>
-                📅 {p.data} • {p.horario}
-              </p>
-              <p>
-                📍 {p.local} - {p.endereco} - CEP {p.cep}
-              </p>
-              <p>💬 {p.descricao}</p>
-              <p>📞 Contato: {p.contato}</p>
-              <p className={styles.valor}>💰 R$ {p.valor.toFixed(2)}</p>
-
-              {p.status === "Pendente" && (
-                <div className={styles.cardActions}>
-                  <button
-                    onClick={() =>
-                      setPropostasEstado((prev) =>
-                        prev.map((item) =>
-                          item.id === p.id
-                            ? { ...item, status: "Aceita" }
-                            : item
-                        )
-                      )
-                    }
-                    className={styles.aceitarButton}
-                  >
-                    Aceitar
-                  </button>
-                  <button
-                    onClick={() =>
-                      setPropostasEstado((prev) =>
-                        prev.map((item) =>
-                          item.id === p.id
-                            ? { ...item, status: "Recusada" }
-                            : item
-                        )
-                      )
-                    }
-                    className={styles.recusarButton}
-                  >
-                    Recusar
-                  </button>
-                </div>
-              )}
+    if (contractsLoading) {
+      return (
+        <section className={styles.formSection}>
+          <div className={styles.placeholderContent}>
+            <div className={styles.placeholderBox}>
+              <p>Carregando contratos...</p>
             </div>
-          ))}
-      </div>
-    </section>
-  );
+          </div>
+        </section>
+      );
+    }
 
-  const renderPlaceholderContent = (title: string, description: string) => (
-    <section className={styles.formSection}>
-      <h1 className={styles.title}>{title}</h1>
-      <p className={styles.subtitle}>{description}</p>
-      <div className={styles.placeholderContent}>
-        <div className={styles.placeholderBox}>
-          <p>Esta seção está em desenvolvimento.</p>
-          <p>Em breve, você terá acesso a todas as funcionalidades.</p>
+    if (contractsError) {
+      return (
+        <section className={styles.formSection}>
+          <div className={styles.placeholderContent}>
+            <div className={styles.placeholderBox}>
+              <p>Erro ao carregar contratos.</p>
+              <p>Tente novamente mais tarde.</p>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    return (
+      <section className={styles.formSection}>
+        <div className={styles.statusTabs}>
+          <button
+            className={`${styles.statusTab} ${
+              statusTab === "pendente" ? styles.active : ""
+            }`}
+            onClick={() => setStatusTab("pendente")}
+          >
+            Pendente ({contractCounts.pendente})
+          </button>
+          <button
+            className={`${styles.statusTab} ${
+              statusTab === "aceito" ? styles.active : ""
+            }`}
+            onClick={() => setStatusTab("aceito")}
+          >
+            Aceito ({contractCounts.aceito})
+          </button>
+          <button
+            className={`${styles.statusTab} ${
+              statusTab === "recusado" ? styles.active : ""
+            }`}
+            onClick={() => setStatusTab("recusado")}
+          >
+            Recusado ({contractCounts.recusado})
+          </button>
         </div>
-      </div>
-    </section>
-  );
+
+        <div className={styles.propostasContainer}>
+          {filteredContracts.length === 0 ? (
+            <div className={styles.placeholderContent}>
+              <div className={styles.placeholderBox}>
+                <p>Nenhum contrato {statusTab} encontrado.</p>
+              </div>
+            </div>
+          ) : (
+            filteredContracts.map((contract) => (
+              <div key={contract.id} className={styles.propostaCard}>
+                <div className={styles.cardHeader}>
+                  <h3>{contract.eventName}</h3>
+                  <span className={styles.statusBadge}>
+                    {contract.isConfirmed === null 
+                      ? "Pendente" 
+                      : contract.isConfirmed 
+                        ? "Aceita" 
+                        : "Recusada"}
+                  </span>
+                </div>
+                <p>{contract.eventType}</p>
+                <p>
+                  📅 {formatDate(contract.eventDate)} • {contract.startTime} - {contract.endTime}
+                </p>
+                <p>
+                  📍 {contract.requester.name} - {contract.requester.address}, {contract.requester.city} - CEP {contract.requester.cep}
+                </p>
+                {contract.additionalDetails && (
+                  <p>💬 {contract.additionalDetails}</p>
+                )}
+                {contract.requester.contact && (
+                  <p>📞 Contato: {contract.requester.contact}</p>
+                )}
+                <p className={styles.valor}>💰 {formatCurrency(contract.budget)}</p>
+
+                {contract.isConfirmed === null && (
+                  <div className={styles.cardActions}>
+                    <button
+                      onClick={() => handleAcceptContract(contract.id)}
+                      className={styles.aceitarButton}
+                      disabled={updateContractMutation.isPending}
+                    >
+                      {updateContractMutation.isPending ? "Processando..." : "Aceitar"}
+                    </button>
+                    <button
+                      onClick={() => handleRejectContract(contract.id)}
+                      className={styles.recusarButton}
+                      disabled={updateContractMutation.isPending}
+                    >
+                      {updateContractMutation.isPending ? "Processando..." : "Recusar"}
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+      </section>
+    );
+  };
 
   const renderContent = () => {
     switch (activeSection) {
@@ -344,16 +421,6 @@ const EditarBanda = () => {
         return renderPerfilContent();
       case "contratos":
         return renderContratosContent();
-      case "contrato":
-        return renderPlaceholderContent(
-          "Contrato",
-          "Gerencie contratos individuais e documentação."
-        );
-      case "dashboard":
-        return renderPlaceholderContent(
-          "Dashboard",
-          "Visualize estatísticas e métricas da sua banda."
-        );
       default:
         return renderPerfilContent();
     }
