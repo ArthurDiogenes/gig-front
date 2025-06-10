@@ -27,7 +27,7 @@ export default function AppRoutes() {
       <Route path="/pesquisa" element={<Pesquisa/>}/>
 
       <Route path="/bandas/:id" element={<BandProfile/>}/>
-      <Route path="/perfil-estabelecimento" element={<PerfilEstabelecimento/>}/>
+      <Route path="/venue/:id" element={<PerfilEstabelecimento/>}/>
       <Route path="/termos" element={<Termos/>}/>
       <Route path="/meu-perfil" element={<EditarBanda/>}/>
 
