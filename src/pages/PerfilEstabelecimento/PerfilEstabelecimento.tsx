@@ -12,8 +12,47 @@ import {
 	TwitterIcon,
 } from '../../utils/icons';
 import Footer from '../../components/Footer/Footer';
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import api from '@/services/api';
+import { Phone } from 'lucide-react';
+
+export type VenueProfileType = {
+	id: string;
+	name: string;
+	type: string;
+	cep: string;
+	city: string;
+	description: string;
+	address: string;
+	contact: string;
+	coverPhoto: string | null;
+	profilePhoto: string | null;
+	socialMedia: string;
+	user: {
+		id: string;
+		role: string;
+	}
+}
 
 const PerfilEstabelecimento = () => {
+	const {id} = useParams();
+	console.log(`ID do estabelecimento: ${id}`);
+
+	const { data : venue} = useQuery({
+		queryKey: ['venue', id],
+		queryFn: async () => {
+			const response = await api.get<VenueProfileType>(`/venues/user/${id}`);
+			if (response.status !== 200) {
+				throw new Error('Erro ao buscar o estabelecimento');
+			}
+			return response.data;
+		},
+	})
+
+	console.log(venue);
+	
+	
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
 			<Navbar />
@@ -33,36 +72,22 @@ const PerfilEstabelecimento = () => {
 				<div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 px-2">
 					<div className="mb-4 md:mb-0">
 						<h1 className="text-3xl font-bold text-slate-800 mb-2 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-							Hard Rock Café
+							{venue?.name}
 						</h1>
 					</div>
+					{ venue?.user.role === 'venue' && (
 					<div className="flex flex-wrap gap-3">
 						<div>
 							<EditarEstabelecimento />
 						</div>
 					</div>
+					)}
 				</div>
 
 				{/* Content Grid */}
 				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 					{/* Main Content */}
 					<div className="lg:col-span-2 space-y-6">
-						{/* Photos Section */}
-						<section className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5 transition-all duration-300 hover:shadow-2xl hover:shadow-black/10">
-							<h2 className="text-xl font-bold text-slate-800 mb-6 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-								Fotos
-							</h2>
-							<div className="rounded-xl overflow-hidden shadow-lg mb-4" style={{ height: '520px' }}>
-								<div 
-									className="w-full h-full bg-cover bg-center rounded-xl"
-									style={{ backgroundImage: 'url(/public/images/hard-rock.png)' }}
-								/>
-							</div>
-							<button className="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-semibold px-6 py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 flex items-center justify-center gap-3">
-								<span className="text-xl">+</span>
-								Adicionar fotos
-							</button>
-						</section>
 
 						{/* Description Section */}
 						<section className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5 transition-all duration-300 hover:shadow-2xl hover:shadow-black/10">
@@ -70,16 +95,9 @@ const PerfilEstabelecimento = () => {
 								<h2 className="text-xl font-bold text-slate-800 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
 									Descrição
 								</h2>
-								<EditIcon style={{ width: '20px', height: '20px', color: '#64748b', cursor: 'pointer' }} />
 							</div>
 							<p className="text-slate-700 leading-relaxed">
-								O Hard Rock Cafe é uma cadeia de restaurantes e entretenimento
-								conhecida por sua temática rock 'n' roll, decorada com
-								memorabilia de músicos famosos. Oferecendo uma experiência
-								única, combina uma atmosfera vibrante com uma variedade de
-								pratos clássicos, drinks e música ao vivo. O café também é
-								famoso por suas lojas de produtos personalizados, tornando-se um
-								destino para fãs de música e cultura pop.
+								{venue?.description || 'Sem descrição.'}
 							</p>
 						</section>
 
@@ -89,23 +107,15 @@ const PerfilEstabelecimento = () => {
 								<h2 className="text-xl font-bold text-slate-800 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
 									Próximos eventos
 								</h2>
-								<button className="bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-semibold px-4 py-2 rounded-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 flex items-center gap-2">
-									<span className="text-lg">+</span>
-									Adicionar evento
-								</button>
 							</div>
 							<div className="space-y-4">
 								<div className="flex justify-between items-center p-4 bg-slate-50/60 rounded-xl border border-slate-200/50 hover:bg-slate-100/80 transition-all duration-200">
 									<p className="font-medium text-slate-800">Wesley Safadão</p>
-									<button className="bg-black hover:bg-gray-900 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
-										Ver evento
-									</button>
+				
 								</div>
 								<div className="flex justify-between items-center p-4 bg-slate-50/60 rounded-xl border border-slate-200/50 hover:bg-slate-100/80 transition-all duration-200">
 									<p className="font-medium text-slate-800">Michael Jackson</p>
-									<button className="bg-black hover:bg-gray-900 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
-										Ver evento
-									</button>
+									
 								</div>
 							</div>
 						</section>
@@ -119,16 +129,19 @@ const PerfilEstabelecimento = () => {
 								<h2 className="text-xl font-bold text-slate-800 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
 									Info
 								</h2>
-								<EditIcon style={{ width: '20px', height: '20px', color: '#64748b', cursor: 'pointer', transition: 'color 0.2s' }} />
 							</div>
 							<ul className="space-y-4">
 								<li className="flex items-center gap-4 p-3 bg-slate-50/60 rounded-lg border border-slate-200/40">
 									<TagIcon style={{ width: '20px', height: '20px', color: '#64748b' }} />
-									<span className="text-slate-700 font-medium">Restaurante</span>
+									<span className="text-slate-700 font-medium">{venue?.type}</span>
 								</li>
 								<li className="flex items-center gap-4 p-3 bg-slate-50/60 rounded-lg border border-slate-200/40">
 									<LocationIcon style={{ width: '20px', height: '20px', color: '#64748b' }} />
-									<span className="text-slate-700 font-medium">Localizada em Fortaleza/CE</span>
+									<span className="text-slate-700 font-medium">{venue?.city}</span>
+								</li>
+								<li className="flex items-center gap-4 p-3 bg-slate-50/60 rounded-lg border border-slate-200/40">
+									<Phone style={{ width: '20px', height: '20px', color: '#64748b' }} />
+									<span className="text-slate-700 font-medium">{venue?.contact || "Sem contato"}</span>
 								</li>
 							</ul>
 						</section>
@@ -154,50 +167,6 @@ const PerfilEstabelecimento = () => {
 							</ul>
 						</section>
 
-						{/* Reviews Section */}
-						<section className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5 transition-all duration-300 hover:shadow-2xl hover:shadow-black/10">
-							<h2 className="text-xl font-bold text-slate-800 mb-6 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-								Reviews
-							</h2>
-							<div className="space-y-6">
-								<div className="p-4 bg-slate-50/60 rounded-xl border border-slate-200/50">
-									<div className="flex gap-1 mb-3">
-										<StarIcon />
-										<StarIcon />
-										<StarIcon />
-										<StarIcon />
-										<StarIcon />
-									</div>
-									<p className="text-slate-700 text-sm leading-relaxed mb-3">
-										"Great place to play! Loved the atmosphere and energy of the
-										crowd. Definitely recommend getting a gig there."
-									</p>
-									<span className="text-xs text-slate-500 font-medium">- Nirvana</span>
-								</div>
-								<div className="p-4 bg-slate-50/60 rounded-xl border border-slate-200/50">
-									<div className="flex gap-1 mb-3">
-										<StarIcon />
-										<StarIcon />
-										<StarIcon />
-										<StarIcon />
-										<StarOutlineIcon />
-									</div>
-									<p className="text-slate-700 text-sm leading-relaxed mb-3">
-										"The sound system there leaves a little to be desired, but
-										otherwise it was a great experience."
-									</p>
-									<span className="text-xs text-slate-500 font-medium">
-										- The Doors
-									</span>
-								</div>
-							</div>
-						</section>
-						
-						<div className="flex justify-center">
-							<button className="bg-black hover:bg-gray-900 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5">
-								Avaliar
-							</button>
-						</div>
 					</div>
 				</div>
 			</main>

@@ -138,7 +138,7 @@ export default function Home() {
                   to={
                     user.role === "band"
                       ? `bandas/${user.id}`
-                      : `perfil-estabelecimento`
+                      : `venue/${user.id}`
                   }
                 >
                   <Button className="w-full bg-black hover:bg-stone-900 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5">

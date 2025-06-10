@@ -149,7 +149,7 @@ export default function EditarEstabelecimento({...props }: DialogProps) {
 	}
 	return (
 		<Dialog {...props}>
-			<DialogTrigger className="bg-black text-white hover:bg-black/80 py-2 px-4 rounded-sm">
+			<DialogTrigger className="bg-black text-white hover:bg-black/80 py-2 px-4 rounded-sm cursor-pointer ">
 				Editar estabelecimento
 			</DialogTrigger>
 			<DialogContent className="h-min px-0">
