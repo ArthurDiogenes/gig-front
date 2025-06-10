@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import {
   BandProfileIcon,
@@ -13,8 +13,6 @@ import { useQuery } from "@tanstack/react-query";
 import api from "@/services/api";
 import { capitalize } from "lodash";
 import { Contract } from "@/types/contract";
-import { Button } from "@/components/ui/button";
-import HireBandForm from "@/components/Contrato";
 import Review from "@/components/Review/Review";
 import Footer from "@/components/Footer/Footer";
 import ViewReview from "@/components/Review/View";
@@ -87,12 +85,6 @@ const BandProfile = () => {
   const isBand = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user") || "{}").role === "band"
     : false;
-
-  const userId = localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user") || "{}").id
-    : null;
-
-  const owner = band?.userId.id === userId;
 
   // Format date helper
   const formatDate = (dateString: string) => {
@@ -172,20 +164,6 @@ const BandProfile = () => {
             <p className="text-lg text-slate-600 font-medium">
               {capitalize(band.genre)}
             </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {isBand && owner ? (
-              <Link to={`/meu-perfil`}>
-                <Button
-                  variant={"outline"}
-                  className="bg-white border-slate-300 text-slate-700 hover:bg-slate-50"
-                >
-                  Editar perfil
-                </Button>
-              </Link>
-            ) : (
-              <HireBandForm band={band} />
-            )}
           </div>
         </div>
 
