@@ -43,6 +43,7 @@ type FeaturedBand = {
   bandId: number;
   bandName: string;
   userId: string;
+  profilePicture?: string;
 };
 
 export default function Home() {
@@ -120,11 +121,25 @@ export default function Home() {
                     <p className="font-semibold text-slate-800">{user.name}</p>
                   </div>
                 </div>
+                <div className="grid grid-cols-2 gap-4 text-center mb-6">
+                  <div className="p-3 bg-slate-50/60 rounded-lg border border-slate-200/40">
+                    <p className="font-bold text-lg text-slate-800">245</p>
+                    <p className="text-xs text-slate-600 font-medium">
+                      Seguidores
+                    </p>
+                  </div>
+                  <div className="p-3 bg-slate-50/60 rounded-lg border border-slate-200/40">
+                    <p className="font-bold text-lg text-slate-800">123</p>
+                    <p className="text-xs text-slate-600 font-medium">
+                      Seguindo
+                    </p>
+                  </div>
+                </div>
                 <Link
                   to={
                     user.role === "band"
                       ? `bandas/${user.id}`
-                      : `venue/${user.id}`
+                      : `perfil-estabelecimento`
                   }
                 >
                   <Button className="w-full bg-black hover:bg-stone-900 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5">
@@ -211,7 +226,7 @@ export default function Home() {
                     band={{
                       id: band.userId,
                       title: band.bandName,
-                      image: "/placeholder.svg?height=200&width=150",
+                      profilePicture: band.profilePicture || "/placeholder.svg?height=200&width=150",
                       rating: band.averageRating,
                     }}
                     compact
