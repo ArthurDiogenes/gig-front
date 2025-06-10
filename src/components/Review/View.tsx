@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { StarIcon as FilledStar } from "../../utils/icons"; // Estrela cheia personalizada
 import { Star as EmptyStar } from "lucide-react"; // Estrela vazia
 import api from "@/services/api";
+import { Link } from "react-router-dom";
 
 type ViewReviewProps = {
   id: string;
@@ -83,9 +84,11 @@ export default function ViewReview({ id }: ViewReviewProps) {
               </div>
 
               <p style={{ color: "#555", margin: 0 }}>"{review.comment}"</p>
+              <Link to={`/venue/${review.user.id}`}>
               <span style={{ fontSize: 14, color: "#888" }}>
                 – {review.user.name}
               </span>
+              </Link>
             </div>
           </div>
         ))

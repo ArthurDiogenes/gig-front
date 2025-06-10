@@ -16,6 +16,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/services/api';
 import { Phone } from 'lucide-react';
+import { getUser } from '@/services/users';
 
 export type VenueProfileType = {
 	id: string;
@@ -37,7 +38,7 @@ export type VenueProfileType = {
 
 const PerfilEstabelecimento = () => {
 	const {id} = useParams();
-	console.log(`ID do estabelecimento: ${id}`);
+	const user = getUser();
 
 	const { data : venue} = useQuery({
 		queryKey: ['venue', id],
@@ -75,7 +76,7 @@ const PerfilEstabelecimento = () => {
 							{venue?.name}
 						</h1>
 					</div>
-					{ venue?.user.role === 'venue' && (
+					{ venue?.user.role === 'venue' && venue.user.id == user?.id && (
 					<div className="flex flex-wrap gap-3">
 						<div>
 							<EditarEstabelecimento />
