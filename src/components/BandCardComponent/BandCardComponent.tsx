@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 interface Band {
   id: string;
   title: string;
-  image: string | null;
+  profilePicture: string | null;
   rating: number;
 }
 
@@ -18,7 +18,7 @@ export function BandCard({ band, compact = false }: BandCardProps) {
     return (
       <Link to={`/bandas/${band.id}`} className="flex items-start gap-3 group">
         <img
-          src="/placeholder.svg"
+          src={band.profilePicture || "/placeholder.svg"}
           alt="Band Thumbnail"
           width={64}
           height={96}
@@ -44,7 +44,7 @@ export function BandCard({ band, compact = false }: BandCardProps) {
     >
       <div className="relative">
         <img
-          src={"/placeholder.svg"}
+          src={band.profilePicture || "/placeholder.svg"}
           alt={band.title}
           className="object-cover w-full aspect-[2/3]"
           width={300}
