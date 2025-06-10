@@ -17,9 +17,15 @@ interface BandSearchResponse {
     bandName: string;
     city: string;
     genre: string;
-    profilePicture?: string;
+    description?: string;
+    contact?: string;
+    members?: number;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt?: string;
     userId?: {
       id: string;
+      role: string;
     };
   }[];
   total: number;
@@ -104,15 +110,17 @@ export default function Pesquisa() {
       return [];
     }
 
-    return searchResults.data.map(band => ({
-      id: band.userId?.id || band.id.toString(), // Use userId.id if available, otherwise convert band.id to string
-      tipo: 'banda' as const,
-      title: band.bandName,
-      profilePicture: band.profilePicture || '/placeholder.svg',
-      year: '2024', // You might want to get this from the API if available
-      rating: 4.5, // You might want to get this from the API if available
-      genre: band.genre
-    }));
+    return searchResults.data
+      .filter(band => band.userId?.id) // Only include bands that have a userId
+      .map(band => ({
+        id: band.userId!.id, // Use the userId.id for routing to the profile page
+        tipo: 'banda' as const,
+        title: band.bandName,
+        profilePicture: '/placeholder.svg', // You might want to add this to the API response
+        year: new Date(band.createdAt).getFullYear().toString(),
+        rating: 4.5, // You might want to calculate this from reviews or get from API
+        genre: band.genre
+      }));
   };
 
   const applyFilters = (resultados: ResultadoPesquisa[]): ResultadoPesquisa[] => {
