@@ -7,6 +7,7 @@ interface FiltroOption {
   value: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const tiposOptions: FiltroOption[] = [
   { label: 'Todos', value: 'todos' },
   { label: 'Bandas', value: 'bandas' },
@@ -23,6 +24,15 @@ const generoOptions: FiltroOption[] = [
   { label: 'MPB', value: 'mpb' }
 ];
 
+const tipoEstabelecimentoOptions: FiltroOption[] = [
+  { label: 'Restaurante', value: 'restaurante' },
+  { label: 'Bar', value: 'bar' },
+  { label: 'Casa de show', value: 'casa-de-show' },
+  { label: 'Pub', value: 'pub' },
+  { label: 'Cafeteria', value: 'cafeteria' },
+  { label: 'Outro', value: 'outro' }
+];
+
 const cidadeOptions: FiltroOption[] = [
   { label: 'Fortaleza', value: 'fortaleza' },
   { label: 'São Paulo', value: 'sao-paulo' },
@@ -35,20 +45,27 @@ interface FiltrosPesquisaProps {
   onFilterChange: (filtros: {
     tipo: string;
     genero: string;
+    tipoEstabelecimento: string;
     cidade: string;
   }) => void;
   className?: string;
+  activeTab?: 'bandas' | 'estabelecimentos';
 }
 
-export default function FiltrosPesquisa({ onFilterChange, className }: FiltrosPesquisaProps) {
+export default function FiltrosPesquisa({ 
+  onFilterChange, 
+  className,
+  activeTab = 'bandas'
+}: FiltrosPesquisaProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [filtros, setFiltros] = useState({
     tipo: 'todos',
     genero: '',
+    tipoEstabelecimento: '',
     cidade: ''
   });
 
-  const handleFilterChange = (tipo: 'tipo' | 'genero' | 'cidade', valor: string) => {
+  const handleFilterChange = (tipo: 'tipo' | 'genero' | 'tipoEstabelecimento' | 'cidade', valor: string) => {
     const novosFiltros = {
       ...filtros,
       [tipo]: valor
@@ -62,6 +79,7 @@ export default function FiltrosPesquisa({ onFilterChange, className }: FiltrosPe
     const filtrosLimpos = {
       tipo: 'todos',
       genero: '',
+      tipoEstabelecimento: '',
       cidade: ''
     };
     
@@ -97,48 +115,55 @@ export default function FiltrosPesquisa({ onFilterChange, className }: FiltrosPe
 
       {(isExpanded || filtrosAtivos > 0) && (
         <div className={styles.filtrosContent}>
-          <div className={styles.filtroGroup}>
-            <h3 className={styles.filtroTitle}>Tipo</h3>
-            <div className={styles.opcoes}>
-              {tiposOptions.map(opcao => (
-                <label key={opcao.value} className={styles.opcao}>
-                  <input
-                    type="radio"
-                    name="tipo"
-                    value={opcao.value}
-                    checked={filtros.tipo === opcao.value}
-                    onChange={() => handleFilterChange('tipo', opcao.value)}
-                    className={styles.radioInput}
-                  />
-                  <span className={`${styles.radioLabel} ${filtros.tipo === opcao.value ? styles.selected : ''}`}>
-                    {opcao.label}
-                  </span>
-                </label>
-              ))}
+          {/* Mostrar gênero apenas para bandas */}
+          {activeTab === 'bandas' && (
+            <div className={styles.filtroGroup}>
+              <h3 className={styles.filtroTitle}>Gênero</h3>
+              <div className={styles.opcoes}>
+                {generoOptions.map(opcao => (
+                  <label key={opcao.value} className={styles.chipLabel}>
+                    <input
+                      type="radio"
+                      name="genero"
+                      value={opcao.value}
+                      checked={filtros.genero === opcao.value}
+                      onChange={() => handleFilterChange('genero', opcao.value)}
+                      className={styles.chipInput}
+                    />
+                    <span className={`${styles.chipOption} ${filtros.genero === opcao.value ? styles.selected : ''}`}>
+                      {opcao.label}
+                    </span>
+                  </label>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className={styles.filtroGroup}>
-            <h3 className={styles.filtroTitle}>Gênero</h3>
-            <div className={styles.opcoes}>
-              {generoOptions.map(opcao => (
-                <label key={opcao.value} className={styles.chipLabel}>
-                  <input
-                    type="radio"
-                    name="genero"
-                    value={opcao.value}
-                    checked={filtros.genero === opcao.value}
-                    onChange={() => handleFilterChange('genero', opcao.value)}
-                    className={styles.chipInput}
-                  />
-                  <span className={`${styles.chipOption} ${filtros.genero === opcao.value ? styles.selected : ''}`}>
-                    {opcao.label}
-                  </span>
-                </label>
-              ))}
+          {/* Mostrar tipo de estabelecimento apenas para estabelecimentos */}
+          {activeTab === 'estabelecimentos' && (
+            <div className={styles.filtroGroup}>
+              <h3 className={styles.filtroTitle}>Tipo de Estabelecimento</h3>
+              <div className={styles.opcoes}>
+                {tipoEstabelecimentoOptions.map(opcao => (
+                  <label key={opcao.value} className={styles.chipLabel}>
+                    <input
+                      type="radio"
+                      name="tipoEstabelecimento"
+                      value={opcao.value}
+                      checked={filtros.tipoEstabelecimento === opcao.value}
+                      onChange={() => handleFilterChange('tipoEstabelecimento', opcao.value)}
+                      className={styles.chipInput}
+                    />
+                    <span className={`${styles.chipOption} ${filtros.tipoEstabelecimento === opcao.value ? styles.selected : ''}`}>
+                      {opcao.label}
+                    </span>
+                  </label>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
+          {/* Cidade sempre visível */}
           <div className={styles.filtroGroup}>
             <h3 className={styles.filtroTitle}>Cidade</h3>
             <div className={styles.opcoes}>
