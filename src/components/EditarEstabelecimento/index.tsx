@@ -15,7 +15,9 @@ import {
 } from '../ui/select';
 import api from '@/services/api';
 import { toast } from 'react-toastify';
-import { DialogProps } from '@radix-ui/react-dialog';
+import { Button } from '../ui/button';
+import { Textarea } from '../ui/textarea';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const schema = z.object({
 	name: z.string().min(2, 'O nome deve ter pelo menos 2 caracteres'),
@@ -25,153 +27,177 @@ const schema = z.object({
 		.optional(),
 	city: z.string().min(2, 'Cidade obrigatória'),
 	type: z.enum(
-		['Restaurante', 'Cafeteria', 'Loja', 'Padaria', 'Mercado', 'Outro'],
+		['Restaurante', 'Bar', 'Casa de show', 'Pub', 'Cafeteria', 'Outro'],
 		{
 			required_error: 'Selecione o tipo de estabelecimento',
 		}
 	),
-	profilePhoto: z
-		.instanceof(File)
-		.optional()
-		.or(z.any().refine((v) => typeof v === 'string', { message: '' })),
-	coverPhoto: z
-		.instanceof(File)
-		.optional()
-		.or(z.any().refine((v) => typeof v === 'string', { message: '' })),
-	socials: z.object({
-		instagram: z.string().url('URL inválida').optional().or(z.literal('')),
-		facebook: z.string().url('URL inválida').optional().or(z.literal('')),
-		linkedin: z.string().url('URL inválida').optional().or(z.literal('')),
-		twitter: z.string().url('URL inválida').optional().or(z.literal('')),
-	}),
+	twitter: z.string().optional().or(z.literal('')),
+	instagram: z.string().optional().or(z.literal('')),
+	facebook: z.string().optional().or(z.literal('')),
 });
 
 type FormData = z.infer<typeof schema>;
 
 const tiposEstabelecimento = [
 	'Restaurante',
+	'Bar', 
+	'Casa de show',
+	'Pub',
 	'Cafeteria',
-	'Loja',
-	'Padaria',
-	'Mercado',
 	'Outro',
 ];
 
-export default function EditarEstabelecimento({...props }: DialogProps) {
+type VenueData = {
+	id: string;
+	name: string;
+	type: string;
+	city: string;
+	description?: string;
+	twitter?: string;
+	instagram?: string;
+	facebook?: string;
+};
+
+interface EditarEstabelecimentoProps {
+	venue: VenueData;
+}
+
+export default function EditarEstabelecimento({ venue }: EditarEstabelecimentoProps) {
+	const [open, setOpen] = useState(false);
 	const [previewProfile, setPreviewProfile] = useState<string | null>(null);
 	const [previewCover, setPreviewCover] = useState<string | null>(null);
+	const [profileFile, setProfileFile] = useState<File | null>(null);
+	const [coverFile, setCoverFile] = useState<File | null>(null);
+	const queryClient = useQueryClient();
 
 	const {
 		register,
 		handleSubmit,
 		setValue,
 		formState: { errors },
-		// reset,
+		reset,
 		watch,
 	} = useForm<FormData>({
 		resolver: zodResolver(schema),
 		defaultValues: {
-			socials: {
-				instagram: '',
-				facebook: '',
-				linkedin: '',
-				twitter: '',
-			},
+			name: venue.name || '',
+			description: venue.description || '',
+			city: venue.city || '',
+			type: venue.type as FormData['type'] || 'Restaurante',
+			twitter: venue.twitter || '',
+			instagram: venue.instagram || '',
+			facebook: venue.facebook || '',
 		},
 	});
 
-	const profilePhoto = watch('profilePhoto');
-	const coverPhoto = watch('coverPhoto');
-
+	// Reset form when venue data changes
 	useEffect(() => {
-		if (profilePhoto && profilePhoto instanceof File) {
-			setPreviewProfile(URL.createObjectURL(profilePhoto));
-		} else if (!profilePhoto) {
+		reset({
+			name: venue.name || '',
+			description: venue.description || '',
+			city: venue.city || '',
+			type: venue.type as FormData['type'] || 'Restaurante',
+			twitter: venue.twitter || '',
+			instagram: venue.instagram || '',
+			facebook: venue.facebook || '',
+		});
+	}, [venue, reset]);
+
+	const updateVenueMutation = useMutation({
+		mutationFn: async (data: FormData) => {
+			const formData = new FormData();
+
+			// Add text fields
+			formData.append('name', data.name);
+			formData.append('description', data.description || '');
+			formData.append('city', data.city);
+			formData.append('type', data.type);
+			formData.append('twitter', data.twitter || '');
+			formData.append('instagram', data.instagram || '');
+			formData.append('facebook', data.facebook || '');
+
+			// Add files if selected
+			if (profileFile) {
+				formData.append('profilePhoto', profileFile);
+			}
+			if (coverFile) {
+				formData.append('coverPhoto', coverFile);
+			}
+
+			const response = await api.patch(`/venues/${venue.id}`, formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				},
+			});
+			return response.data;
+		},
+		onSuccess: () => {
+			toast.success('Perfil atualizado com sucesso!');
+			setOpen(false);
+			// Invalidate and refetch venue data
+			queryClient.invalidateQueries({ queryKey: ['venue'] });
+			// Reset file states
+			setProfileFile(null);
+			setCoverFile(null);
 			setPreviewProfile(null);
-		}
-	}, [profilePhoto]);
-
-	useEffect(() => {
-		if (coverPhoto && coverPhoto instanceof File) {
-			setPreviewCover(URL.createObjectURL(coverPhoto));
-		} else if (!coverPhoto) {
 			setPreviewCover(null);
-		}
-	}, [coverPhoto]);
+		},
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		onError: (error: any) => {
+			console.error('Error updating venue:', error);
+			toast.error('Erro ao atualizar o perfil. Tente novamente.');
+		},
+	});
 
-	const onSubmit = async (data: FormData) => {
-		const formData = new FormData();
-
-		formData.append('name', data.name);
-		formData.append('description', data.description || '');
-		formData.append('city', data.city);
-		formData.append('type', data.type);
-		formData.append('socials', JSON.stringify(data.socials));
-
-		if (data.profilePhoto instanceof File) {
-			formData.append('profilePhoto', data.profilePhoto);
-		}
-
-		if (data.coverPhoto instanceof File) {
-			formData.append('coverPhoto', data.coverPhoto);
-		}
-
-		for (const [key, value] of formData.entries()) {
-			console.log(`${key}:`, value);
-		}
-
-		try {
-			await api.patch(
-				`/venues/cf6e56dd-4920-4cf3-b493-bcc409e98192`,
-				formData,
-				{
-					headers: {
-						'Content-Type': 'multipart/form-data',
-					},
-				}
-			);
-			// reset();
-			// setPreviewProfile(null);
-			// setPreviewCover(null);
-		} catch (error) {
-			toast.error('Erro ao atualizar o perfil');
-			console.error('Error submitting form:', error);
-		}
+	const onSubmit = (data: FormData) => {
+		updateVenueMutation.mutate(data);
 	};
 
-	// para permitir upload usando input file e registrar no estado react-hook-form
-	function handleFileInput(
-		event: React.ChangeEvent<HTMLInputElement>,
-		field: 'profilePhoto' | 'coverPhoto'
-	) {
-		const file = event.target.files && event.target.files[0];
-		if (file) setValue(field, file, { shouldValidate: true });
+	// Handle profile photo upload
+	function handleProfileFileInput(event: React.ChangeEvent<HTMLInputElement>) {
+		const file = event.target.files?.[0];
+		if (file) {
+			setProfileFile(file);
+			setPreviewProfile(URL.createObjectURL(file));
+		}
 	}
-	return (
-		<Dialog {...props}>
-			<DialogTrigger className="bg-black text-white hover:bg-black/80 py-2 px-4 rounded-sm cursor-pointer ">
-				Editar estabelecimento
-			</DialogTrigger>
-			<DialogContent className="h-min px-0">
-				<form
-					className="bg-white rounded-md shadow-lg px-8 py-10 mt-8 mb-10 flex flex-col gap-8"
-					onSubmit={handleSubmit(onSubmit)}
-				>
-					<h2 className="text-2xl font-bold mb-2 text-primary flex items-center gap-2">
-						<StoreIcon className="w-6 h-6 text-purple-500" />
-						Cadastrar Estabelecimento
-					</h2>
 
-					{/* Foto de capa */}
+	// Handle cover photo upload  
+	function handleCoverFileInput(event: React.ChangeEvent<HTMLInputElement>) {
+		const file = event.target.files?.[0];
+		if (file) {
+			setCoverFile(file);
+			setPreviewCover(URL.createObjectURL(file));
+		}
+	}
+
+	return (
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger asChild>
+				<Button className="bg-black text-white hover:bg-black/80">
+					Editar estabelecimento
+				</Button>
+			</DialogTrigger>
+			<DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-4">
+					<div className="text-center">
+						<h2 className="text-2xl font-bold text-primary flex items-center justify-center gap-2">
+							<StoreIcon className="w-6 h-6 text-blue-500" />
+							Editar Estabelecimento
+						</h2>
+					</div>
+
+					{/* Cover Photo */}
 					<div>
-						<Label className="mb-1 block">Foto de Capa</Label>
+						<Label className="mb-2 block font-semibold">Foto de Capa</Label>
 						<div className="flex items-center gap-4">
 							<label className="relative cursor-pointer group">
 								<input
 									type="file"
 									accept="image/*"
 									className="hidden"
-									onChange={(e) => handleFileInput(e, 'coverPhoto')}
+									onChange={handleCoverFileInput}
 								/>
 								<div className="w-40 h-20 bg-gray-200 rounded-md flex items-center justify-center border border-gray-300 overflow-hidden hover:opacity-80 transition-all shadow-sm">
 									{previewCover ? (
@@ -184,28 +210,23 @@ export default function EditarEstabelecimento({...props }: DialogProps) {
 										<CameraIcon className="w-8 h-8 text-gray-400" />
 									)}
 								</div>
-								<span className="absolute bottom-2 left-2 bg-white px-2 py-1 rounded-md text-xs shadow opacity-0 group-hover:opacity-100 transition">
+								<span className="absolute -bottom-8 left-0 bg-white px-2 py-1 rounded-md text-xs shadow opacity-0 group-hover:opacity-100 transition text-center whitespace-nowrap">
 									Selecionar capa
 								</span>
 							</label>
-							{errors.coverPhoto && (
-								<span className="text-sm text-red-500">
-									{errors.coverPhoto.message}
-								</span>
-							)}
 						</div>
 					</div>
 
-					{/* Foto de perfil */}
+					{/* Profile Photo */}
 					<div>
-						<Label className="mb-1 block">Foto de Perfil</Label>
+						<Label className="mb-2 block font-semibold">Foto de Perfil</Label>
 						<div className="flex items-center gap-4">
 							<label className="relative cursor-pointer group">
 								<input
 									type="file"
 									accept="image/*"
 									className="hidden"
-									onChange={(e) => handleFileInput(e, 'profilePhoto')}
+									onChange={handleProfileFileInput}
 								/>
 								<div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center border border-gray-300 overflow-hidden hover:opacity-80 transition-all shadow-sm">
 									{previewProfile ? (
@@ -218,21 +239,16 @@ export default function EditarEstabelecimento({...props }: DialogProps) {
 										<ImageIcon className="w-8 h-8 text-gray-400" />
 									)}
 								</div>
-								<span className="absolute bottom-2 left-2 bg-white px-2 py-1 rounded text-xs shadow opacity-0 group-hover:opacity-100 transition">
+								<span className="absolute -bottom-8 left-0 bg-white px-2 py-1 rounded text-xs shadow opacity-0 group-hover:opacity-100 transition text-center whitespace-nowrap">
 									Selecionar perfil
 								</span>
 							</label>
-							{errors.profilePhoto && (
-								<span className="text-sm text-red-500">
-									{errors.profilePhoto.message}
-								</span>
-							)}
 						</div>
 					</div>
 
-					{/* Nome */}
+					{/* Name */}
 					<div>
-						<Label htmlFor="nome">Nome do estabelecimento</Label>
+						<Label htmlFor="nome" className="font-semibold">Nome do estabelecimento</Label>
 						<Input
 							id="nome"
 							{...register('name')}
@@ -244,16 +260,20 @@ export default function EditarEstabelecimento({...props }: DialogProps) {
 						)}
 					</div>
 
-					{/* Descrição */}
+					{/* Description */}
 					<div>
-						<Label htmlFor="descricao">Descrição</Label>
-						<Input
+						<Label htmlFor="descricao" className="font-semibold">Descrição</Label>
+						<Textarea
 							id="descricao"
 							{...register('description')}
 							placeholder="Uma breve descrição do local"
 							className="mt-2"
 							maxLength={250}
+							rows={3}
 						/>
+						<p className="text-xs text-gray-500 mt-1">
+							{watch('description')?.length || 0}/250 caracteres
+						</p>
 						{errors.description && (
 							<p className="text-sm text-red-500 mt-1">
 								{errors.description.message}
@@ -261,10 +281,10 @@ export default function EditarEstabelecimento({...props }: DialogProps) {
 						)}
 					</div>
 
-					{/* Cidade */}
+					{/* City */}
 					<div>
-						<Label htmlFor="cidade" className="flex gap-1 items-center">
-							<MapPinIcon className="w-4 h-4 text-purple-400" />
+						<Label htmlFor="cidade" className="flex gap-1 items-center font-semibold">
+							<MapPinIcon className="w-4 h-4 text-blue-400" />
 							Cidade
 						</Label>
 						<Input
@@ -278,23 +298,24 @@ export default function EditarEstabelecimento({...props }: DialogProps) {
 						)}
 					</div>
 
-					{/* Tipo de Estabelecimento */}
+					{/* Type */}
 					<div>
-						<Label htmlFor="type">Tipo de estabelecimento</Label>
+						<Label htmlFor="type" className="font-semibold">Tipo de estabelecimento</Label>
 						<Select
-							onValueChange={(v) =>
-								setValue('type', v as FormData['type'], {
+							value={watch('type')}
+							onValueChange={(value) =>
+								setValue('type', value as FormData['type'], {
 									shouldValidate: true,
 								})
 							}
 						>
-							<SelectTrigger className={errors.type ? 'border-red-400' : ''}>
+							<SelectTrigger className={`mt-2 ${errors.type ? 'border-red-400' : ''}`}>
 								<SelectValue placeholder="Selecione o tipo..." />
 							</SelectTrigger>
-							<SelectContent className="z-50 bg-white">
-								{tiposEstabelecimento.map((tp) => (
-									<SelectItem key={tp} value={tp}>
-										{tp}
+							<SelectContent>
+								{tiposEstabelecimento.map((tipo) => (
+									<SelectItem key={tipo} value={tipo}>
+										{tipo}
 									</SelectItem>
 								))}
 							</SelectContent>
@@ -304,28 +325,59 @@ export default function EditarEstabelecimento({...props }: DialogProps) {
 						)}
 					</div>
 
-					{/* Redes sociais */}
-					<div>
-						<Label>Redes Sociais</Label>
-						<div className="mt-2 grid gap-2">
-							{/* <SocialLinksInput register={register} errors={errors} /> */}
+					{/* Social Media */}
+					<div className="space-y-4">
+						<Label className="font-semibold">Redes Sociais</Label>
+						
+						<div>
+							<Label htmlFor="twitter" className="text-sm">Twitter/X</Label>
+							<Input
+								id="twitter"
+								{...register('twitter')}
+								placeholder="https://twitter.com/seu_perfil"
+								className="mt-1"
+							/>
+						</div>
+
+						<div>
+							<Label htmlFor="instagram" className="text-sm">Instagram</Label>
+							<Input
+								id="instagram"
+								{...register('instagram')}
+								placeholder="https://instagram.com/seu_perfil"
+								className="mt-1"
+							/>
+						</div>
+
+						<div>
+							<Label htmlFor="facebook" className="text-sm">Facebook</Label>
+							<Input
+								id="facebook"
+								{...register('facebook')}
+								placeholder="https://facebook.com/seu_perfil"
+								className="mt-1"
+							/>
 						</div>
 					</div>
 
-					<div className="flex items-center gap-4">
-						<button
+					{/* Action Buttons */}
+					<div className="flex items-center gap-4 pt-4">
+						<Button
 							type="button"
-							onClick={() => props.onOpenChange?.(false)}
-							className="w-full bg-primary text-white mt-6 hover:bg-purple-700 transition font-semibold text-lg py-4"
+							variant="outline"
+							onClick={() => setOpen(false)}
+							className="flex-1"
+							disabled={updateVenueMutation.isPending}
 						>
 							Cancelar
-						</button>
-						<button
+						</Button>
+						<Button
 							type="submit"
-							className="w-full bg-primary text-white mt-6 hover:bg-purple-700 transition font-semibold text-lg py-4"
+							className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+							disabled={updateVenueMutation.isPending}
 						>
-							Salvar
-						</button>
+							{updateVenueMutation.isPending ? 'Salvando...' : 'Salvar'}
+						</Button>
 					</div>
 				</form>
 			</DialogContent>
