@@ -30,7 +30,7 @@ export function BandCard({ band, compact = false }: BandCardProps) {
           </h3>
           <div className="flex items-center gap-1 mt-1">
             <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-            <span className="text-xs">{band.rating}</span>
+            <span className="text-xs">{band.rating / 1}</span>
           </div>
         </div>
       </Link>
@@ -54,7 +54,7 @@ export function BandCard({ band, compact = false }: BandCardProps) {
           <h3 className="text-sm font-medium text-white">{band.title}</h3>
           <div className="flex items-center gap-1 mt-1">
             <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-            <span className="text-xs text-white">{band.rating}</span>
+            <span className="text-xs text-white">{band.rating / 1}</span>
           </div>
         </div>
       </div>

@@ -7,8 +7,6 @@ import {
   InstagramIcon,
   LocationIcon,
   MusicIcon,
-  StarIcon,
-  StarOutlineIcon,
   TwitterIcon,
   UserIcon,
 } from "../../utils/icons";
@@ -20,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import HireBandForm from "@/components/Contrato";
 import Review from "@/components/Review/Review";
 import Footer from "@/components/Footer/Footer";
+import ViewReview from "@/components/Review/View";
 
 export type UserType = {
   id: string;
@@ -355,63 +354,7 @@ const BandProfile = () => {
               </ul>
             </section>
 
-            <section
-              style={{
-                border: "1px solid #ddd",
-                padding: "16px",
-                marginTop: "16px",
-                borderRadius: "8px",
-              }}
-            >
-              <h2>Reviews</h2>
-              <div style={{ marginTop: "8px" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "start",
-                  }}
-                >
-                  <div style={{ display: "flex", gap: 2 }}>
-                    <StarIcon />
-                    <StarIcon />
-                    <StarIcon />
-                    <StarIcon />
-                    <StarIcon />
-                  </div>
-                  <p style={{ color: "#555", margin: "8px 0 16px 0" }}>
-                    "The Melodic Mavericks brought the house down! Their energy
-                    was contagious."
-                  </p>
-                  <span style={{ fontSize: 14, color: "#888" }}>
-                    - Rock City Venue
-                  </span>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "start",
-                    marginTop: "48px",
-                  }}
-                >
-                  <div style={{ display: "flex", gap: 2 }}>
-                    <StarIcon />
-                    <StarIcon />
-                    <StarIcon />
-                    <StarIcon />
-                    <StarOutlineIcon />
-                  </div>
-                  <p style={{ color: "#555", margin: "8px 0 16px 0" }}>
-                    "Great band with a unique sound. They were professional and
-                    easy to work with."
-                  </p>
-                  <span style={{ fontSize: 14, color: "#888" }}>
-                    - Soundwave Festival
-                  </span>
-                </div>
-              </div>
-            </section>
+            <ViewReview id={id || ""} />
             {!isBand && (
               <div className="place-self-end my-4">
                 <Review band={band} />

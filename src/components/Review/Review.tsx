@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import { Textarea } from "../ui/textarea";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // ✅ AQUI!
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import api from "@/services/api";
 import { Rating } from "../ui/rating";
@@ -41,6 +41,7 @@ export default function Review({ band }: { band: BandProfileType }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const user = getUser();
+  const queryCliente = useQueryClient();
 
   useEffect(() => {
     if (open) {
@@ -78,6 +79,8 @@ export default function Review({ band }: { band: BandProfileType }) {
     onSuccess: () => {
       toast.success("Avaliação enviada com sucesso!");
       console.log("Avaliação enviada com sucesso!");
+      queryCliente.invalidateQueries({ queryKey: ["featuredBands"] });
+      queryCliente.invalidateQueries({ queryKey: ["reviews"] });
     },
     onError: (error) => {
       toast.error("Erro ao enviar avaliação. Tente novamente.");
