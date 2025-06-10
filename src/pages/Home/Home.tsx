@@ -212,8 +212,10 @@ export default function Home() {
                     band={{
                       id: band.userId,
                       title: band.bandName,
-                      profilePicture: band.profilePicture || "/placeholder.svg?height=200&width=150",
-                      rating: band.averageRating,
+                      profilePicture:
+                        band.profilePicture ||
+                        "https://www.gravatar.com/avatar/?d=mp",
+                      rating: band.averageRating / 1,
                     }}
                     compact
                   />
