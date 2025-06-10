@@ -11,7 +11,7 @@ export interface ResultadoBanda {
   id: number;
   tipo: 'banda';
   title: string;
-  image: string;
+  profilePicture: string; // UPDATED: image -> profilePicture
   year: string;
   rating: number;
   genre: string;
@@ -21,7 +21,7 @@ export interface ResultadoEstabelecimento {
   id: number;
   tipo: 'estabelecimento';
   name: string;
-  image: string;
+  profilePicture: string; // UPDATED: image -> profilePicture
   genre: string;
 }
 
@@ -57,7 +57,7 @@ export default function ResultadosPesquisa({
           band={{
             id: resultado.id,
             title: resultado.title,
-            image: resultado.image || '/placeholder.svg',
+            profilePicture: resultado.profilePicture || '/placeholder.svg', // UPDATED: use profilePicture
             year: resultado.year,
             rating: resultado.rating
           }}
@@ -68,7 +68,7 @@ export default function ResultadosPesquisa({
         <CardMusico 
           name={resultado.name}
           genre={resultado.genre}
-          image={resultado.image || '/placeholder.svg'}
+          profilePicture={resultado.profilePicture || '/placeholder.svg'} // UPDATED: use profilePicture
           onClick={() => console.log(`Clicou em ${resultado.name}`)}
         />
       );

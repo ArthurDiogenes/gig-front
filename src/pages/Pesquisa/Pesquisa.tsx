@@ -17,6 +17,7 @@ interface BandSearchResponse {
     bandName: string;
     city: string;
     genre: string;
+    profilePicture?: string; // UPDATED: Add profilePicture to API response type
   }[];
   total: number;
   page: number;
@@ -30,7 +31,7 @@ export interface ResultadoBanda {
   id: number;
   tipo: 'banda';
   title: string;
-  image: string;
+  profilePicture: string; // UPDATED: image -> profilePicture
   year: string;
   rating: number;
   genre: string;
@@ -40,7 +41,7 @@ export interface ResultadoEstabelecimento {
   id: number;
   tipo: 'estabelecimento';
   name: string;
-  image: string;
+  profilePicture: string; // UPDATED: image -> profilePicture
   genre: string;
 }
 
@@ -101,7 +102,7 @@ export default function Pesquisa() {
       id: band.id,
       tipo: 'banda',
       title: band.bandName,
-      image: '/images/placeholder.svg',
+      profilePicture: band.profilePicture || '/images/placeholder.svg', // UPDATED: use profilePicture from API
       year: '2024',
       rating: 4.5,
       genre: band.genre
@@ -142,7 +143,7 @@ export default function Pesquisa() {
           band={{
             id: resultado.id,
             title: resultado.title,
-            image: resultado.image || '/placeholder.svg',
+            profilePicture: resultado.profilePicture || '/placeholder.svg', // UPDATED: use profilePicture
             year: resultado.year,
             rating: resultado.rating
           }}
@@ -153,7 +154,7 @@ export default function Pesquisa() {
         <CardMusico 
           name={resultado.name}
           genre={resultado.genre}
-          image={resultado.image || '/placeholder.svg'}
+          profilePicture={resultado.profilePicture || '/placeholder.svg'} // UPDATED: use profilePicture
           onClick={() => console.log(`Clicou em ${resultado.name}`)}
         />
       );
