@@ -1,5 +1,4 @@
 import { Link, useParams } from "react-router-dom";
-import ImageCarousel from "../../components/ImageCarousel/ImageCarousel";
 import Navbar from "../../components/Navbar/Navbar";
 import {
   BandProfileIcon,
@@ -13,6 +12,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import api from "@/services/api";
 import { capitalize } from "lodash";
+import { Contract } from "@/types/contract";
 import { Button } from "@/components/ui/button";
 import HireBandForm from "@/components/Contrato";
 import Review from "@/components/Review/Review";
@@ -46,6 +46,37 @@ const BandProfile = () => {
     },
   });
 
+  // Fetch contracts and filter for accepted ones
+  const { data: acceptedContracts, isLoading: contractsLoading } = useQuery({
+    queryKey: ["contracts", "accepted", band?.id],
+    queryFn: async () => {
+      if (!band?.id) return [];
+      
+      try {
+        const response = await api.get<Contract[]>(`/contract/band/${band.id}`);
+        
+        // Filter only accepted contracts (isConfirmed === true)
+        const acceptedContracts = response.data.filter(contract => 
+          contract.isConfirmed === true
+        );
+        
+        // Sort by event date (most recent first)
+        const sortedContracts = acceptedContracts.sort((a, b) => 
+          new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime()
+        );
+        
+        console.log('All contracts:', response.data);
+        console.log('Accepted contracts:', acceptedContracts);
+        
+        return sortedContracts;
+      } catch (error) {
+        console.error('Error fetching contracts:', error);
+        return [];
+      }
+    },
+    enabled: !!band?.id,
+  });
+
   const isBand = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user") || "{}").role === "band"
     : false;
@@ -55,6 +86,20 @@ const BandProfile = () => {
     : null;
 
   const owner = band?.userId.id === userId;
+
+  // Format date helper
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+
+  // Check if event is upcoming
+  const isUpcomingEvent = (eventDate: string) => {
+    return new Date(eventDate) >= new Date();
+  };
 
   if (isLoading) {
     return (
@@ -119,16 +164,6 @@ const BandProfile = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Photos Section */}
-            <section className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5 transition-all duration-300 hover:shadow-2xl hover:shadow-black/10">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-slate-800 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                  Fotos
-                </h2>
-              </div>
-              <ImageCarousel />
-            </section>
-
             {/* Description Section */}
             <section className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5 transition-all duration-300 hover:shadow-2xl hover:shadow-black/10">
               <div className="flex items-center justify-between mb-4">
@@ -141,49 +176,70 @@ const BandProfile = () => {
               </p>
             </section>
 
-            {/* Songs Section */}
-            <section className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5 transition-all duration-300 hover:shadow-2xl hover:shadow-black/10">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-slate-800 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                  Nossas músicas
-                </h2>
-              </div>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center p-4 bg-slate-50/60 rounded-xl border border-slate-200/50 hover:bg-slate-100/80 transition-all duration-200">
-                  <p className="font-medium text-slate-800">Caminhos Cruzados</p>
-                  <Button size="sm" className="bg-black text-white hover:bg-gray-900">
-                    Play
-                  </Button>
-                </div>
-                <div className="flex justify-between items-center p-4 bg-slate-50/60 rounded-xl border border-slate-200/50 hover:bg-slate-100/80 transition-all duration-200">
-                  <p className="font-medium text-slate-800">Ecos do Amanhecer</p>
-                  <Button size="sm" className="bg-black text-white hover:bg-gray-900">
-                    Play
-                  </Button>
-                </div>
-              </div>
-            </section>
-
             {/* Events Section */}
             <section className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl shadow-black/5 transition-all duration-300 hover:shadow-2xl hover:shadow-black/10">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-slate-800 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                  Próximos eventos
+                  Próximos Eventos
                 </h2>
+                {acceptedContracts && acceptedContracts.length > 0 && (
+                  <span className="text-sm text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
+                    {acceptedContracts.length} evento{acceptedContracts.length !== 1 ? 's' : ''}
+                  </span>
+                )}
               </div>
+              
               <div className="space-y-4">
-                <div className="flex justify-between items-center p-4 bg-slate-50/60 rounded-xl border border-slate-200/50 hover:bg-slate-100/80 transition-all duration-200">
-                  <p className="font-medium text-slate-800">Rock in Rio</p>
-                  <Button size="sm" variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-50">
-                    Ver evento
-                  </Button>
-                </div>
-                <div className="flex justify-between items-center p-4 bg-slate-50/60 rounded-xl border border-slate-200/50 hover:bg-slate-100/80 transition-all duration-200">
-                  <p className="font-medium text-slate-800">Lollapalooza</p>
-                  <Button size="sm" variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-50">
-                    Ver evento
-                  </Button>
-                </div>
+                {contractsLoading ? (
+                  <div className="text-center py-8">
+                    <p className="text-slate-500">Carregando eventos...</p>
+                  </div>
+                ) : acceptedContracts && acceptedContracts.length > 0 ? (
+                  acceptedContracts.map((contract) => (
+                    <div key={contract.id} className="flex justify-between items-center p-4 bg-slate-50/60 rounded-xl border border-slate-200/50 hover:bg-slate-100/80 transition-all duration-200">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className="font-medium text-slate-800">{contract.eventName}</p>
+                          {isUpcomingEvent(contract.eventDate) ? (
+                            <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                              Próximo
+                            </span>
+                          ) : (
+                            <span className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-full">
+                              Realizado
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-slate-600 mt-1">
+                          📍 {contract.requester.name} - {contract.requester.city}
+                        </p>
+                        <p className="text-sm text-slate-600">
+                          🕐 {contract.startTime} - {contract.endTime}
+                        </p>
+                        <p className="text-sm text-slate-600">
+                          🎭 {contract.eventType}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-sm font-medium text-slate-700 bg-slate-200/60 px-3 py-1 rounded-lg">
+                          {formatDate(contract.eventDate)}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="mb-4">
+                      <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        🎵
+                      </div>
+                      <p className="text-slate-500 font-medium">Nenhum evento confirmado</p>
+                      <p className="text-sm text-slate-400 mt-1">
+                        Os eventos aceitos aparecerão aqui
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </section>
           </div>
