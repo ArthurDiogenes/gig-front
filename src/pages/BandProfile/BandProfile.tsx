@@ -117,15 +117,9 @@ const BandProfile = () => {
               <Link to={`/meu-perfil`}>
                 <Button variant={"outline"}>Editar perfil</Button>
               </Link>
-            ) : isBand && !owner ? (
-              <Link to={`/mensagens`}>
-                <Button variant={"outline"}>Mensagens</Button>
-              </Link>
+            
             ) : (
               <>
-                <Link to={`/mensagens`}>
-                  <Button variant={"outline"}>Mensagem</Button>
-                </Link>
                 <HireBandForm band={band} />
               </>
             )}
