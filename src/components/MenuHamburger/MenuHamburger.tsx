@@ -49,11 +49,6 @@ export default function MenuHamburger() {
             <CustomButton onClick={handleProfile}>Perfil</CustomButton>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <CustomButton onClick={() => (window.location.href = "/mensagens")}>
-              Conversas
-            </CustomButton>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
             <CustomButton
               onClick={() => (window.location.href = "/meu-perfil")}
             >
