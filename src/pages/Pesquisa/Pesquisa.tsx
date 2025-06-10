@@ -17,7 +17,10 @@ interface BandSearchResponse {
     bandName: string;
     city: string;
     genre: string;
-    profilePicture?: string; // UPDATED: Add profilePicture to API response type
+    profilePicture?: string;
+    userId?: {
+      id: string;
+    };
   }[];
   total: number;
   page: number;
@@ -28,20 +31,20 @@ interface BandSearchResponse {
 export type ResultadoTipo = 'banda' | 'estabelecimento';
 
 export interface ResultadoBanda {
-  id: number;
+  id: string; // Changed to string to match BandCard expectations
   tipo: 'banda';
   title: string;
-  profilePicture: string; // UPDATED: image -> profilePicture
+  profilePicture: string;
   year: string;
   rating: number;
   genre: string;
 }
 
 export interface ResultadoEstabelecimento {
-  id: number;
+  id: string; // Changed to string for consistency
   tipo: 'estabelecimento';
   name: string;
-  profilePicture: string; // UPDATED: image -> profilePicture
+  profilePicture: string;
   genre: string;
 }
 
@@ -61,6 +64,7 @@ export default function Pesquisa() {
 
   useEffect(() => {
     setTermoPesquisa(queryFromUrl);
+    setPaginaAtual(1); // Reset page when search term changes
   }, [queryFromUrl]);
 
   const searchBandsFromAPI = async (): Promise<BandSearchResponse> => {
@@ -86,11 +90,13 @@ export default function Pesquisa() {
 
   const { 
     data: searchResults, 
-    isLoading
+    isLoading,
+    error
   } = useQuery({
     queryKey: ['search', termoPesquisa, paginaAtual],
     queryFn: searchBandsFromAPI,
     enabled: termoPesquisa.length > 0,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
   const convertToResultados = (): ResultadoPesquisa[] => {
@@ -99,26 +105,31 @@ export default function Pesquisa() {
     }
 
     return searchResults.data.map(band => ({
-      id: band.id,
-      tipo: 'banda',
+      id: band.userId?.id || band.id.toString(), // Use userId.id if available, otherwise convert band.id to string
+      tipo: 'banda' as const,
       title: band.bandName,
-      profilePicture: band.profilePicture || '/images/placeholder.svg', // UPDATED: use profilePicture from API
-      year: '2024',
-      rating: 4.5,
+      profilePicture: band.profilePicture || '/placeholder.svg',
+      year: '2024', // You might want to get this from the API if available
+      rating: 4.5, // You might want to get this from the API if available
       genre: band.genre
     }));
   };
 
   const applyFilters = (resultados: ResultadoPesquisa[]): ResultadoPesquisa[] => {
     return resultados.filter(item => {
+      // Filter by type
       if (filtros.tipo !== 'todos') {
         if (filtros.tipo === 'bandas' && item.tipo !== 'banda') return false;
         if (filtros.tipo === 'estabelecimentos' && item.tipo !== 'estabelecimento') return false;
       }
       
+      // Filter by genre
       if (filtros.genero && item.genre.toLowerCase() !== filtros.genero.toLowerCase()) {
         return false;
       }
+      
+      // City filter would need to be implemented based on your requirements
+      // For now, we'll skip it since the current API doesn't seem to filter by city
       
       return true;
     });
@@ -128,7 +139,7 @@ export default function Pesquisa() {
 
   const handleFilterChange = (novosFiltros: { tipo: string; genero: string; cidade: string }) => {
     setFiltros(novosFiltros);
-    setPaginaAtual(1);
+    setPaginaAtual(1); // Reset to first page when filters change
   };
 
   const handlePageChange = (pagina: number) => {
@@ -143,8 +154,7 @@ export default function Pesquisa() {
           band={{
             id: resultado.id,
             title: resultado.title,
-            profilePicture: resultado.profilePicture || '/placeholder.svg', // UPDATED: use profilePicture
-            year: resultado.year,
+            profilePicture: resultado.profilePicture,
             rating: resultado.rating
           }}
         />
@@ -154,7 +164,7 @@ export default function Pesquisa() {
         <CardMusico 
           name={resultado.name}
           genre={resultado.genre}
-          profilePicture={resultado.profilePicture || '/placeholder.svg'} // UPDATED: use profilePicture
+          profilePicture={resultado.profilePicture}
           onClick={() => console.log(`Clicou em ${resultado.name}`)}
         />
       );
@@ -172,9 +182,33 @@ export default function Pesquisa() {
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <AlertCircle size={48} className="text-gray-400 mb-4" />
       <h3 className="text-xl font-semibold text-gray-900 mb-2">Nenhum resultado encontrado</h3>
-      <p className="text-gray-600">
+      <p className="text-gray-600 mb-4">
         Não encontramos resultados para "<strong>{termoPesquisa}</strong>".
       </p>
+      <div className="text-sm text-gray-500">
+        <p>Dicas para melhorar sua busca:</p>
+        <ul className="list-disc list-inside mt-2 space-y-1">
+          <li>Verifique a ortografia</li>
+          <li>Tente termos mais gerais</li>
+          <li>Use palavras-chave diferentes</li>
+        </ul>
+      </div>
+    </div>
+  );
+
+  const renderError = () => (
+    <div className="flex flex-col items-center justify-center py-16 text-center">
+      <AlertCircle size={48} className="text-red-400 mb-4" />
+      <h3 className="text-xl font-semibold text-gray-900 mb-2">Erro ao buscar resultados</h3>
+      <p className="text-gray-600 mb-4">
+        Ocorreu um erro ao buscar os resultados. Tente novamente.
+      </p>
+      <button 
+        onClick={() => window.location.reload()} 
+        className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors"
+      >
+        Tentar novamente
+      </button>
     </div>
   );
 
@@ -215,15 +249,17 @@ export default function Pesquisa() {
               </div>
             </div>
 
-            {isLoading ? (
+            {error ? (
+              renderError()
+            ) : isLoading ? (
               renderLoading()
             ) : resultadosFiltrados.length === 0 ? (
               renderEmpty()
             ) : (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mb-6">
-                  {resultadosFiltrados.map((resultado, index) => (
-                    <div key={`${resultado.tipo}-${resultado.id || index}`} className="transition-transform hover:-translate-y-1">
+                  {resultadosFiltrados.map((resultado) => (
+                    <div key={`${resultado.tipo}-${resultado.id}`} className="transition-transform hover:-translate-y-1">
                       {renderResultado(resultado)}
                     </div>
                   ))}
@@ -240,37 +276,36 @@ export default function Pesquisa() {
                       <ChevronLeft size={16} />
                     </button>
                     
-                    {Array.from({ length: totalPaginas }).map((_, index) => {
-                      const pagina = index + 1;
-                      if (
-                        pagina === 1 || 
-                        pagina === totalPaginas || 
-                        (pagina >= paginaAtual - 1 && pagina <= paginaAtual + 1)
-                      ) {
-                        return (
-                          <button 
-                            key={pagina}
-                            className={`flex items-center justify-center h-9 min-w-9 px-2 border rounded transition-colors text-sm ${
-                              paginaAtual === pagina 
-                                ? 'bg-black text-white border-black' 
-                                : 'bg-white border-gray-300 hover:bg-gray-50'
-                            }`}
-                            onClick={() => handlePageChange(pagina)}
-                          >
-                            {pagina}
-                          </button>
-                        );
-                      } else if (
-                        (pagina === paginaAtual - 2 && paginaAtual > 3) || 
-                        (pagina === paginaAtual + 2 && paginaAtual < totalPaginas - 2)
-                      ) {
-                        return (
-                          <span key={pagina} className="flex items-center justify-center h-9 text-sm text-gray-600">
-                            ...
-                          </span>
-                        );
+                    {Array.from({ length: Math.min(totalPaginas, 7) }).map((_, index) => {
+                      let pagina: number;
+                      
+                      if (totalPaginas <= 7) {
+                        pagina = index + 1;
+                      } else {
+                        if (paginaAtual <= 4) {
+                          pagina = index + 1;
+                        } else if (paginaAtual >= totalPaginas - 3) {
+                          pagina = totalPaginas - 6 + index;
+                        } else {
+                          pagina = paginaAtual - 3 + index;
+                        }
                       }
-                      return null;
+
+                      if (pagina < 1 || pagina > totalPaginas) return null;
+
+                      return (
+                        <button 
+                          key={pagina}
+                          className={`flex items-center justify-center h-9 min-w-9 px-2 border rounded transition-colors text-sm ${
+                            paginaAtual === pagina 
+                              ? 'bg-black text-white border-black' 
+                              : 'bg-white border-gray-300 hover:bg-gray-50'
+                          }`}
+                          onClick={() => handlePageChange(pagina)}
+                        >
+                          {pagina}
+                        </button>
+                      );
                     })}
                     
                     <button 
