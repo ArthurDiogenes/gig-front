@@ -5,8 +5,8 @@ export type Contract = {
   eventDate: string;
   startTime: string;
   endTime: string;
-  budget: string; // Pode ser number, dependendo do backend
-  additionalDetails: string;
+  budget: number;
+  additionalDetails?: string;
   isConfirmed: boolean | null;
   createdAt: string;
   updatedAt: string;
@@ -25,7 +25,7 @@ export type Provider = {
   deletedAt: string | null;
   description: string | null;
   genre: string;
-  members: string | null;
+  members: number | null;
 };
 
 export type Requester = {
@@ -39,5 +39,7 @@ export type Requester = {
   description: string | null;
   coverPhoto: string | null;
   profilePhoto: string | null;
-  socialMedia: string | null;
+  twitter: string | null;
+  instagram: string | null;
+  facebook: string | null;
 };

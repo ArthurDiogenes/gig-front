@@ -1,15 +1,17 @@
-import api from "@/services/api";
-import { Contract } from "@/types/contract";
 import { useQuery } from "@tanstack/react-query";
+import { getContractsByBand, getAllContracts } from "@/services/contracts";
+
+export function useContractsByBand(bandId?: number) {
+  return useQuery({
+    queryKey: ["contracts", "band", bandId],
+    queryFn: () => getContractsByBand(bandId!),
+    enabled: !!bandId,
+  });
+}
 
 export function useContractsData() {
-  const contracts = useQuery({
+  return useQuery({
     queryKey: ["contracts"],
-    queryFn: async () => {
-      const response = await api.get<Contract[]>("/contract");
-      return response.data;
-    },
+    queryFn: getAllContracts,
   });
-
-  return contracts;
 }
