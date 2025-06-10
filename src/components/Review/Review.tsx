@@ -80,6 +80,7 @@ export default function Review({ band }: { band: BandProfileType }) {
       toast.success("Avaliação enviada com sucesso!");
       console.log("Avaliação enviada com sucesso!");
       queryCliente.invalidateQueries({ queryKey: ["featuredBands"] });
+      queryCliente.invalidateQueries({ queryKey: ["reviews"] });
     },
     onError: (error) => {
       toast.error("Erro ao enviar avaliação. Tente novamente.");

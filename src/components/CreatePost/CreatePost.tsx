@@ -41,9 +41,9 @@ export default function CreatePost() {
       await createPost(formData);
     },
     onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ["posts"],
-			});
+      queryClient.invalidateQueries({
+        queryKey: ["posts"],
+      });
       toast.success("Post criado com sucesso!");
     },
     onError: (error) => {
