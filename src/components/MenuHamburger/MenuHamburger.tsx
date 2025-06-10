@@ -36,7 +36,7 @@ export default function MenuHamburger() {
     if (user.role === "band") {
       navigate(`/bandas/${user.id}`);
     } else {
-      navigate("/perfil-estabelecimento");
+      navigate(`/venue/${user.id}`);
     }
   };
 

@@ -1,4 +1,3 @@
-import EditarEstabelecimento from '@/components/EditarEstabelecimento';
 import Navbar from '../../components/Navbar/Navbar';
 import {
 	BandProfileIcon,
@@ -13,7 +12,6 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/services/api';
 import { Phone } from 'lucide-react';
-import { getUser } from '@/services/users';
 
 export type VenueProfileType = {
 	id: string;
@@ -37,7 +35,6 @@ export type VenueProfileType = {
 
 const PerfilEstabelecimento = () => {
 	const {id} = useParams();
-	const user = getUser();
 
 	const { data : venue, isLoading, error } = useQuery({
 		queryKey: ['venue', id],
@@ -71,8 +68,6 @@ const PerfilEstabelecimento = () => {
 			</div>
 		);
 	}
-
-	const isOwner = venue?.user.role === 'venue' && venue.user.id === user?.id;
 	
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
@@ -114,18 +109,6 @@ const PerfilEstabelecimento = () => {
 						</h1>
 						<p className="text-lg text-slate-600 font-medium">{venue?.type}</p>
 					</div>
-					{isOwner && venue && (
-						<div className="flex flex-wrap gap-3">
-							<EditarEstabelecimento
-								venue={{
-									...venue,
-									twitter: venue.twitter ?? undefined,
-									facebook: venue.facebook ?? undefined,
-									instagram: venue.instagram ?? undefined,
-								}}
-							/>
-						</div>
-					)}
 				</div>
 
 				{/* Content Grid */}
