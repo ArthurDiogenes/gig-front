@@ -25,6 +25,7 @@ export type PostType = {
   user: {
     id: number;
     name: string;
+    avatar: string | null;
   };
   isLiked: boolean;
   commentsCount: number;
