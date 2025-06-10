@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import {
   BandProfileIcon,
@@ -16,6 +16,8 @@ import { Contract } from "@/types/contract";
 import Review from "@/components/Review/Review";
 import Footer from "@/components/Footer/Footer";
 import ViewReview from "@/components/Review/View";
+import { Button } from "@/components/ui/button";
+import HireBandForm from "@/components/Contrato";
 
 export type UserType = {
   id: string;
@@ -86,6 +88,12 @@ const BandProfile = () => {
     ? JSON.parse(localStorage.getItem("user") || "{}").role === "band"
     : false;
 
+  const userId = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user") || "{}").id
+    : null;
+
+  const owner = band?.userId.id === userId;
+
   // Format date helper
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("pt-BR", {
@@ -133,7 +141,8 @@ const BandProfile = () => {
             <img
               src={band.coverPicture}
               alt={`${band.bandName} cover`}
-              className="w-full h-64 object-cover rounded-2xl shadow-2xl shadow-black/20"/>
+              className="w-full h-64 object-cover rounded-2xl shadow-2xl shadow-black/20"
+            />
           ) : (
             <div className="relative w-full h-64 bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl overflow-hidden shadow-2xl shadow-black/20">
               <div className="absolute inset-0 bg-black/20"></div>
@@ -164,6 +173,20 @@ const BandProfile = () => {
             <p className="text-lg text-slate-600 font-medium">
               {capitalize(band.genre)}
             </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {isBand && owner ? (
+              <Link to={`/meu-perfil`}>
+                <Button
+                  variant={"outline"}
+                  className="bg-white border-slate-300 text-slate-700 hover:bg-slate-50"
+                >
+                  Editar perfil
+                </Button>
+              </Link>
+            ) : (
+              <HireBandForm band={band} />
+            )}
           </div>
         </div>
 
